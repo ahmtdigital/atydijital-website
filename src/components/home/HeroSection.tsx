@@ -1,11 +1,10 @@
-
 import { useState, useEffect } from 'react';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDataService } from '@/lib/db';
-import { HeroSlide } from '@/components/admin/HeroSliderManager';
+import { HeroSlide } from '@/types/HeroSlideTypes';
 
 const defaultSlides: HeroSlide[] = [
   {

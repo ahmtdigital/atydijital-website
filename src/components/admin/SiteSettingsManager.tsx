@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from '@/hooks/use-toast';
 import { 
   Settings, 
@@ -427,7 +428,7 @@ const SiteSettingsManager = () => {
           </div>
           
           {isMaintenanceMode && (
-            <Alert className="bg-orange-900/20 border-orange-900/50 text-orange-400">
+            <Alert variant="destructive" className="bg-orange-900/20 border-orange-900/50 text-orange-400">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
                 Web siteniz bakım modunda. Yalnızca yöneticiler tarafından erişilebilir.

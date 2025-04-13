@@ -19,6 +19,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import { v4 as uuidv4 } from 'uuid';
 import { motion } from 'framer-motion';
+import { HeroSlide } from '@/types/HeroSlideTypes';
 
 interface SliderItem {
   id: string;
