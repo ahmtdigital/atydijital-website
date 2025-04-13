@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -31,7 +32,10 @@ import {
   ChevronUp,
   Plus,
   Trash2,
-  Info
+  Info,
+  X,
+  Search,
+  UserPlus
 } from 'lucide-react';
 
 interface SocialLink {
@@ -869,4 +873,33 @@ const SiteSettingsManager = () => {
                 activeSection === 'maintenance' ? 'bg-dark-400 hover:bg-dark-300' : ''
               }`}
             >
-              <AlertCircle className="h-4 w-4"
+              <AlertCircle className="h-4 w-4" />
+              Bakım
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setActiveSection('cookie')}
+              className={`w-full md:w-auto justify-start gap-2 ${
+                activeSection === 'cookie' ? 'bg-dark-400 hover:bg-dark-300' : ''
+              }`}
+            >
+              <Info className="h-4 w-4" />
+              Çerez
+            </Button>
+          </div>
+          
+          <div className="mt-6">
+            {activeSection === 'general' && <GeneralSettings />}
+            {activeSection === 'social' && <SocialMediaSettings />}
+            {activeSection === 'contact' && <ContactSettings />}
+            {activeSection === 'seo' && <SeoSettings />}
+            {activeSection === 'maintenance' && <MaintenanceSettings />}
+            {activeSection === 'cookie' && <CookieSettings />}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default SiteSettingsManager;
