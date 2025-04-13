@@ -4,28 +4,27 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
   build: {
-    outDir: 'dist',
-    chunkSizeWarningLimit: 1000,
     minify: 'terser',
-    sourcemap: false,
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    },
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
+        manualChunks(id) {
           if (id.includes('node_modules')) {
             return 'vendor';
           }
         }
       }
     }
-  },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src')
-    }
-  },
-  optimizeDeps: {
-    include: ['react', 'react-dom'],
-    exclude: ['@auth']
   }
 })
