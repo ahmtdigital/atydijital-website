@@ -84,7 +84,7 @@ const About = () => {
     <Layout>
       {/* Header */}
       <section className="py-24 bg-dark-600 relative">
-        <div className="absolute top-0 left-0 w-full h-1 text-gradient"></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-ignite"></div>
         <div className="container mx-auto px-4 text-center max-w-3xl">
           <p className="text-ignite font-semibold mb-4 animate-fade-in">WHO WE ARE</p>
           <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in" style={{animationDelay: '0.2s'}}>
