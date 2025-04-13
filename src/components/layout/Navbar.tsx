@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ChevronDown, Bell } from 'lucide-react';
+import { Menu, X, ChevronDown, Bell, Image } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -63,12 +63,17 @@ const Navbar = () => {
         'fixed top-0 left-0 right-0 z-50 bg-dark-800/95 backdrop-blur-md py-4 shadow-lg border-b border-dark-600'
       )}>
         <div className="container mx-auto px-4 flex justify-between items-center">
-          <Link to="/" className="relative z-50">
-            <h1 className="text-2xl font-bold tracking-tight">
-              <span className="text-white">Ignite</span>
-              <span className="text-ignite">Marketing</span>
-              <span className="ml-2 text-sm text-gray-400 font-normal">Admin Panel</span>
-            </h1>
+          <Link to="/" className="relative z-50 flex items-center">
+            <div className="mr-3 bg-ignite rounded-full w-10 h-10 flex items-center justify-center">
+              <Image size={22} className="text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">
+                <span className="text-white">Ignite</span>
+                <span className="text-ignite">Marketing</span>
+                <span className="ml-2 text-sm text-gray-400 font-normal">Admin Panel</span>
+              </h1>
+            </div>
           </Link>
 
           <div className="flex items-center gap-4">
@@ -144,11 +149,35 @@ const Navbar = () => {
       scrolled ? 'bg-dark/90 backdrop-blur-md py-4 shadow-lg' : 'bg-transparent py-6'
     )}>
       <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link to="/" className="relative z-50">
-          <h1 className="text-2xl font-bold tracking-tight">
-            <span className="text-white">Ignite</span>
-            <span className="text-ignite">Marketing</span>
-          </h1>
+        <Link to="/" className="relative z-50 flex items-center group">
+          <motion.div 
+            initial={{ scale: 1 }}
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="mr-3 bg-ignite rounded-full w-10 h-10 flex items-center justify-center overflow-hidden"
+          >
+            <Image size={20} className="text-white" />
+          </motion.div>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">
+              <motion.span 
+                className="text-white inline-block"
+                initial={{ y: 0 }}
+                whileHover={{ y: -2 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                Ignite
+              </motion.span>
+              <motion.span 
+                className="text-ignite inline-block"
+                initial={{ y: 0 }}
+                whileHover={{ y: -2 }}
+                transition={{ type: "spring", stiffness: 300, delay: 0.05 }}
+              >
+                Marketing
+              </motion.span>
+            </h1>
+          </div>
         </Link>
 
         {/* Desktop Navigation */}
@@ -157,9 +186,10 @@ const Navbar = () => {
             <Link 
               key={item.path} 
               to={item.path}
-              className="text-white/80 hover:text-ignite transition-colors duration-200"
+              className="text-white/80 hover:text-ignite transition-colors duration-200 relative group"
             >
               {item.name}
+              <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-ignite group-hover:w-full transition-all duration-300"></span>
             </Link>
           ))}
           <Button variant="default" className="bg-ignite hover:bg-ignite-700 text-white">

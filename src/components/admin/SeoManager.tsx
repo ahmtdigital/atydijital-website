@@ -1,698 +1,562 @@
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { 
-  Search, 
   Globe, 
+  Search, 
   FileText, 
+  Tag, 
+  Share2, 
+  List, 
+  BarChart4, 
+  Settings, 
   Code, 
-  Sitemap, 
-  ArrowUpRight, 
-  Save,
-  BookOpen,
-  CheckSquare,
-  Share2,
-  ExternalLink,
-  Database,
-  X
-} from "lucide-react";
-import { motion } from "framer-motion";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetFooter, SheetClose } from "@/components/ui/sheet";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-
-interface PageSeo {
-  id: string;
-  path: string;
-  title: string;
-  description: string;
-  keywords: string;
-  ogTitle: string;
-  ogDescription: string;
-  ogImage: string;
-  canonical: string;
-  indexable: boolean;
-  lastUpdated: string;
-}
+  FileJson, 
+  AlertCircle 
+} from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { toast } from '@/hooks/use-toast';
 
 const SeoManager = () => {
-  const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState("pages");
-  const [loading, setLoading] = useState(false);
-  const [showEditSheet, setShowEditSheet] = useState(false);
-  const [currentPage, setCurrentPage] = useState<PageSeo | null>(null);
-  const [sitemapGenerated, setSitemapGenerated] = useState(true);
-  const [robotsTxtContent, setRobotsTxtContent] = useState(
-`User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
-User-agent: *
-Allow: /
-`);
-
-  // Demo pages data
-  const [pages, setPages] = useState<PageSeo[]>([
-    {
-      id: "1",
-      path: "/",
-      title: "Ignite Pazarlama | Dijital Pazarlama Ajansı",
-      description: "Markanızı dijital dünyada parlatacak stratejiler ve çözümler. Sosyal medya, SEO, içerik pazarlama ve daha fazlası.",
-      keywords: "dijital pazarlama, SEO, sosyal medya, içerik pazarlama, web tasarım",
-      ogTitle: "Ignite Pazarlama | Dijital Pazarlama Ajansı",
-      ogDescription: "Markanızı dijital dünyada parlatacak stratejiler ve çözümler.",
-      ogImage: "/images/og-image.jpg",
-      canonical: "https://ignitepazarlama.com/",
-      indexable: true,
-      lastUpdated: "2025-04-10"
-    },
-    {
-      id: "2",
-      path: "/hizmetler",
-      title: "Hizmetlerimiz | Ignite Pazarlama",
-      description: "Markanızı büyütmek için verdiğimiz dijital pazarlama, SEO, sosyal medya ve içerik üretim hizmetleri.",
-      keywords: "dijital pazarlama hizmetleri, SEO hizmetleri, sosyal medya yönetimi",
-      ogTitle: "Dijital Pazarlama Hizmetleri | Ignite Pazarlama",
-      ogDescription: "Markanızı büyütmek için verdiğimiz dijital pazarlama hizmetleri.",
-      ogImage: "/images/services-og.jpg",
-      canonical: "https://ignitepazarlama.com/hizmetler",
-      indexable: true,
-      lastUpdated: "2025-04-08"
-    },
-    {
-      id: "3",
-      path: "/hakkimizda",
-      title: "Hakkımızda | Ignite Pazarlama",
-      description: "Ignite Pazarlama olarak kim olduğumuz, vizyonumuz ve markanızı büyütme tutkumuz.",
-      keywords: "dijital pazarlama ajansı, ignite pazarlama hakkında, pazarlama ekibi",
-      ogTitle: "Hakkımızda | Ignite Pazarlama",
-      ogDescription: "Ignite Pazarlama olarak kim olduğumuz, vizyonumuz ve markanızı büyütme tutkumuz.",
-      ogImage: "/images/about-og.jpg",
-      canonical: "https://ignitepazarlama.com/hakkimizda",
-      indexable: true,
-      lastUpdated: "2025-04-05"
-    }
-  ]);
-
-  // Google settings
-  const [googleSettings, setGoogleSettings] = useState({
-    gaTrackingId: "G-ABC123XYZ",
-    gtagEnabled: true,
-    searchConsoleVerification: "<meta name=\"google-site-verification\" content=\"ABC123XYZ\" />",
-    enhancedEcommerce: false,
-    anonymizeIp: true,
-    consentMode: true
+  const [activeTab, setActiveTab] = useState('page-seo');
+  const [sitemapGenerated, setSitemapGenerated] = useState(false);
+  const [metaTags, setMetaTags] = useState<Record<string, string>>({
+    title: '',
+    description: '',
+    keywords: ''
   });
+  const [ogTags, setOgTags] = useState<Record<string, string>>({
+    title: '',
+    description: '',
+    image: ''
+  });
+  const [selectedPage, setSelectedPage] = useState('home');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleEditPage = (page: PageSeo) => {
-    setCurrentPage(page);
-    setShowEditSheet(true);
+  const pages = [
+    { id: 'home', name: 'Ana Sayfa', slug: '/' },
+    { id: 'services', name: 'Hizmetler', slug: '/services' },
+    { id: 'portfolio', name: 'Portfolyo', slug: '/portfolio' },
+    { id: 'about', name: 'Hakkımızda', slug: '/about' },
+    { id: 'blog', name: 'Blog', slug: '/blog' },
+    { id: 'contact', name: 'İletişim', slug: '/contact' }
+  ];
+
+  const handlePageSelect = (pageId: string) => {
+    setSelectedPage(pageId);
+    // Simulate loading SEO data for the selected page
+    setIsLoading(true);
+    setTimeout(() => {
+      const pageData = {
+        home: {
+          metaTags: {
+            title: 'Ignite Marketing | Dijital Pazarlama Ajansı',
+            description: 'Markanızı dijital dünyada parlatacak stratejiler ve çözümler sunan pazarlama ajansı.',
+            keywords: 'dijital pazarlama, SEO, sosyal medya, web tasarım, içerik üretimi'
+          },
+          ogTags: {
+            title: 'Ignite Marketing | Dijital Pazarlama Ajansı',
+            description: 'Markanızı dijital dünyada parlatacak stratejiler ve çözümler sunan pazarlama ajansı.',
+            image: 'https://ignitepazarlama.com/images/og-image.jpg'
+          }
+        },
+        services: {
+          metaTags: {
+            title: 'Hizmetlerimiz | Ignite Marketing',
+            description: 'Dijital pazarlama, SEO, sosyal medya ve web geliştirme hizmetlerimiz ile işinizi büyütün.',
+            keywords: 'dijital pazarlama hizmetleri, SEO hizmetleri, sosyal medya yönetimi, web tasarım, içerik üretimi'
+          },
+          ogTags: {
+            title: 'Hizmetlerimiz | Ignite Marketing',
+            description: 'Dijital pazarlama, SEO, sosyal medya ve web geliştirme hizmetlerimiz ile işinizi büyütün.',
+            image: 'https://ignitepazarlama.com/images/services-og.jpg'
+          }
+        }
+      };
+      
+      // Default data for pages that aren't specifically defined
+      const defaultData = {
+        metaTags: {
+          title: `${pages.find(p => p.id === pageId)?.name || pageId} | Ignite Marketing`,
+          description: 'Ignite Marketing ile dijital dünyada varlığınızı güçlendirin.',
+          keywords: 'dijital pazarlama, SEO, sosyal medya, web tasarım'
+        },
+        ogTags: {
+          title: `${pages.find(p => p.id === pageId)?.name || pageId} | Ignite Marketing`,
+          description: 'Ignite Marketing ile dijital dünyada varlığınızı güçlendirin.',
+          image: 'https://ignitepazarlama.com/images/default-og.jpg'
+        }
+      };
+      
+      const data = pageData[pageId as keyof typeof pageData] || defaultData;
+      setMetaTags(data.metaTags);
+      setOgTags(data.ogTags);
+      setIsLoading(false);
+    }, 800);
   };
 
-  const handleSavePage = () => {
-    if (!currentPage) return;
-    
-    setLoading(true);
-    
-    // In a real app, this would be an API call
+  useEffect(() => {
+    handlePageSelect('home');
+  }, []);
+
+  const handleSaveSeoSettings = () => {
+    setIsLoading(true);
     setTimeout(() => {
-      setPages(pages.map(page => 
-        page.id === currentPage.id ? currentPage : page
-      ));
-      
-      setShowEditSheet(false);
-      setLoading(false);
-      
       toast({
-        title: "SEO Bilgileri Güncellendi",
-        description: `${currentPage.path} sayfası için SEO bilgileri başarıyla güncellendi.`,
+        title: "SEO Ayarları Kaydedildi",
+        description: `${pages.find(p => p.id === selectedPage)?.name} sayfası için SEO ayarları güncellendi.`,
       });
-    }, 800);
+      setIsLoading(false);
+    }, 1000);
   };
 
   const handleGenerateSitemap = () => {
-    setLoading(true);
-    
-    // In a real app, this would generate an actual sitemap.xml file
+    setIsLoading(true);
     setTimeout(() => {
-      setLoading(false);
       setSitemapGenerated(true);
-      
       toast({
-        title: "Sitemap.xml Oluşturuldu",
-        description: "Sitemap.xml dosyası başarıyla oluşturuldu ve sunucuya yüklendi.",
+        title: "Sitemap Oluşturuldu",
+        description: "sitemap.xml başarıyla oluşturuldu ve web sitenizin kök dizinine yerleştirildi.",
       });
-    }, 1200);
+      setIsLoading(false);
+    }, 1500);
   };
 
-  const handleSaveRobotsTxt = () => {
-    setLoading(true);
-    
-    // In a real app, this would update the robots.txt file
+  const handleSubmitToSearchConsole = () => {
+    setIsLoading(true);
     setTimeout(() => {
-      setLoading(false);
-      
       toast({
-        title: "Robots.txt Güncellendi",
-        description: "Robots.txt dosyası başarıyla güncellendi.",
+        title: "Google Search Console'a Gönderildi",
+        description: "Sitemap.xml dosyanız başarıyla Google Search Console'a gönderildi.",
       });
-    }, 800);
-  };
-
-  const handleSaveGoogleSettings = () => {
-    setLoading(true);
-    
-    // In a real app, this would update the Google settings
-    setTimeout(() => {
-      setLoading(false);
-      
-      toast({
-        title: "Google Ayarları Güncellendi",
-        description: "Google ayarları başarıyla güncellendi.",
-      });
-    }, 800);
+      setIsLoading(false);
+    }, 1500);
   };
 
   return (
-    <div className="space-y-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="flex flex-col gap-4"
-      >
-        <div className="flex justify-between items-center">
-          <div>
-            <h2 className="text-2xl font-bold flex items-center">
-              <Search className="mr-2 h-6 w-6 text-ignite" />
-              SEO Yönetimi
-            </h2>
-            <p className="text-muted-foreground">
-              Sitenizin arama motoru optimizasyonu ayarlarını yönetin
-            </p>
-          </div>
-        </div>
-
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-1 md:grid-cols-4 mb-8">
-            <TabsTrigger value="pages" className="flex items-center">
-              <Globe className="mr-2 h-4 w-4" />
-              Sayfa SEO
-            </TabsTrigger>
-            <TabsTrigger value="technical" className="flex items-center">
-              <Code className="mr-2 h-4 w-4" />
-              Teknik SEO
-            </TabsTrigger>
-            <TabsTrigger value="google" className="flex items-center">
-              <Search className="mr-2 h-4 w-4" />
-              Google Entegrasyonu
-            </TabsTrigger>
-            <TabsTrigger value="analyze" className="flex items-center">
-              <BookOpen className="mr-2 h-4 w-4" />
-              SEO Analizi
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Pages Tab */}
-          <TabsContent value="pages" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">Sayfa SEO Ayarları</CardTitle>
-                <CardDescription>
-                  Her sayfa için başlık, açıklama ve anahtar kelimeler gibi SEO bilgilerini düzenleyin
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Sayfa Yolu</TableHead>
-                        <TableHead>Başlık</TableHead>
-                        <TableHead>Indexlenebilir</TableHead>
-                        <TableHead>Son Güncelleme</TableHead>
-                        <TableHead className="text-right">İşlemler</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {pages.map((page) => (
-                        <TableRow key={page.id}>
-                          <TableCell className="font-medium">{page.path}</TableCell>
-                          <TableCell>{page.title}</TableCell>
-                          <TableCell>
-                            {page.indexable ? 
-                              <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                                <CheckSquare className="mr-1 h-3 w-3" /> Evet
-                              </span> : 
-                              <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-                                <X className="mr-1 h-3 w-3" /> Hayır
-                              </span>
-                            }
-                          </TableCell>
-                          <TableCell>{page.lastUpdated}</TableCell>
-                          <TableCell className="text-right">
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleEditPage(page)}
-                            >
-                              Düzenle
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">SEO Yönetimi</h2>
+        <Button 
+          onClick={handleSaveSeoSettings}
+          className="bg-ignite hover:bg-ignite-700"
+          disabled={isLoading}
+        >
+          {isLoading ? 'Kaydediliyor...' : 'Değişiklikleri Kaydet'}
+        </Button>
+      </div>
+      
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className="bg-dark-400 w-full justify-start overflow-auto">
+          <TabsTrigger value="page-seo" className="flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            <span>Sayfa SEO</span>
+          </TabsTrigger>
+          <TabsTrigger value="technical-seo" className="flex items-center gap-2">
+            <Code className="h-4 w-4" />
+            <span>Teknik SEO</span>
+          </TabsTrigger>
+          <TabsTrigger value="social-seo" className="flex items-center gap-2">
+            <Share2 className="h-4 w-4" />
+            <span>Sosyal Medya</span>
+          </TabsTrigger>
+          <TabsTrigger value="google" className="flex items-center gap-2">
+            <Globe className="h-4 w-4" />
+            <span>Google Entegrasyonu</span>
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="flex items-center gap-2">
+            <BarChart4 className="h-4 w-4" />
+            <span>SEO Analizi</span>
+          </TabsTrigger>
+        </TabsList>
+        
+        {/* Page SEO Tab */}
+        <TabsContent value="page-seo" className="space-y-6">
+          <Card className="bg-dark-500 border-dark-400">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-ignite" />
+                Sayfa SEO Ayarları
+              </CardTitle>
+              <CardDescription>
+                Her sayfa için meta etiketlerini ve SEO ayarlarını yapılandırın
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <Label>Sayfa Seçin</Label>
+                <Select value={selectedPage} onValueChange={handlePageSelect}>
+                  <SelectTrigger className="bg-dark-400 border-dark-300">
+                    <SelectValue placeholder="Sayfa seçin" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-dark-400 border-dark-300">
+                    {pages.map(page => (
+                      <SelectItem key={page.id} value={page.id} className="hover:bg-dark-500">
+                        {page.name} ({page.slug})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {isLoading ? (
+                <div className="py-10 flex justify-center">
+                  <div className="animate-spin h-8 w-8 border-4 border-ignite border-t-transparent rounded-full"></div>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Technical SEO Tab */}
-          <TabsContent value="technical" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl flex items-center">
-                  <Sitemap className="mr-2 h-5 w-5 text-ignite" />
-                  Sitemap Yönetimi
-                </CardTitle>
-                <CardDescription>
-                  Web sitenizin sitemap.xml dosyasını oluşturun ve yönetin
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="bg-muted p-4 rounded-md border">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h4 className="font-medium">Sitemap.xml Durumu</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {sitemapGenerated ? 
-                          "Sitemap.xml dosyası mevcut ve güncel." : 
-                          "Sitemap.xml dosyası henüz oluşturulmadı veya güncel değil."}
-                      </p>
+              ) : (
+                <>
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Meta Etiketleri</h3>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="meta-title">Başlık (Title)</Label>
+                      <Input 
+                        id="meta-title"
+                        value={metaTags.title}
+                        onChange={(e) => setMetaTags({...metaTags, title: e.target.value})}
+                        placeholder="Sayfa başlığı"
+                        className="bg-dark-400 border-dark-300"
+                      />
+                      <p className="text-xs text-gray-400">Önerilen uzunluk: 50-60 karakter</p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      {sitemapGenerated && (
-                        <Button variant="outline" size="sm" className="gap-1">
-                          <ExternalLink className="h-4 w-4" />
-                          Görüntüle
-                        </Button>
-                      )}
-                      <Button 
-                        onClick={handleGenerateSitemap}
-                        disabled={loading}
-                        size="sm"
-                      >
-                        {loading ? "İşleniyor..." : "Sitemap Oluştur"}
-                      </Button>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="meta-description">Açıklama (Description)</Label>
+                      <Textarea 
+                        id="meta-description"
+                        value={metaTags.description}
+                        onChange={(e) => setMetaTags({...metaTags, description: e.target.value})}
+                        placeholder="Sayfa açıklaması"
+                        className="bg-dark-400 border-dark-300 min-h-20"
+                      />
+                      <p className="text-xs text-gray-400">Önerilen uzunluk: 150-160 karakter</p>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="meta-keywords">Anahtar Kelimeler (Keywords)</Label>
+                      <Textarea 
+                        id="meta-keywords"
+                        value={metaTags.keywords}
+                        onChange={(e) => setMetaTags({...metaTags, keywords: e.target.value})}
+                        placeholder="Anahtar kelimeler (virgülle ayrılmış)"
+                        className="bg-dark-400 border-dark-300"
+                      />
+                      <p className="text-xs text-gray-400">Anahtar kelimeleri virgülle ayırın</p>
                     </div>
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <h4 className="font-medium">Arama Motorlarına Gönder</h4>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="gap-1"
-                      disabled={!sitemapGenerated}
-                    >
-                      <Share2 className="h-4 w-4" />
-                      Gönder
-                    </Button>
+                  
+                  <div className="pt-4 space-y-4">
+                    <h3 className="text-lg font-medium">Önizleme</h3>
+                    <div className="bg-dark-600 p-4 rounded-md border border-dark-300">
+                      <div className="text-blue-400 text-lg font-medium line-clamp-1">{metaTags.title || 'Sayfa Başlığı'}</div>
+                      <div className="text-green-400 text-sm line-clamp-1">{pages.find(p => p.id === selectedPage)?.slug || '/'}</div>
+                      <div className="text-gray-300 text-sm mt-1 line-clamp-2">{metaTags.description || 'Sayfa açıklaması burada görünecek...'}</div>
+                    </div>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    Oluşturduğunuz sitemap.xml dosyasını Google, Bing ve Yandex gibi arama motorlarına gönderin.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl flex items-center">
-                  <FileText className="mr-2 h-5 w-5 text-ignite" />
-                  Robots.txt Yönetimi
-                </CardTitle>
-                <CardDescription>
-                  Arama motoru botlarının sitenizi nasıl tarayacağını yapılandırın
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Textarea 
-                  value={robotsTxtContent}
-                  onChange={(e) => setRobotsTxtContent(e.target.value)}
-                  className="font-mono text-sm h-52"
-                />
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        {/* Technical SEO Tab */}
+        <TabsContent value="technical-seo" className="space-y-6">
+          <Card className="bg-dark-500 border-dark-400">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Code className="h-5 w-5 text-ignite" />
+                Teknik SEO
+              </CardTitle>
+              <CardDescription>
+                Sitemap, robots.txt ve yapısal veri gibi teknik SEO ayarlarını yapılandırın
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium flex items-center gap-2">
+                  <FileJson className="h-4 w-4 text-ignite" />
+                  Sitemap Oluşturucu
+                </h3>
                 
-                <div className="bg-dark-600 p-3 rounded-md text-sm">
-                  <p><strong>Not:</strong> Robots.txt düzenlerken dikkatli olun. Yanlış yapılandırma, sitenizin indekslenmesini etkileyebilir.</p>
-                </div>
-                
-                <div className="flex justify-end">
+                <div className="flex items-center justify-between p-4 bg-dark-600 rounded-md border border-dark-300">
+                  <div>
+                    <p className="font-medium">XML Sitemap</p>
+                    <p className="text-sm text-gray-400">Web sitenizin arama motorlarına taranmak üzere sayfalarını bildirmek için XML sitemap oluşturun.</p>
+                  </div>
                   <Button 
-                    onClick={handleSaveRobotsTxt}
-                    disabled={loading}
-                    className="gap-1"
+                    variant="outline" 
+                    className="border-ignite text-ignite hover:bg-ignite hover:text-white"
+                    onClick={handleGenerateSitemap}
+                    disabled={isLoading}
                   >
-                    <Save className="h-4 w-4" />
-                    {loading ? "Kaydediliyor..." : "Kaydet"}
+                    {isLoading ? 'İşleniyor...' : 'Sitemap Oluştur'}
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Google Integration Tab */}
-          <TabsContent value="google" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">Google Search Console</CardTitle>
-                <CardDescription>
-                  Web sitenizi Google'a doğrulayın ve indeksleme durumunu izleyin
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="verification">Site Doğrulama Meta Etiketi</Label>
-                  <Input 
-                    id="verification"
-                    value={googleSettings.searchConsoleVerification}
-                    onChange={(e) => setGoogleSettings({...googleSettings, searchConsoleVerification: e.target.value})}
-                    placeholder='<meta name="google-site-verification" content="YOUR_VERIFICATION_CODE" />'
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    Google Search Console'dan aldığınız doğrulama meta etiketini buraya yapıştırın.
-                  </p>
-                </div>
-
-                <div className="bg-muted p-4 rounded-md border">
-                  <h4 className="font-medium mb-2">Hızlı Bağlantılar</h4>
-                  <div className="space-y-2">
-                    <Button variant="outline" size="sm" className="w-full justify-start gap-2">
-                      <ArrowUpRight className="h-4 w-4" />
-                      Google Search Console'u Aç
-                    </Button>
-                    <Button variant="outline" size="sm" className="w-full justify-start gap-2">
-                      <ArrowUpRight className="h-4 w-4" />
-                      Google Analytics'i Aç
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">Google Analytics</CardTitle>
-                <CardDescription>
-                  Web siteniz için Google Analytics izleme ayarlarını yapılandırın
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="gaId">Google Analytics Izleme Kimliği</Label>
-                  <Input 
-                    id="gaId"
-                    value={googleSettings.gaTrackingId}
-                    onChange={(e) => setGoogleSettings({...googleSettings, gaTrackingId: e.target.value})}
-                    placeholder="G-XXXXXXXXXX"
-                  />
-                </div>
-
-                <div className="space-y-4 pt-2">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label htmlFor="gtag">Google Tag Manager</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Google Tag Manager entegrasyonunu etkinleştirin
-                      </p>
-                    </div>
-                    <Switch 
-                      id="gtag"
-                      checked={googleSettings.gtagEnabled}
-                      onCheckedChange={(checked) => setGoogleSettings({...googleSettings, gtagEnabled: checked})}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label htmlFor="ecommerce">Gelişmiş E-Ticaret</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Gelişmiş e-ticaret izlemeyi etkinleştirin
-                      </p>
-                    </div>
-                    <Switch 
-                      id="ecommerce"
-                      checked={googleSettings.enhancedEcommerce}
-                      onCheckedChange={(checked) => setGoogleSettings({...googleSettings, enhancedEcommerce: checked})}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label htmlFor="anonymize">IP Anonimleştirme</Label>
-                      <p className="text-sm text-muted-foreground">
-                        GDPR uyumluluğu için kullanıcı IP adreslerini anonimleştirin
-                      </p>
-                    </div>
-                    <Switch 
-                      id="anonymize"
-                      checked={googleSettings.anonymizeIp}
-                      onCheckedChange={(checked) => setGoogleSettings({...googleSettings, anonymizeIp: checked})}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label htmlFor="consent">Onay Modu</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Çerez onayı almadan önce veri toplamayı durdurun
-                      </p>
-                    </div>
-                    <Switch 
-                      id="consent"
-                      checked={googleSettings.consentMode}
-                      onCheckedChange={(checked) => setGoogleSettings({...googleSettings, consentMode: checked})}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex justify-end pt-4">
-                  <Button onClick={handleSaveGoogleSettings} disabled={loading}>
-                    {loading ? "Kaydediliyor..." : "Ayarları Kaydet"}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* SEO Analysis Tab */}
-          <TabsContent value="analyze" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">SEO Durum Raporu</CardTitle>
-                <CardDescription>
-                  Web sitenizin SEO performansını kontrol edin ve iyileştirme önerileri alın
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-muted rounded-lg p-4 border">
-                      <div className="text-3xl font-bold text-green-500 mb-2">92%</div>
-                      <div className="text-sm font-medium">Sayfa Başlıkları</div>
-                      <p className="text-sm text-muted-foreground">12/13 sayfa uygun başlık uzunluğuna sahip</p>
-                    </div>
-                    <div className="bg-muted rounded-lg p-4 border">
-                      <div className="text-3xl font-bold text-yellow-500 mb-2">78%</div>
-                      <div className="text-sm font-medium">Meta Açıklamaları</div>
-                      <p className="text-sm text-muted-foreground">10/13 sayfa optimize edilmiş açıklamaya sahip</p>
-                    </div>
-                    <div className="bg-muted rounded-lg p-4 border">
-                      <div className="text-3xl font-bold text-red-500 mb-2">65%</div>
-                      <div className="text-sm font-medium">İçerik Uzunluğu</div>
-                      <p className="text-sm text-muted-foreground">8/13 sayfa yeterli içerik uzunluğuna sahip</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <h4 className="font-medium">SEO İyileştirme Önerileri</h4>
-                    <div className="bg-yellow-50 text-yellow-800 p-3 rounded-md border border-yellow-200 flex items-start gap-2">
-                      <div className="p-1 bg-yellow-100 rounded-full mt-0.5">
-                        <AlertDescription className="h-4 w-4 text-yellow-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium">"/iletisim" sayfası için meta açıklama eklenmeli</p>
-                        <p className="text-xs mt-1">Meta açıklamalar, arama sonuçlarında görüntülenir ve tıklama oranlarını artırabilir.</p>
-                      </div>
-                    </div>
-                    <div className="bg-yellow-50 text-yellow-800 p-3 rounded-md border border-yellow-200 flex items-start gap-2">
-                      <div className="p-1 bg-yellow-100 rounded-full mt-0.5">
-                        <AlertDescription className="h-4 w-4 text-yellow-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium">"/blog/dijital-pazarlama-trendleri" sayfasında içerik çok kısa</p>
-                        <p className="text-xs mt-1">Arama motorları için en az 300 kelimelik içerik oluşturmalısınız.</p>
-                      </div>
-                    </div>
-                    <div className="bg-green-50 text-green-800 p-3 rounded-md border border-green-200 flex items-start gap-2">
-                      <div className="p-1 bg-green-100 rounded-full mt-0.5">
-                        <CheckSquare className="h-4 w-4 text-green-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium">Tüm sayfalar canonical URL'lere sahip</p>
-                        <p className="text-xs mt-1">Canonical URL'ler, içerik tekrarı sorunlarını önlemeye yardımcı olur.</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </motion.div>
-
-      {/* Edit Page Sheet */}
-      <Sheet open={showEditSheet} onOpenChange={setShowEditSheet}>
-        <SheetContent className="w-full md:max-w-md lg:max-w-lg overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>SEO Ayarlarını Düzenle</SheetTitle>
-            <SheetDescription>
-              {currentPage?.path} sayfası için SEO ayarlarını yapılandırın
-            </SheetDescription>
-          </SheetHeader>
-          
-          {currentPage && (
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Sayfa Başlığı</Label>
-                <Input 
-                  id="title"
-                  value={currentPage.title}
-                  onChange={(e) => setCurrentPage({...currentPage, title: e.target.value})}
-                  placeholder="Sayfa başlığı girin"
-                />
-                <p className="text-sm text-muted-foreground flex justify-between">
-                  <span>Önerilen: 50-60 karakter</span>
-                  <span className={`${currentPage.title.length > 60 ? 'text-red-500' : 'text-green-500'}`}>
-                    {currentPage.title.length}/60
-                  </span>
-                </p>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="description">Meta Açıklama</Label>
-                <Textarea 
-                  id="description"
-                  value={currentPage.description}
-                  onChange={(e) => setCurrentPage({...currentPage, description: e.target.value})}
-                  placeholder="Sayfa açıklaması girin"
-                />
-                <p className="text-sm text-muted-foreground flex justify-between">
-                  <span>Önerilen: 150-160 karakter</span>
-                  <span className={`${currentPage.description.length > 160 ? 'text-red-500' : 'text-green-500'}`}>
-                    {currentPage.description.length}/160
-                  </span>
-                </p>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="keywords">Anahtar Kelimeler</Label>
-                <Input 
-                  id="keywords"
-                  value={currentPage.keywords}
-                  onChange={(e) => setCurrentPage({...currentPage, keywords: e.target.value})}
-                  placeholder="virgülle ayrılmış anahtar kelimeler"
-                />
-                <p className="text-sm text-muted-foreground">
-                  Virgülle ayrılmış anahtar kelimeler girin
-                </p>
-              </div>
-              
-              <div className="pt-2 pb-1">
-                <h4 className="text-sm font-medium mb-2">Sosyal Medya Meta Etiketleri</h4>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="ogTitle">OG Başlık</Label>
-                  <Input 
-                    id="ogTitle"
-                    value={currentPage.ogTitle}
-                    onChange={(e) => setCurrentPage({...currentPage, ogTitle: e.target.value})}
-                    placeholder="Sosyal medya başlığı"
-                  />
-                </div>
+                {sitemapGenerated && (
+                  <Alert className="bg-green-900/20 border-green-900/50">
+                    <AlertDescription className="flex justify-between items-center">
+                      <span>
+                        sitemap.xml başarıyla oluşturuldu: <span className="text-green-400">https://ignitepazarlama.com/sitemap.xml</span>
+                      </span>
+                      <Button 
+                        variant="ghost" 
+                        className="h-8 px-2 text-green-400 hover:text-green-300 hover:bg-green-900/30"
+                        onClick={() => window.open('/sitemap.xml', '_blank')}
+                      >
+                        Görüntüle
+                      </Button>
+                    </AlertDescription>
+                  </Alert>
+                )}
                 
-                <div className="space-y-2 mt-3">
-                  <Label htmlFor="ogDescription">OG Açıklama</Label>
+                <div className="space-y-4 pt-4">
+                  <h3 className="text-lg font-medium flex items-center gap-2">
+                    <List className="h-4 w-4 text-ignite" />
+                    Robots.txt
+                  </h3>
+                  
                   <Textarea 
-                    id="ogDescription"
-                    value={currentPage.ogDescription}
-                    onChange={(e) => setCurrentPage({...currentPage, ogDescription: e.target.value})}
-                    placeholder="Sosyal medya açıklaması"
+                    className="bg-dark-400 border-dark-300 font-mono min-h-32"
+                    value={`User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /private
+
+# Sitemap
+Sitemap: https://ignitepazarlama.com/sitemap.xml`}
                   />
                 </div>
                 
-                <div className="space-y-2 mt-3">
-                  <Label htmlFor="ogImage">OG Resim</Label>
+                <div className="space-y-4 pt-4">
+                  <h3 className="text-lg font-medium flex items-center gap-2">
+                    <Code className="h-4 w-4 text-ignite" />
+                    Schema.org Yapısal Veriler
+                  </h3>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Switch id="schema-org" defaultChecked />
+                    <Label htmlFor="schema-org">Organization Schema.org verilerini ekle</Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Switch id="schema-breadcrumbs" defaultChecked />
+                    <Label htmlFor="schema-breadcrumbs">Breadcrumbs Schema.org verilerini ekle</Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Switch id="schema-faq" />
+                    <Label htmlFor="schema-faq">FAQ Schema.org verilerini ekle</Label>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        {/* Social SEO Tab */}
+        <TabsContent value="social-seo" className="space-y-6">
+          <Card className="bg-dark-500 border-dark-400">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Share2 className="h-5 w-5 text-ignite" />
+                Sosyal Medya Paylaşımları
+              </CardTitle>
+              <CardDescription>
+                Sosyal medya platformlarında paylaşıldığında içeriğinizin nasıl görüneceğini yapılandırın
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {isLoading ? (
+                <div className="py-10 flex justify-center">
+                  <div className="animate-spin h-8 w-8 border-4 border-ignite border-t-transparent rounded-full"></div>
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Open Graph Etiketleri</h3>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="og-title">OG Başlık</Label>
+                      <Input 
+                        id="og-title"
+                        value={ogTags.title}
+                        onChange={(e) => setOgTags({...ogTags, title: e.target.value})}
+                        placeholder="Open Graph başlığı"
+                        className="bg-dark-400 border-dark-300"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="og-description">OG Açıklama</Label>
+                      <Textarea 
+                        id="og-description"
+                        value={ogTags.description}
+                        onChange={(e) => setOgTags({...ogTags, description: e.target.value})}
+                        placeholder="Open Graph açıklaması"
+                        className="bg-dark-400 border-dark-300"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="og-image">OG Görsel URL</Label>
+                      <Input 
+                        id="og-image"
+                        value={ogTags.image}
+                        onChange={(e) => setOgTags({...ogTags, image: e.target.value})}
+                        placeholder="https://example.com/image.jpg"
+                        className="bg-dark-400 border-dark-300"
+                      />
+                    </div>
+                    
+                    <div className="pt-4 space-y-4">
+                      <h3 className="text-lg font-medium">Sosyal Medya Önizleme</h3>
+                      <div className="bg-dark-600 p-4 rounded-md border border-dark-300">
+                        <div className="max-w-md border border-dark-300 rounded-md overflow-hidden">
+                          <div className="h-48 bg-dark-400 flex items-center justify-center">
+                            {ogTags.image ? (
+                              <img 
+                                src={ogTags.image} 
+                                alt="OG Image Preview" 
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.currentTarget.src = 'https://via.placeholder.com/1200x630/2a2a2a/cccccc?text=Ignite+Marketing';
+                                }}
+                              />
+                            ) : (
+                              <div className="text-gray-400">Görsel URL girişi yapılmadı</div>
+                            )}
+                          </div>
+                          <div className="p-3 bg-dark-700">
+                            <div className="text-blue-400 text-sm">ignitepazarlama.com</div>
+                            <div className="text-white font-medium">{ogTags.title || 'OG Başlık'}</div>
+                            <div className="text-gray-400 text-sm line-clamp-2 mt-1">{ogTags.description || 'OG açıklaması buraya girilecek...'}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        {/* Google Tab */}
+        <TabsContent value="google" className="space-y-6">
+          <Card className="bg-dark-500 border-dark-400">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="h-5 w-5 text-ignite" />
+                Google Entegrasyonu
+              </CardTitle>
+              <CardDescription>
+                Google Search Console, Google Analytics ve diğer Google araçlarını yapılandırın
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Google Search Console</h3>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="google-verification">Site Doğrulama Kodu</Label>
                   <Input 
-                    id="ogImage"
-                    value={currentPage.ogImage}
-                    onChange={(e) => setCurrentPage({...currentPage, ogImage: e.target.value})}
-                    placeholder="/images/og-image.jpg"
+                    id="google-verification"
+                    placeholder="google-site-verification: xxxxxxxxxxxxx"
+                    className="bg-dark-400 border-dark-300"
                   />
+                  <p className="text-xs text-gray-400">Google Search Console'da site doğrulaması için HTML meta etiketi</p>
+                </div>
+                
+                <div className="flex items-center justify-between p-4 bg-dark-600 rounded-md border border-dark-300 mt-4">
+                  <div>
+                    <p className="font-medium">Sitemap Gönderimi</p>
+                    <p className="text-sm text-gray-400">Sitemap'inizi Google Search Console'a gönderin</p>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    className="border-ignite text-ignite hover:bg-ignite hover:text-white"
+                    onClick={handleSubmitToSearchConsole}
+                    disabled={isLoading || !sitemapGenerated}
+                  >
+                    {isLoading ? 'Gönderiliyor...' : 'Search Console\'a Gönder'}
+                  </Button>
                 </div>
               </div>
               
-              <div className="space-y-2 pt-2">
-                <Label htmlFor="canonical">Standart URL (Canonical)</Label>
-                <Input 
-                  id="canonical"
-                  value={currentPage.canonical}
-                  onChange={(e) => setCurrentPage({...currentPage, canonical: e.target.value})}
-                  placeholder="https://example.com/page"
-                />
+              <div className="space-y-4 pt-6">
+                <h3 className="text-lg font-medium">Google Analytics</h3>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="google-analytics">Google Analytics Ölçüm ID</Label>
+                  <Input 
+                    id="google-analytics"
+                    placeholder="G-XXXXXXXXXX veya UA-XXXXXXXX-X"
+                    className="bg-dark-400 border-dark-300"
+                  />
+                </div>
+                
+                <div className="flex items-center space-x-2 mt-2">
+                  <Switch id="enable-analytics" defaultChecked />
+                  <Label htmlFor="enable-analytics">Google Analytics Etkinleştir</Label>
+                </div>
               </div>
               
-              <div className="flex items-center space-x-2 pt-3">
-                <Switch 
-                  id="indexable"
-                  checked={currentPage.indexable}
-                  onCheckedChange={(checked) => setCurrentPage({...currentPage, indexable: checked})}
-                />
-                <Label htmlFor="indexable">
-                  Arama motorlarında indexlensin
-                </Label>
+              <div className="space-y-4 pt-6">
+                <h3 className="text-lg font-medium">Google Tag Manager</h3>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="gtm-id">Google Tag Manager ID</Label>
+                  <Input 
+                    id="gtm-id"
+                    placeholder="GTM-XXXXXXX"
+                    className="bg-dark-400 border-dark-300"
+                  />
+                </div>
+                
+                <div className="flex items-center space-x-2 mt-2">
+                  <Switch id="enable-gtm" />
+                  <Label htmlFor="enable-gtm">Google Tag Manager Etkinleştir</Label>
+                </div>
               </div>
-            </div>
-          )}
-          
-          <SheetFooter className="pt-4">
-            <SheetClose asChild>
-              <Button variant="outline">İptal</Button>
-            </SheetClose>
-            <Button onClick={handleSavePage} disabled={loading}>
-              {loading ? "Kaydediliyor..." : "Kaydet"}
-            </Button>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        {/* Analytics Tab */}
+        <TabsContent value="analytics" className="space-y-6">
+          <Card className="bg-dark-500 border-dark-400">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart4 className="h-5 w-5 text-ignite" />
+                SEO Analizi
+              </CardTitle>
+              <CardDescription>
+                SEO performansınızı izleyin ve optimizasyon önerileri alın
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="py-6 text-center">
+                <AlertCircle className="h-12 w-12 text-ignite mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">SEO Analizi Entegrasyonu</h3>
+                <p className="text-gray-400 max-w-md mx-auto mb-6">
+                  Bu özellik veritabanı bağlantısı gerektirmektedir. Lütfen veritabanı ayarlarınızı yapılandırın ve tekrar deneyin.
+                </p>
+                <Button className="bg-ignite hover:bg-ignite-700">
+                  Veritabanı Ayarlarına Git
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

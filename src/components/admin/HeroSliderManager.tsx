@@ -1,390 +1,378 @@
-
 import { useState, useEffect } from 'react';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowDown, ArrowUp, Eye, Plus, Save, Trash2, X } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useDataService } from '@/lib/db';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Label } from '@/components/ui/label';
+import { Plus, Edit, Trash2, ImageIcon, Link as LucideLink } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AspectRatio } from "@/components/ui/aspect-ratio"
+import { v4 as uuidv4 } from 'uuid';
+import { motion } from 'framer-motion';
 
-export interface HeroSlide {
-  id: number;
+interface SliderItem {
+  id: string;
   title: string;
-  subtitle: string;
-  buttonText: string;
-  buttonLink: string;
-  backgroundImage: string;
-  isActive: boolean;
+  description: string;
+  imageUrl: string;
+  link: string;
+  order: number;
 }
 
-const defaultSlides: HeroSlide[] = [
-  {
-    id: 1,
-    title: "Ignite Your Brand's Digital Presence",
-    subtitle: "We combine creativity, data, and technology to craft digital experiences that transform businesses and drive exceptional results.",
-    buttonText: "Explore Our Services",
-    buttonLink: "/services",
-    backgroundImage: "https://images.unsplash.com/photo-1560472355-536de3962603?q=80&w=2070",
-    isActive: true
-  }
-];
-
 const HeroSliderManager = () => {
-  const { toast } = useToast();
-  const { 
-    items: slides, 
-    add: addSlide, 
-    update: updateSlide, 
-    remove: removeSlide,
-    isLoading
-  } = useDataService<HeroSlide>('heroSlides', defaultSlides);
-
-  const [newSlide, setNewSlide] = useState<Omit<HeroSlide, 'id'>>({
+  const [sliderItems, setSliderItems] = useState<SliderItem[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newSliderItem, setNewSliderItem] = useState<Omit<SliderItem, 'id' | 'order'>>({
     title: '',
-    subtitle: '',
-    buttonText: 'Explore Our Services',
-    buttonLink: '/services',
-    backgroundImage: '',
-    isActive: true
+    description: '',
+    imageUrl: '',
+    link: '',
   });
-  
-  const [editingSlide, setEditingSlide] = useState<HeroSlide | null>(null);
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<SliderItem | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editedSliderItem, setEditedSliderItem] = useState<SliderItem>({
+    id: '',
+    title: '',
+    description: '',
+    imageUrl: '',
+    link: '',
+    order: 0,
+  });
 
-  const handleAddSlide = () => {
-    if (!newSlide.title || !newSlide.subtitle) {
-      toast({
-        title: "Eksik Bilgi",
-        description: "Başlık ve alt başlık alanları zorunludur.",
-        variant: "destructive"
-      });
-      return;
+  useEffect(() => {
+    // Load slider items from local storage or default values
+    const storedSliderItems = localStorage.getItem('sliderItems');
+    if (storedSliderItems) {
+      setSliderItems(JSON.parse(storedSliderItems));
+    } else {
+      // Initialize with some default slider items
+      setSliderItems([
+        {
+          id: uuidv4(),
+          title: 'Ignite Your Brand',
+          description: 'Reach new heights with our digital marketing strategies.',
+          imageUrl: 'https://images.unsplash.com/photo-1606761940304-1293a7c2d135?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+          link: '/',
+          order: 1,
+        },
+        {
+          id: uuidv4(),
+          title: 'Data-Driven Results',
+          description: 'We turn data into actionable insights for your business.',
+          imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+          link: '/services',
+          order: 2,
+        },
+      ]);
     }
-    
-    addSlide(newSlide);
-    setNewSlide({
+  }, []);
+
+  useEffect(() => {
+    // Save slider items to local storage whenever they change
+    localStorage.setItem('sliderItems', JSON.stringify(sliderItems));
+  }, [sliderItems]);
+
+  const handleOpenDialog = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setNewSliderItem({
       title: '',
-      subtitle: '',
-      buttonText: 'Explore Our Services',
-      buttonLink: '/services',
-      backgroundImage: '',
-      isActive: true
-    });
-    setIsAddDialogOpen(false);
-    
-    toast({
-      title: "Slayt Eklendi",
-      description: "Yeni hero slaytı başarıyla eklendi."
+      description: '',
+      imageUrl: '',
+      link: '',
     });
   };
-  
-  const handleUpdateSlide = () => {
-    if (!editingSlide || !editingSlide.title || !editingSlide.subtitle) {
-      toast({
-        title: "Eksik Bilgi",
-        description: "Başlık ve alt başlık alanları zorunludur.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    updateSlide(editingSlide.id, editingSlide);
-    setEditingSlide(null);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setNewSliderItem(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleAddSliderItem = () => {
+    const newItem: SliderItem = {
+      id: uuidv4(),
+      title: newSliderItem.title,
+      description: newSliderItem.description,
+      imageUrl: newSliderItem.imageUrl,
+      link: newSliderItem.link,
+      order: sliderItems.length + 1,
+    };
+
+    setSliderItems(prevItems => [...prevItems, newItem]);
+    handleCloseDialog();
+    toast({
+      title: "Slider Eklendi",
+      description: "Yeni slider başarıyla eklendi.",
+    });
+  };
+
+  const handleDeleteSliderItem = (id: string) => {
+    setSliderItems(prevItems => prevItems.filter(item => item.id !== id));
+    toast({
+      title: "Slider Silindi",
+      description: "Slider başarıyla silindi.",
+    });
+  };
+
+  const handleEditSliderItem = (item: SliderItem) => {
+    setEditingItem(item);
+    setEditedSliderItem(item);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleCloseEditDialog = () => {
     setIsEditDialogOpen(false);
-    
-    toast({
-      title: "Slayt Güncellendi",
-      description: "Hero slaytı başarıyla güncellendi."
-    });
+    setEditingItem(null);
   };
-  
-  const handleDeleteSlide = (id: number) => {
-    if (slides.length <= 1) {
-      toast({
-        title: "İşlem Reddedildi",
-        description: "En az bir adet hero slaytı bulunmalıdır.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    removeSlide(id);
-    
-    toast({
-      title: "Slayt Silindi",
-      description: "Hero slaytı başarıyla silindi."
-    });
+
+  const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setEditedSliderItem(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
-  
-  const moveSlide = (id: number, direction: 'up' | 'down') => {
-    const currentIndex = slides.findIndex(slide => slide.id === id);
-    if (
-      (direction === 'up' && currentIndex === 0) || 
-      (direction === 'down' && currentIndex === slides.length - 1)
-    ) {
-      return;
-    }
-    
-    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-    const newSlides = [...slides];
-    const [movedSlide] = newSlides.splice(currentIndex, 1);
-    newSlides.splice(newIndex, 0, movedSlide);
-    
-    // Update all slides with new order
-    newSlides.forEach((slide, index) => {
-      updateSlide(slide.id, { ...slide, order: index });
+
+  const handleUpdateSliderItem = () => {
+    if (!editingItem) return;
+
+    setSliderItems(prevItems =>
+      prevItems.map(item =>
+        item.id === editingItem.id ? editedSliderItem : item
+      )
+    );
+    handleCloseEditDialog();
+    toast({
+      title: "Slider Güncellendi",
+      description: "Slider başarıyla güncellendi.",
     });
   };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Hero Slaytları</h2>
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-ignite hover:bg-ignite-700">
-              <Plus className="h-4 w-4 mr-2" /> Yeni Slayt Ekle
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="bg-dark-500 border-dark-400 text-white">
-            <DialogHeader>
-              <DialogTitle>Yeni Hero Slaytı Ekle</DialogTitle>
-              <DialogDescription className="text-gray-400">
-                Slayt bilgilerini doldurun ve kaydedin.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Başlık</label>
-                <Input 
-                  value={newSlide.title}
-                  onChange={(e) => setNewSlide({...newSlide, title: e.target.value})}
-                  placeholder="Ana başlık"
-                  className="bg-dark-400 border-dark-300"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Alt Başlık</label>
-                <Textarea 
-                  value={newSlide.subtitle}
-                  onChange={(e) => setNewSlide({...newSlide, subtitle: e.target.value})}
-                  placeholder="Alt başlık metni"
-                  className="bg-dark-400 border-dark-300"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Buton Metni</label>
-                  <Input 
-                    value={newSlide.buttonText}
-                    onChange={(e) => setNewSlide({...newSlide, buttonText: e.target.value})}
-                    placeholder="Buton metni"
-                    className="bg-dark-400 border-dark-300"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Buton Linki</label>
-                  <Input 
-                    value={newSlide.buttonLink}
-                    onChange={(e) => setNewSlide({...newSlide, buttonLink: e.target.value})}
-                    placeholder="/services"
-                    className="bg-dark-400 border-dark-300"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Arkaplan Görseli URL</label>
-                <Input 
-                  value={newSlide.backgroundImage}
-                  onChange={(e) => setNewSlide({...newSlide, backgroundImage: e.target.value})}
-                  placeholder="https://example.com/image.jpg"
-                  className="bg-dark-400 border-dark-300"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                İptal
-              </Button>
-              <Button 
-                className="bg-ignite hover:bg-ignite-700"
-                onClick={handleAddSlide}
-                disabled={isLoading}
-              >
-                {isLoading ? 'Ekleniyor...' : 'Slayt Ekle'}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <h2 className="text-2xl font-bold">Hero Slider Yönetimi</h2>
+        <Button onClick={handleOpenDialog} className="bg-ignite hover:bg-ignite-700">
+          <Plus className="h-4 w-4 mr-2" /> Yeni Slider Ekle
+        </Button>
       </div>
-      
-      <div className="space-y-4 mt-6">
-        <AnimatePresence>
-          {slides.map((slide, index) => (
-            <motion.div
-              key={slide.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Card className="bg-dark-500 border-dark-400">
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-lg">Slayt {index + 1}</CardTitle>
-                      <CardDescription>{slide.title}</CardDescription>
-                    </div>
-                    <div className="flex gap-1">
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        className="h-8 w-8"
-                        onClick={() => moveSlide(slide.id, 'up')}
-                        disabled={index === 0}
-                      >
-                        <ArrowUp className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        className="h-8 w-8"
-                        onClick={() => moveSlide(slide.id, 'down')}
-                        disabled={index === slides.length - 1}
-                      >
-                        <ArrowDown className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        className="h-8 w-8"
-                        onClick={() => {
-                          setEditingSlide(slide);
-                          setIsEditDialogOpen(true);
-                        }}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        variant="destructive" 
-                        size="icon" 
-                        className="h-8 w-8"
-                        onClick={() => handleDeleteSlide(slide.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-sm text-gray-400 space-y-1">
-                    <p><strong>Alt Başlık:</strong> {slide.subtitle.substring(0, 60)}...</p>
-                    <p><strong>Buton:</strong> {slide.buttonText} → {slide.buttonLink}</p>
-                    {slide.backgroundImage && (
-                      <div className="mt-2">
-                        <img 
-                          src={slide.backgroundImage} 
-                          alt="Slayt önizleme" 
-                          className="w-full h-32 object-cover rounded-md opacity-75"
-                        />
+
+      <Card className="bg-dark-500 border-dark-400">
+        <CardHeader>
+          <CardTitle>Slider Öğeleri</CardTitle>
+          <CardDescription>Slider öğelerini yönetin, düzenleyin veya silin</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[200px]">Başlık</TableHead>
+                <TableHead>Açıklama</TableHead>
+                <TableHead>Görsel</TableHead>
+                <TableHead>Link</TableHead>
+                <TableHead className="text-right">Eylemler</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sliderItems.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell className="font-medium">{item.title}</TableCell>
+                  <TableCell>{item.description}</TableCell>
+                  <TableCell>
+                    <a href={item.imageUrl} target="_blank" rel="noopener noreferrer" className="text-ignite hover:text-ignite-400 underline">
+                      <div className="w-24 h-16 relative overflow-hidden rounded-md">
+                        <AspectRatio ratio={16 / 9}>
+                          <img
+                            src={item.imageUrl}
+                            alt={item.title}
+                            className="object-cover w-full h-full"
+                          />
+                        </AspectRatio>
                       </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
-      
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="bg-dark-500 border-dark-400 text-white max-w-2xl">
+                    </a>
+                  </TableCell>
+                  <TableCell>
+                    <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-ignite hover:text-ignite-400 underline">
+                      {item.link}
+                    </a>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button variant="ghost" size="icon" onClick={() => handleEditSliderItem(item)}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => handleDeleteSliderItem(item.id)}>
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      {/* Add Slider Item Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogTrigger asChild>
+          <Button variant="outline">Yeni Slider Ekle</Button>
+        </DialogTrigger>
+        <DialogContent className="bg-dark-600 border-dark-400">
           <DialogHeader>
-            <DialogTitle>Slayt Düzenle</DialogTitle>
-            <DialogDescription className="text-gray-400">
-              Slayt bilgilerini güncelleyin.
+            <DialogTitle>Yeni Slider Ekle</DialogTitle>
+            <DialogDescription>
+              Slider içeriğini ve görselini ayarlayın
             </DialogDescription>
           </DialogHeader>
-          {editingSlide && (
-            <>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Başlık</label>
-                  <Input 
-                    value={editingSlide.title}
-                    onChange={(e) => setEditingSlide({...editingSlide, title: e.target.value})}
-                    className="bg-dark-400 border-dark-300"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Alt Başlık</label>
-                  <Textarea 
-                    value={editingSlide.subtitle}
-                    onChange={(e) => setEditingSlide({...editingSlide, subtitle: e.target.value})}
-                    className="bg-dark-400 border-dark-300"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Buton Metni</label>
-                    <Input 
-                      value={editingSlide.buttonText}
-                      onChange={(e) => setEditingSlide({...editingSlide, buttonText: e.target.value})}
-                      className="bg-dark-400 border-dark-300"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Buton Linki</label>
-                    <Input 
-                      value={editingSlide.buttonLink}
-                      onChange={(e) => setEditingSlide({...editingSlide, buttonLink: e.target.value})}
-                      className="bg-dark-400 border-dark-300"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Arkaplan Görseli URL</label>
-                  <Input 
-                    value={editingSlide.backgroundImage}
-                    onChange={(e) => setEditingSlide({...editingSlide, backgroundImage: e.target.value})}
-                    className="bg-dark-400 border-dark-300"
-                  />
-                </div>
-                {editingSlide.backgroundImage && (
-                  <div className="mt-2">
-                    <img 
-                      src={editingSlide.backgroundImage} 
-                      alt="Slayt önizleme" 
-                      className="w-full h-48 object-cover rounded-md"
-                    />
-                  </div>
-                )}
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-                  İptal
-                </Button>
-                <Button 
-                  className="bg-ignite hover:bg-ignite-700"
-                  onClick={handleUpdateSlide}
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Güncelleniyor...' : 'Güncelle'}
-                </Button>
-              </DialogFooter>
-            </>
-          )}
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="title" className="text-right">
+                Başlık
+              </Label>
+              <Input
+                type="text"
+                id="title"
+                name="title"
+                value={newSliderItem.title}
+                onChange={handleInputChange}
+                className="col-span-3 bg-dark-500 border-dark-300"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="description" className="text-right">
+                Açıklama
+              </Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={newSliderItem.description}
+                onChange={handleInputChange}
+                className="col-span-3 bg-dark-500 border-dark-300"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="imageUrl" className="text-right">
+                Görsel URL
+              </Label>
+              <Input
+                type="text"
+                id="imageUrl"
+                name="imageUrl"
+                value={newSliderItem.imageUrl}
+                onChange={handleInputChange}
+                className="col-span-3 bg-dark-500 border-dark-300"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="link" className="text-right">
+                Link
+              </Label>
+              <Input
+                type="text"
+                id="link"
+                name="link"
+                value={newSliderItem.link}
+                onChange={handleInputChange}
+                className="col-span-3 bg-dark-500 border-dark-300"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="secondary" onClick={handleCloseDialog}>
+              İptal
+            </Button>
+            <Button type="submit" onClick={handleAddSliderItem} className="bg-ignite hover:bg-ignite-700">
+              Ekle
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Slider Item Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="bg-dark-600 border-dark-400">
+          <DialogHeader>
+            <DialogTitle>Slider Düzenle</DialogTitle>
+            <DialogDescription>
+              Slider içeriğini ve görselini düzenleyin
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="title" className="text-right">
+                Başlık
+              </Label>
+              <Input
+                type="text"
+                id="title"
+                name="title"
+                value={editedSliderItem.title}
+                onChange={handleEditInputChange}
+                className="col-span-3 bg-dark-500 border-dark-300"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="description" className="text-right">
+                Açıklama
+              </Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={editedSliderItem.description}
+                onChange={handleEditInputChange}
+                className="col-span-3 bg-dark-500 border-dark-300"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="imageUrl" className="text-right">
+                Görsel URL
+              </Label>
+              <Input
+                type="text"
+                id="imageUrl"
+                name="imageUrl"
+                value={editedSliderItem.imageUrl}
+                onChange={handleEditInputChange}
+                className="col-span-3 bg-dark-500 border-dark-300"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="link" className="text-right">
+                Link
+              </Label>
+              <Input
+                type="text"
+                id="link"
+                name="link"
+                value={editedSliderItem.link}
+                onChange={handleEditInputChange}
+                className="col-span-3 bg-dark-500 border-dark-300"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="secondary" onClick={handleCloseEditDialog}>
+              İptal
+            </Button>
+            <Button type="submit" onClick={handleUpdateSliderItem} className="bg-ignite hover:bg-ignite-700">
+              Güncelle
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
