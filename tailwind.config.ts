@@ -57,6 +57,9 @@ export default {
           400: '#262626', 
           500: '#171717',
           600: '#0F0F0F',
+          700: '#0A0A0A',
+          800: '#050505',
+          900: '#000000'
         },
         ignite: {
           DEFAULT: '#FF6B00',
@@ -68,7 +71,8 @@ export default {
           500: '#FF8A00',
           600: '#FF6B00',
           700: '#CC5500',
-          800: '#994000'
+          800: '#994000',
+          900: '#662A00'
         }
       },
       borderRadius: {
@@ -90,7 +94,11 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config
+} satisfies Config;
