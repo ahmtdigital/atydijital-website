@@ -210,7 +210,7 @@ const CarouselPrevious = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute h-8 w-8 rounded-full",
+        "absolute h-8 w-8 rounded-full transition-all duration-300",
         orientation === "horizontal"
           ? "-left-12 top-1/2 -translate-y-1/2"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
@@ -239,7 +239,7 @@ const CarouselNext = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute h-8 w-8 rounded-full",
+        "absolute h-8 w-8 rounded-full transition-all duration-300",
         orientation === "horizontal"
           ? "-right-12 top-1/2 -translate-y-1/2"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
@@ -266,8 +266,8 @@ const CarouselIconItem = React.forwardRef<
       className={cn(
         "flex h-20 w-20 items-center justify-center rounded-full transition-all duration-300",
         active 
-          ? "bg-ignite/10 text-ignite scale-110" 
-          : "bg-dark-400 text-gray-400 hover:bg-dark-300",
+          ? 'bg-ignite/10 text-ignite scale-105' 
+          : 'bg-dark-400 text-gray-400 hover:bg-dark-300',
         className
       )}
       {...props}
@@ -291,19 +291,18 @@ const MarketingIconCarousel = ({ icons }: { icons: string[] }) => {
 
   return (
     <div className="space-y-6">
-      <Carousel iconMode>
-        <CarouselContent>
-          {icons.map((icon, index) => (
-            <CarouselItem key={index}>
-              <CarouselIconItem 
-                icon={icon}
-                active={activeIcon === index}
-                onClick={() => handleIconClick(index)}
-              />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
+      <div className="flex flex-wrap gap-4 justify-center">
+        {icons.map((icon, index) => (
+          <div key={index} className="relative">
+            <CarouselIconItem 
+              icon={icon}
+              active={activeIcon === index}
+              onClick={() => handleIconClick(index)}
+              className="hover:scale-105 transition-all cursor-pointer"
+            />
+          </div>
+        ))}
+      </div>
       <div className="bg-dark-500 p-6 rounded-lg border border-dark-400">
         <h3 className="text-xl font-bold mb-2">
           {icons[activeIcon] === 'google-analytics' && 'Google Analytics'}
