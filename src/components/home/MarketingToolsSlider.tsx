@@ -3,20 +3,20 @@ import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronLeft, ChevronRight, BarChart4, Instagram, Facebook, Twitter, Linkedin, Youtube, TrendingUp, Search, Globe } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import MarketingIcon from "../ui/marketing-icon";
 
 // Define marketing tools with icons and names
 const marketingTools = [
-  { id: 'analytics', name: 'Google Analytics', icon: <BarChart4 className="h-8 w-8" />, description: 'Web sitenizin performansını analiz edin, kullanıcı davranışlarını anlayın ve veri odaklı kararlar verin.' },
-  { id: 'meta-ads', name: 'Meta Ads', icon: <Facebook className="h-8 w-8" />, description: 'Facebook ve Instagram platformlarında hedef kitlenize ulaşın ve satışlarınızı artırın.' },
-  { id: 'instagram-ads', name: 'Instagram Ads', icon: <Instagram className="h-8 w-8" />, description: 'Görsel odaklı içeriklerle Instagram kullanıcılarına ulaşın ve etkileşim yaratın.' },
-  { id: 'twitter-ads', name: 'Twitter Ads', icon: <Twitter className="h-8 w-8" />, description: 'X platformunda gündem konuları ile ilgili reklam kampanyaları oluşturun.' },
-  { id: 'linkedin-ads', name: 'LinkedIn Ads', icon: <Linkedin className="h-8 w-8" />, description: 'B2B pazarda profesyonellere ulaşın, potansiyel müşterilerinizi hedefleyin.' },
-  { id: 'youtube-ads', name: 'YouTube Ads', icon: <Youtube className="h-8 w-8" />, description: 'Dünyanın en büyük video platformunda markanızı tanıtın ve izleyicilerle etkileşime geçin.' },
-  { id: 'seo', name: 'SEO Optimizasyonu', icon: <Search className="h-8 w-8" />, description: 'Arama motorlarında görünürlüğünüzü artırın ve organik trafik elde edin.' },
-  { id: 'google-ads', name: 'Google Ads', icon: <Globe className="h-8 w-8" />, description: 'Arama ağında ve görüntülü reklamlarda markanızı öne çıkarın, dönüşüm oranlarınızı artırın.' },
-  { id: 'growth-hacking', name: 'Growth Hacking', icon: <TrendingUp className="h-8 w-8" />, description: 'Hızlı büyüme stratejileri ile minimum bütçe, maksimum etki yaratın.' },
+  { id: 'google-analytics', name: 'Google Analytics', description: 'Web sitenizin performansını analiz edin, kullanıcı davranışlarını anlayın ve veri odaklı kararlar verin.' },
+  { id: 'meta-ads', name: 'Meta Ads', description: 'Facebook ve Instagram platformlarında hedef kitlenize ulaşın ve satışlarınızı artırın.' },
+  { id: 'instagram-ads', name: 'Instagram Ads', description: 'Görsel odaklı içeriklerle Instagram kullanıcılarına ulaşın ve etkileşim yaratın.' },
+  { id: 'twitter-ads', name: 'X Ads', description: 'X platformunda gündem konuları ile ilgili reklam kampanyaları oluşturun.' },
+  { id: 'linkedin-ads', name: 'LinkedIn Ads', description: 'B2B pazarda profesyonellere ulaşın, potansiyel müşterilerinizi hedefleyin.' },
+  { id: 'youtube-ads', name: 'YouTube Ads', description: 'Dünyanın en büyük video platformunda markanızı tanıtın ve izleyicilerle etkileşime geçin.' },
+  { id: 'tiktok-ads', name: 'TikTok Ads', description: 'Kısa formatlı videolar ile Z kuşağına ulaşın ve marka bilinirliğinizi artırın.' },
+  { id: 'google-ads', name: 'Google Ads', description: 'Arama ağında ve görüntülü reklamlarda markanızı öne çıkarın, dönüşüm oranlarınızı artırın.' },
 ];
 
 const MarketingToolsSlider = () => {
@@ -95,19 +95,19 @@ const MarketingToolsSlider = () => {
           >
             <div className="flex gap-4 py-2 min-w-min">
               {marketingTools.map((tool, index) => (
-                <HoverCard key={tool.id}>
+                <HoverCard key={tool.id} openDelay={200} closeDelay={100}>
                   <HoverCardTrigger asChild>
                     <div 
                       className={`p-6 min-w-[180px] rounded-xl ${
                         activeIndex === index 
                           ? 'bg-ignite/20 border border-ignite/60' 
                           : 'bg-dark-500/50 border border-dark-400/50'
-                      } text-center cursor-pointer transition-all duration-300 hover:border-ignite`}
+                      } text-center cursor-pointer transition-all duration-300 hover:border-ignite hover:shadow-lg hover:shadow-ignite/10`}
                       onClick={() => handleToolClick(index)}
                     >
                       <div className="flex justify-center items-center h-16 mb-3">
-                        <div className={`${activeIndex === index ? 'text-ignite' : 'text-gray-400'} transition-colors duration-300`}>
-                          {tool.icon}
+                        <div className={`${activeIndex === index ? 'text-ignite' : 'text-gray-400'} transition-colors duration-300 w-10 h-10`}>
+                          <MarketingIcon name={tool.id} />
                         </div>
                       </div>
                       <p className={`${activeIndex === index ? 'text-white' : 'text-gray-300'} font-medium transition-colors`}>
@@ -115,9 +115,11 @@ const MarketingToolsSlider = () => {
                       </p>
                     </div>
                   </HoverCardTrigger>
-                  <HoverCardContent className="w-80 bg-dark-500 border-dark-400 text-white p-4 shadow-lg shadow-black/30">
+                  <HoverCardContent className="w-80 bg-dark-500/90 backdrop-blur-sm border-dark-400 text-white p-4 shadow-lg shadow-black/30">
                     <div className="flex justify-between">
-                      <div className="text-ignite mr-3">{tool.icon}</div>
+                      <div className="text-ignite mr-3 w-10 h-10">
+                        <MarketingIcon name={tool.id} />
+                      </div>
                       <div className="flex-1">
                         <h4 className="font-bold text-lg">{tool.name}</h4>
                         <p className="text-gray-300 text-sm mt-1">{tool.description}</p>
@@ -129,10 +131,10 @@ const MarketingToolsSlider = () => {
             </div>
           </div>
           
-          <div className="mt-8 bg-dark-500 p-6 rounded-lg border border-dark-400">
+          <div className="mt-8 bg-dark-500 p-6 rounded-lg border border-dark-400 transition-all duration-300">
             <div className="flex items-start gap-4">
-              <div className="text-ignite opacity-90 hidden sm:block">
-                {marketingTools[activeIndex].icon}
+              <div className="text-ignite opacity-90 hidden sm:block w-12 h-12">
+                <MarketingIcon name={marketingTools[activeIndex].id} />
               </div>
               <div>
                 <h3 className="text-xl font-bold mb-2">{marketingTools[activeIndex].name}</h3>

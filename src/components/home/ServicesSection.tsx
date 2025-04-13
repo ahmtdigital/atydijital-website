@@ -60,7 +60,7 @@ const ServicesSection = () => {
       }
     }),
     hover: {
-      scale: 1.05,
+      y: -5,
       boxShadow: "0 10px 30px rgba(255, 107, 0, 0.2)",
       borderColor: "rgba(255, 107, 0, 0.5)",
       transition: {
@@ -71,21 +71,17 @@ const ServicesSection = () => {
   };
 
   const iconVariants = {
-    hidden: { scale: 0.8, opacity: 0 },
     visible: {
-      scale: 1,
       opacity: 1,
       transition: {
-        delay: 0.2,
         duration: 0.5,
         ease: "easeOut"
       }
     },
     hover: {
-      scale: 1.2,
-      rotate: [0, -10, 10, -10, 0],
+      color: "rgba(255, 107, 0, 1)",
       transition: {
-        duration: 0.5
+        duration: 0.3
       }
     }
   };

@@ -3,7 +3,27 @@ import { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, Clock, User, ArrowRight } from 'lucide-react';
+import { 
+  ChevronRight, 
+  Clock, 
+  User, 
+  ArrowRight, 
+  Globe, 
+  Calendar, 
+  Award, 
+  BarChart4, 
+  Target, 
+  CheckCircle2,
+  Users,
+  Lightbulb,
+  TrendingUp,
+  BookOpenCheck,
+  Zap,
+  Presentation,
+  Share2,
+  Database,
+  SquareCode
+} from 'lucide-react';
 import { 
   Carousel,
   CarouselContent,
@@ -11,6 +31,7 @@ import {
   CarouselPrevious,
   CarouselNext 
 } from '@/components/ui/carousel-with-icons';
+import { Badge } from '@/components/ui/badge';
 
 // Project data
 const projectData = {
@@ -33,6 +54,7 @@ const projectData = {
       'Marka bilinirliği %70 yükseldi'
     ],
     services: ['SEO Optimizasyonu', 'Sosyal Medya Yönetimi', 'İçerik Üretimi', 'Web Geliştirme', 'Marka Stratejisi'],
+    tools: ['Google Analytics', 'SEMrush', 'Ahrefs', 'Meta Ads', 'Figma', 'Adobe Creative Suite'],
     testimonial: {
       text: "Ignite Dijital Pazarlama ekibi ile çalışmak, markamızı dönüştürmek için attığımız en önemli adımlardan biriydi. Profesyonel yaklaşımları, stratejik düşünce tarzları ve yaratıcı çözümleri ile beklentilerimizin ötesine geçtiler. Satışlarımızdaki artış, yatırımımızın değerini açıkça ortaya koyuyor.",
       author: 'Ayşe Yılmaz',
@@ -45,9 +67,9 @@ const projectData = {
       'https://images.unsplash.com/photo-1607083208577-17fea9ee2a0d?q=80&w=2070'
     ]
   },
-  'seo-kampanyasi': {
-    id: 'seo-kampanyasi',
-    title: 'SEO Optimizasyon Kampanyası',
+  'tech-startup-seo': {
+    id: 'tech-startup-seo',
+    title: 'Teknoloji Girişimi SEO',
     client: 'TeknoMarket',
     category: 'SEO',
     date: 'Eylül 2023',
@@ -64,6 +86,7 @@ const projectData = {
       'Arama motoru sıralamaları ortalama 15 pozisyon yükseldi'
     ],
     services: ['Teknik SEO', 'İçerik Stratejisi', 'Anahtar Kelime Araştırması', 'Backlink Stratejisi', 'SEO Analitik'],
+    tools: ['Google Search Console', 'SEMrush', 'Ahrefs', 'Screaming Frog', 'Google Analytics', 'Moz Pro'],
     testimonial: {
       text: "Ignite Dijital ekibi ile yaptığımız SEO çalışmaları sayesinde web sitemiz artık arama motorlarında çok daha üst sıralarda yer alıyor. Organik trafiğimizdeki artış, doğrudan satışlarımıza da olumlu yansıdı. Teknik bilgileri çok iyi bir şekilde anlayıp, işimize özel stratejiler geliştirmeleri bizi çok etkiledi.",
       author: 'Mehmet Kaya',
@@ -76,9 +99,9 @@ const projectData = {
       'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2070'
     ]
   },
-  'sosyal-medya-kampanyasi': {
-    id: 'sosyal-medya-kampanyasi',
-    title: 'Sosyal Medya Büyüme Kampanyası',
+  'restaurant-social': {
+    id: 'restaurant-social',
+    title: 'Restoran Sosyal Medya Kampanyası',
     client: 'CafeRoast',
     category: 'Sosyal Medya',
     date: 'Aralık 2023',
@@ -95,6 +118,7 @@ const projectData = {
       'Marka etiketlemeleri %200 artış gösterdi'
     ],
     services: ['Sosyal Medya Stratejisi', 'İçerik Üretimi', 'Topluluk Yönetimi', 'Influencer Pazarlaması', 'Sosyal Medya Reklamları'],
+    tools: ['Sprout Social', 'Later', 'Canva Pro', 'Adobe Creative Suite', 'Meta Ads Manager', 'TikTok Ads'],
     testimonial: {
       text: "Ignite Dijital'in sosyal medya ekibi, markamızı tamamen dönüştürdü. Sadece takipçi sayımız artmakla kalmadı, gerçekten etkileşimli ve tutkulu bir topluluk oluşturduk. Yaratıcı içerik stratejileri ve veri odaklı yaklaşımlarıyla her platformda başarılı sonuçlar elde ettik. Satışlarımızdaki artış, sosyal medya yatırımımızın somut bir göstergesi oldu.",
       author: 'Deniz Akar',
@@ -105,6 +129,38 @@ const projectData = {
       'https://images.unsplash.com/photo-1459755486867-b55449bb39ff?q=80&w=2069',
       'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070',
       'https://images.unsplash.com/photo-1442975631115-c4f7b05b6fad?q=80&w=2070'
+    ]
+  },
+  'fitness-app': {
+    id: 'fitness-app',
+    title: 'Fitness Uygulaması Pazarlaması',
+    client: 'FitLife',
+    category: 'Mobil',
+    date: 'Şubat 2024',
+    duration: '5 ay',
+    description: 'FitLife mobil uygulaması için uçtan uca pazarlama ve kullanıcı edinme stratejisi.',
+    longDescription: "FitLife, kullanıcılara kişiselleştirilmiş fitness programları sunan yenilikçi bir mobil uygulamadır. Lansmandan önce ve sonra kapsamlı bir pazarlama stratejisi geliştirdik. ASO (App Store Optimization), mobil reklamlar, influencer pazarlaması ve içerik stratejisi ile uygulamanın indirilme sayısını ve kullanıcı edinimini önemli ölçüde artırdık.",
+    challenge: 'Rekabetçi fitness uygulamaları pazarında fark yaratmak, yüksek kaliteli kullanıcı edinimi sağlamak ve kullanıcı etkileşimini artırmak.',
+    solution: 'ASO stratejisi ile uygulama mağazalarında görünürlüğü artırdık. Fitness influencerları ile stratejik işbirlikleri geliştirdik. Hedefli mobil reklam kampanyaları ile nitelikli kullanıcı edinimi sağladık. Kullanıcı deneyimini iyileştirerek uygulama içi etkileşimi artırdık.',
+    results: [
+      'İlk 3 ayda 250.000+ indirme',
+      'Uygulama mağazası sıralamasında ilk 10',
+      'Kullanıcı edinme maliyeti %35 azaldı',
+      'Kullanıcı tutma oranı %42 arttı',
+      'Premium abonelik dönüşüm oranı %18'
+    ],
+    services: ['Mobil Uygulama Pazarlaması', 'ASO', 'Influencer Pazarlaması', 'Mobil Reklamlar', 'İçerik Stratejisi'],
+    tools: ['App Annie', 'Google Ads', 'Apple Search Ads', 'Meta Ads', 'Sensor Tower', 'Adjust'],
+    testimonial: {
+      text: "Ignite Dijital ile çalışmak, uygulamamızın başarısında kritik bir faktör oldu. Mobil pazarlama ve ASO stratejileri sayesinde rekabetçi fitness uygulamaları pazarında güçlü bir konum elde ettik. Veri odaklı yaklaşımları, maliyetlerimizi düşürürken kullanıcı edinimimizi artırmamıza yardımcı oldu. Onların desteği olmadan bu sonuçlara ulaşmak imkansız olurdu.",
+      author: 'Ali Yıldız',
+      position: 'FitLife CEO'
+    },
+    images: [
+      'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2070',
+      'https://images.unsplash.com/photo-1534258936925-c58bed479fcb?q=80&w=2071',
+      'https://images.unsplash.com/photo-1518310383802-640c2de311b2?q=80&w=2070',
+      'https://images.unsplash.com/photo-1528720208104-3d9bd03cc9d4?q=80&w=2070'
     ]
   }
 };
@@ -190,21 +246,33 @@ const ProjectDetail = () => {
                 {project.description}
               </p>
               <div className="flex flex-wrap gap-6 animate-fade-in" style={{animationDelay: '0.4s'}}>
-                <div>
-                  <p className="text-gray-400 text-sm mb-1">Müşteri</p>
-                  <p className="font-medium">{project.client}</p>
+                <div className="flex items-center">
+                  <User className="h-5 w-5 text-ignite mr-2" />
+                  <div>
+                    <p className="text-gray-400 text-sm">Müşteri</p>
+                    <p className="font-medium">{project.client}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-gray-400 text-sm mb-1">Kategori</p>
-                  <p className="font-medium">{project.category}</p>
+                <div className="flex items-center">
+                  <Target className="h-5 w-5 text-ignite mr-2" />
+                  <div>
+                    <p className="text-gray-400 text-sm">Kategori</p>
+                    <p className="font-medium">{project.category}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-gray-400 text-sm mb-1">Tarih</p>
-                  <p className="font-medium">{project.date}</p>
+                <div className="flex items-center">
+                  <Calendar className="h-5 w-5 text-ignite mr-2" />
+                  <div>
+                    <p className="text-gray-400 text-sm">Tarih</p>
+                    <p className="font-medium">{project.date}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-gray-400 text-sm mb-1">Süre</p>
-                  <p className="font-medium">{project.duration}</p>
+                <div className="flex items-center">
+                  <Clock className="h-5 w-5 text-ignite mr-2" />
+                  <div>
+                    <p className="text-gray-400 text-sm">Süre</p>
+                    <p className="font-medium">{project.duration}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -242,21 +310,33 @@ const ProjectDetail = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div className="reveal">
-              <h2 className="text-3xl font-bold mb-6">Proje Özeti</h2>
+              <h2 className="text-3xl font-bold mb-8 flex items-center">
+                <BookOpenCheck className="h-6 w-6 text-ignite mr-3" />
+                Proje Özeti
+              </h2>
               <p className="text-gray-300 mb-8">{project.longDescription}</p>
               
               <div className="mb-8">
-                <h3 className="text-xl font-semibold mb-4">Zorluk</h3>
+                <h3 className="text-xl font-semibold mb-4 flex items-center">
+                  <Lightbulb className="h-5 w-5 text-ignite mr-2" />
+                  Zorluk
+                </h3>
                 <p className="text-gray-300">{project.challenge}</p>
               </div>
               
               <div className="mb-8">
-                <h3 className="text-xl font-semibold mb-4">Çözüm</h3>
+                <h3 className="text-xl font-semibold mb-4 flex items-center">
+                  <Zap className="h-5 w-5 text-ignite mr-2" />
+                  Çözüm
+                </h3>
                 <p className="text-gray-300">{project.solution}</p>
               </div>
               
-              <div className="bg-dark-500 p-8 rounded-lg border border-dark-400 reveal">
-                <h3 className="text-xl font-semibold mb-4">Müşteri Yorumu</h3>
+              <div className="bg-dark-500 p-8 rounded-lg border border-dark-400 reveal hover:border-ignite/30 transition-colors duration-300">
+                <h3 className="text-xl font-semibold mb-4 flex items-center">
+                  <Users className="h-5 w-5 text-ignite mr-2" />
+                  Müşteri Yorumu
+                </h3>
                 <blockquote className="text-gray-300 italic mb-6">
                   "{project.testimonial.text}"
                 </blockquote>
@@ -273,15 +353,16 @@ const ProjectDetail = () => {
             </div>
             
             <div className="space-y-8 reveal" style={{animationDelay: '0.2s'}}>
-              <div className="bg-dark-500 p-8 rounded-lg border border-dark-400">
-                <h3 className="text-xl font-semibold mb-6">Sonuçlar</h3>
+              <div className="bg-dark-500 p-8 rounded-lg border border-dark-400 hover:border-ignite/30 transition-colors duration-300">
+                <h3 className="text-xl font-semibold mb-6 flex items-center">
+                  <BarChart4 className="h-5 w-5 text-ignite mr-2" />
+                  Sonuçlar
+                </h3>
                 <ul className="space-y-4">
                   {project.results.map((result, index) => (
-                    <li key={index} className="flex items-center bg-dark-400 p-4 rounded-lg">
-                      <div className="bg-ignite/20 p-2 rounded-full mr-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-ignite">
-                          <path d="m5 12 5 5L20 7"/>
-                        </svg>
+                    <li key={index} className="flex items-center bg-dark-400 p-4 rounded-lg group hover:bg-dark-400/80 transition-colors duration-300">
+                      <div className="bg-ignite/20 p-2 rounded-full mr-4 group-hover:bg-ignite/30 transition-colors duration-300">
+                        <CheckCircle2 className="h-5 w-5 text-ignite" />
                       </div>
                       <span>{result}</span>
                     </li>
@@ -289,20 +370,45 @@ const ProjectDetail = () => {
                 </ul>
               </div>
               
-              <div className="bg-dark-500 p-8 rounded-lg border border-dark-400">
-                <h3 className="text-xl font-semibold mb-6">Kullanılan Hizmetler</h3>
+              <div className="bg-dark-500 p-8 rounded-lg border border-dark-400 hover:border-ignite/30 transition-colors duration-300">
+                <h3 className="text-xl font-semibold mb-6 flex items-center">
+                  <Presentation className="h-5 w-5 text-ignite mr-2" />
+                  Kullanılan Hizmetler
+                </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {project.services.map((service, index) => (
-                    <div key={index} className="flex items-center text-gray-300">
-                      <div className="h-2 w-2 bg-ignite rounded-full mr-3"></div>
-                      <span>{service}</span>
+                    <div key={index} className="flex items-center text-gray-300 group">
+                      <div className="h-2 w-2 bg-ignite rounded-full mr-3 group-hover:scale-110 transition-transform duration-300"></div>
+                      <span className="group-hover:text-white transition-colors duration-300">{service}</span>
                     </div>
                   ))}
                 </div>
               </div>
               
-              <div className="bg-dark-500 p-8 rounded-lg border border-dark-400">
-                <h3 className="text-xl font-semibold mb-6">Proje Süresi</h3>
+              {project.tools && (
+                <div className="bg-dark-500 p-8 rounded-lg border border-dark-400 hover:border-ignite/30 transition-colors duration-300">
+                  <h3 className="text-xl font-semibold mb-6 flex items-center">
+                    <SquareCode className="h-5 w-5 text-ignite mr-2" />
+                    Kullanılan Araçlar
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {project.tools.map((tool, index) => (
+                      <Badge 
+                        key={index} 
+                        className="bg-dark-400 hover:bg-dark-300 text-gray-200 border-none transition-colors duration-300"
+                      >
+                        {tool}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              <div className="bg-dark-500 p-8 rounded-lg border border-dark-400 hover:border-ignite/30 transition-colors duration-300">
+                <h3 className="text-xl font-semibold mb-6 flex items-center">
+                  <Clock className="h-5 w-5 text-ignite mr-2" />
+                  Proje Süresi
+                </h3>
                 <div className="flex items-center text-gray-300 mb-4">
                   <Clock className="h-5 w-5 text-ignite mr-3" />
                   <span>Toplam Süre: <span className="font-medium text-white">{project.duration}</span></span>
@@ -323,16 +429,17 @@ const ProjectDetail = () => {
       {/* CTA Section */}
       <section className="py-16 bg-dark">
         <div className="container mx-auto px-4 max-w-5xl">
-          <div className="bg-gradient-to-r from-dark-500 to-dark-400 rounded-2xl p-8 md:p-12 shadow-lg border border-dark-300 reveal">
+          <div className="bg-gradient-to-r from-dark-500 to-dark-400 rounded-2xl p-8 md:p-12 shadow-lg border border-dark-300 reveal hover:border-ignite/20 transition-colors duration-300">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl font-bold mb-6">Markanız İçin Benzer Sonuçlar İster misiniz?</h2>
               <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
                 Uzman ekibimizle işbirliği yaparak markanızı büyütün ve hedeflerinize ulaşın.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-ignite hover:bg-ignite-700 text-white">
+                <Button size="lg" className="bg-ignite hover:bg-ignite-700 text-white group">
                   <Link to="/contact" className="flex items-center">
-                    Şimdi İletişime Geçin <ArrowRight className="ml-2 h-4 w-4" />
+                    Şimdi İletişime Geçin 
+                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" className="border-ignite text-ignite hover:bg-ignite/10">
