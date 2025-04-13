@@ -114,7 +114,7 @@
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(to right, theme('colors.ignite'), theme('colors.ignite-400'));
+    background: linear-gradient(to right, #FF6B00, #FF8A00);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -124,7 +124,7 @@
 
 @layer utilities {
   .text-gradient {
-    @apply bg-gradient-to-r from-ignite to-ignite-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-[#FF6B00] to-[#FF8A00] bg-clip-text text-transparent;
   }
 }
 
