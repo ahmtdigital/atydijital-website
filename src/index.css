@@ -51,7 +51,7 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-dark-300;
   }
 
   body {
