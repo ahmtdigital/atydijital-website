@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -83,6 +82,9 @@ export default {
 					900: '#0D0D0D',
 					950: '#080808'
 				}
+			},
+			textColor: {
+				foreground: 'hsl(var(--foreground))',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

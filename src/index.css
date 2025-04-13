@@ -47,18 +47,18 @@
     --input: 240 3.7% 15.9%;
     --ring: 346.8 77.2% 49.8%;
   }
-}
 
-@layer base {
   * {
     @apply border-dark-300;
   }
 
   body {
-    @apply bg-dark text-foreground;
+    @apply bg-dark text-white;
     font-family: 'Inter', sans-serif;
   }
+}
 
+@layer base {
   .reveal {
     opacity: 0;
     transform: translateY(20px);
