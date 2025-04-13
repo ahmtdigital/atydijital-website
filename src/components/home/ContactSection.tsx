@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -44,7 +43,7 @@ const ContactSection = () => {
   return (
     <section className="py-20 bg-dark relative">
       {/* Decorative elements */}
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-ignite-500 to-ignite"></div>
+      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-orange-500 to-ignite"></div>
       
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto bg-dark-500 rounded-2xl p-8 md:p-12 shadow-lg border border-dark-400 reveal">

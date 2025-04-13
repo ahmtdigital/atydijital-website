@@ -124,7 +124,7 @@
 
 @layer utilities {
   .text-gradient {
-    @apply bg-gradient-to-r from-[#FF6B00] to-[#FF8A00] bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-orange-500 to-ignite bg-clip-text text-transparent;
   }
 }
 
@@ -134,7 +134,7 @@
     &::before {
       content: '';
       @apply absolute inset-0 rounded-[inherit] p-[1px];
-      background: linear-gradient(to right, var(--tw-gradient-from), var(--tw-gradient-to));
+      background: linear-gradient(to right, #f97316, #FF6B00);
       mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       mask-composite: exclude;
       pointer-events: none;
