@@ -1,7 +1,6 @@
-
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Briefcase, Plus, Edit, Trash2, Image, Save, X, Link, Tag, Category } from 'lucide-react';
+import { Briefcase, Plus, Edit, Trash2, Image, Save, X, Link, Tag } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
