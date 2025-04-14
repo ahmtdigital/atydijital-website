@@ -68,8 +68,8 @@ export default {
           100: '#FFE7CC', 
           200: '#FFD099',
           300: '#FFB866',
-          400: '#FFA133',
-          500: '#FF8A00',  
+          400: '#FFA133',  // Added this explicitly
+          500: '#FF8A00',
           600: '#FF6B00',
           700: '#CC5500',
           800: '#994000',
@@ -103,3 +103,4 @@ export default {
   },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;
+
