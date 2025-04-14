@@ -10,14 +10,11 @@ import {
   Code,
   ImageIcon,
   Users,
-  MessageSquare,
-  Bell,
+  Search,
   Database,
-  Layers,
   SlidersHorizontal,
   Palette,
-  Search,
-  Globe
+  FileText
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -36,7 +33,7 @@ const AdminNav = ({ activeTab, setActiveTab }: AdminNavProps) => {
     >
       <div className="container mx-auto px-4 overflow-x-auto hide-scrollbar">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="py-1">
-          <TabsList className="grid grid-cols-5 md:grid-cols-13 h-auto bg-dark-600 p-1">
+          <TabsList className="grid grid-cols-5 md:grid-cols-14 h-auto bg-dark-600 p-1">
             <TabsTrigger value="dashboard" className="data-[state=active]:bg-ignite data-[state=active]:text-white py-3">
               <LayoutDashboard className="mr-2 h-5 w-5" />
               <span className="hidden md:inline">Dashboard</span>
@@ -56,6 +53,10 @@ const AdminNav = ({ activeTab, setActiveTab }: AdminNavProps) => {
             <TabsTrigger value="blog" className="data-[state=active]:bg-ignite data-[state=active]:text-white py-3">
               <PenTool className="mr-2 h-5 w-5" />
               <span className="hidden md:inline">Blog</span>
+            </TabsTrigger>
+            <TabsTrigger value="pages" className="data-[state=active]:bg-ignite data-[state=active]:text-white py-3">
+              <FileText className="mr-2 h-5 w-5" />
+              <span className="hidden md:inline">Sayfalar</span>
             </TabsTrigger>
             <TabsTrigger value="slider" className="data-[state=active]:bg-ignite data-[state=active]:text-white py-3">
               <SlidersHorizontal className="mr-2 h-5 w-5" />
