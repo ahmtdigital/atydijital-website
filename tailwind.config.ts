@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -68,7 +69,7 @@ export default {
           200: '#FFD099',
           300: '#FFB866',
           400: '#FFA133',
-          500: '#FF8A00',
+          500: '#FF8A00',  // Added the ignite-500 color variant
           600: '#FF6B00',
           700: '#CC5500',
           800: '#994000',
@@ -102,3 +103,4 @@ export default {
   },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;
+
