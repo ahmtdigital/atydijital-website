@@ -210,7 +210,7 @@ const CarouselPrevious = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute h-8 w-8 rounded-full transition-all duration-300",
+        "absolute h-8 w-8 rounded-full",
         orientation === "horizontal"
           ? "-left-12 top-1/2 -translate-y-1/2"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
@@ -239,7 +239,7 @@ const CarouselNext = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute h-8 w-8 rounded-full transition-all duration-300",
+        "absolute h-8 w-8 rounded-full",
         orientation === "horizontal"
           ? "-right-12 top-1/2 -translate-y-1/2"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
@@ -264,9 +264,9 @@ const CarouselIconItem = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        "flex h-20 w-20 items-center justify-center rounded-full transition-all duration-300",
+        "flex h-20 w-20 items-center justify-center rounded-full transition-colors duration-300",
         active 
-          ? 'bg-ignite/10 text-ignite scale-105' 
+          ? 'bg-ignite/10 text-ignite' 
           : 'bg-dark-400 text-gray-400 hover:bg-dark-300',
         className
       )}
@@ -298,7 +298,7 @@ const MarketingIconCarousel = ({ icons }: { icons: string[] }) => {
               icon={icon}
               active={activeIcon === index}
               onClick={() => handleIconClick(index)}
-              className="hover:scale-105 transition-all cursor-pointer"
+              className="hover:scale-105 cursor-pointer"
             />
           </div>
         ))}

@@ -1,7 +1,6 @@
 
 import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -57,13 +56,7 @@ const MarketingToolsSlider = () => {
       <div className="absolute bottom-0 left-1/4 w-32 h-32 bg-ignite/10 blur-3xl rounded-full"></div>
       
       <div className="container mx-auto px-4" ref={containerRef}>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true, amount: 0.3 }}
-          className="text-center mb-12"
-        >
+        <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             <span>Dijital Pazarlama</span>{" "}
             <span className="text-ignite">Araçlarımız</span>
@@ -71,7 +64,7 @@ const MarketingToolsSlider = () => {
           <p className="text-gray-400 max-w-2xl mx-auto">
             Markanızın dijital varlığını güçlendirmek için kullandığımız endüstri lideri pazarlama araçları ve teknolojileri
           </p>
-        </motion.div>
+        </div>
         
         <div className="max-w-5xl mx-auto relative">
           <div className="flex justify-between items-center mb-6">
@@ -95,38 +88,24 @@ const MarketingToolsSlider = () => {
           >
             <div className="flex gap-4 py-2 min-w-min">
               {marketingTools.map((tool, index) => (
-                <HoverCard key={tool.id} openDelay={200} closeDelay={100}>
-                  <HoverCardTrigger asChild>
-                    <div 
-                      className={`p-6 min-w-[180px] rounded-xl ${
-                        activeIndex === index 
-                          ? 'bg-ignite/20 border border-ignite/60' 
-                          : 'bg-dark-500/50 border border-dark-400/50'
-                      } text-center cursor-pointer transition-all duration-300 hover:border-ignite hover:shadow-lg hover:shadow-ignite/10`}
-                      onClick={() => handleToolClick(index)}
-                    >
-                      <div className="flex justify-center items-center h-16 mb-3">
-                        <div className={`${activeIndex === index ? 'text-ignite' : 'text-gray-400'} transition-colors duration-300 w-10 h-10`}>
-                          <MarketingIcon name={tool.id} />
-                        </div>
-                      </div>
-                      <p className={`${activeIndex === index ? 'text-white' : 'text-gray-300'} font-medium transition-colors`}>
-                        {tool.name}
-                      </p>
+                <div 
+                  key={tool.id}
+                  className={`p-6 min-w-[180px] rounded-xl ${
+                    activeIndex === index 
+                      ? 'bg-ignite/20 border border-ignite/60' 
+                      : 'bg-dark-500/50 border border-dark-400/50'
+                  } text-center cursor-pointer transition-all duration-300 hover:border-ignite hover:shadow-lg hover:shadow-ignite/10`}
+                  onClick={() => handleToolClick(index)}
+                >
+                  <div className="flex justify-center items-center h-16 mb-3">
+                    <div className={`${activeIndex === index ? 'text-ignite' : 'text-gray-400'} transition-colors duration-300 w-10 h-10`}>
+                      <MarketingIcon name={tool.id} />
                     </div>
-                  </HoverCardTrigger>
-                  <HoverCardContent className="w-80 bg-dark-500/90 backdrop-blur-sm border-dark-400 text-white p-4 shadow-lg shadow-black/30">
-                    <div className="flex justify-between">
-                      <div className="text-ignite mr-3 w-10 h-10">
-                        <MarketingIcon name={tool.id} />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-bold text-lg">{tool.name}</h4>
-                        <p className="text-gray-300 text-sm mt-1">{tool.description}</p>
-                      </div>
-                    </div>
-                  </HoverCardContent>
-                </HoverCard>
+                  </div>
+                  <p className={`${activeIndex === index ? 'text-white' : 'text-gray-300'} font-medium transition-colors`}>
+                    {tool.name}
+                  </p>
+                </div>
               ))}
             </div>
           </div>

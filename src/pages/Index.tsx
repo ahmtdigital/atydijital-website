@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Layout from '@/components/layout/Layout';
@@ -10,19 +9,11 @@ import TestimonialsSection from '@/components/home/TestimonialsSection';
 import ContactSection from '@/components/home/ContactSection';
 import MarketingToolsSlider from '@/components/home/MarketingToolsSlider';
 import CaseStudiesSlider from '@/components/home/CaseStudiesSlider';
+import Preloader from '@/components/ui/preloader';
 import { useToast } from '@/hooks/use-toast';
 import { MotionConfig } from 'framer-motion';
 
 const animations = {
-  staggerContainer: {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.3,
-      },
-    },
-  },
   fadeIn: {
     hidden: { opacity: 0, y: 20 },
     show: { 
@@ -30,40 +21,7 @@ const animations = {
       y: 0,
       transition: {
         type: "spring",
-        duration: 0.8,
-      }
-    },
-  },
-  scaleUp: {
-    hidden: { opacity: 0, scale: 0.9 },
-    show: { 
-      opacity: 1, 
-      scale: 1,
-      transition: {
-        type: "spring",
-        duration: 0.8,
-      }
-    },
-  },
-  slideInLeft: {
-    hidden: { opacity: 0, x: -50 },
-    show: { 
-      opacity: 1, 
-      x: 0,
-      transition: {
-        type: "spring",
-        duration: 0.8,
-      }
-    },
-  },
-  slideInRight: {
-    hidden: { opacity: 0, x: 50 },
-    show: { 
-      opacity: 1, 
-      x: 0,
-      transition: {
-        type: "spring",
-        duration: 0.8,
+        duration: 0.5,
       }
     },
   },
@@ -82,7 +40,7 @@ const Index = () => {
         title: "Hoş Geldiniz!",
         description: "Ignite Dijital Pazarlama web sitesine hoş geldiniz.",
       });
-    }, 1500);
+    }, 2000);
     
     // Add meta description
     let metaDescription = document.querySelector('meta[name="description"]');
@@ -128,79 +86,16 @@ const Index = () => {
 
   return (
     <MotionConfig reducedMotion="user">
+      <Preloader />
       <Layout>
-        <motion.div
-          variants={animations.staggerContainer}
-          initial="hidden"
-          animate="show"
-        >
-          <motion.div variants={animations.fadeIn}>
-            <HeroSection />
-          </motion.div>
-          
-          <motion.div 
-            variants={animations.scaleUp}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            <ServicesSection />
-          </motion.div>
-          
-          <motion.div 
-            variants={animations.slideInLeft}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            <MarketingToolsSlider />
-          </motion.div>
-          
-          <motion.div 
-            variants={animations.slideInRight}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            <CaseStudiesSlider />
-          </motion.div>
-          
-          <motion.div 
-            variants={animations.fadeIn}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            <PortfolioSection />
-          </motion.div>
-          
-          <motion.div 
-            variants={animations.scaleUp}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            <StatsSection />
-          </motion.div>
-          
-          <motion.div 
-            variants={animations.slideInLeft}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            <TestimonialsSection />
-          </motion.div>
-          
-          <motion.div 
-            variants={animations.fadeIn}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            <ContactSection />
-          </motion.div>
-        </motion.div>
+        <HeroSection />
+        <ServicesSection />
+        <MarketingToolsSlider />
+        <CaseStudiesSlider />
+        <PortfolioSection />
+        <StatsSection />
+        <TestimonialsSection />
+        <ContactSection />
       </Layout>
     </MotionConfig>
   );

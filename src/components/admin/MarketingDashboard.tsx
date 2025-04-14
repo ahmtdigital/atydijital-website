@@ -1,22 +1,23 @@
 
 import { useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import MarketingIcon from '@/components/ui/marketing-icon';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Slider } from '@/components/ui/slider';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-// Sample chart data
-const performanceData = [
-  { name: 'Oca', google: 40, meta: 24, linkedin: 10, tiktok: 15 },
-  { name: 'Şub', google: 30, meta: 28, linkedin: 15, tiktok: 21 },
-  { name: 'Mar', google: 20, meta: 34, linkedin: 18, tiktok: 26 },
-  { name: 'Nis', google: 27, meta: 39, linkedin: 25, tiktok: 34 },
-  { name: 'May', google: 45, meta: 48, linkedin: 32, tiktok: 38 },
-  { name: 'Haz', google: 55, meta: 50, linkedin: 36, tiktok: 42 },
-  { name: 'Tem', google: 65, meta: 45, linkedin: 40, tiktok: 48 },
+// Sample traffic data
+const websiteTrafficData = [
+  { name: 'Oca', users: 1203, pageViews: 4560, sessions: 1850 },
+  { name: 'Şub', users: 1350, pageViews: 5200, sessions: 2100 },
+  { name: 'Mar', users: 1456, pageViews: 5800, sessions: 2300 },
+  { name: 'Nis', users: 1780, pageViews: 6700, sessions: 2650 },
+  { name: 'May', users: 2100, pageViews: 7800, sessions: 3100 },
+  { name: 'Haz', users: 2450, pageViews: 8900, sessions: 3600 },
+  { name: 'Tem', users: 2850, pageViews: 10200, sessions: 4100 },
 ];
 
+// Sample traffic source data
 const trafficSourceData = [
   { name: 'Google Organik', value: 35, color: '#4285F4' },
   { name: 'Google Ads', value: 20, color: '#FBBC05' },
@@ -26,159 +27,226 @@ const trafficSourceData = [
   { name: 'Doğrudan', value: 12, color: '#34A853' },
 ];
 
-const MarketingDashboard = () => {
-  const [reportPeriod, setReportPeriod] = useState('month');
-  const [budgetAllocation, setBudgetAllocation] = useState([30, 20, 15, 15, 10, 10]); // Google, Meta, TikTok, LinkedIn, Email, Diğer
+// Sample page visit data
+const pageVisitsData = [
+  { name: 'Ana Sayfa', views: 4350, percentage: 28 },
+  { name: 'Hizmetler', views: 3250, percentage: 21 },
+  { name: 'Hakkımızda', views: 2150, percentage: 14 },
+  { name: 'Portföy', views: 2750, percentage: 18 },
+  { name: 'Blog', views: 1850, percentage: 12 },
+  { name: 'İletişim', views: 1050, percentage: 7 },
+];
 
-  const handleBudgetChange = (index: number, value: number[]) => {
-    const newBudget = [...budgetAllocation];
-    newBudget[index] = value[0];
-    setBudgetAllocation(newBudget);
-  };
+// Sample device data
+const deviceData = [
+  { name: 'Mobil', value: 68, color: '#FF6B00' },
+  { name: 'Masaüstü', value: 26, color: '#3b5998' },
+  { name: 'Tablet', value: 6, color: '#34A853' },
+];
+
+const MarketingDashboard = () => {
+  const [timeRange, setTimeRange] = useState('month');
 
   return (
     <div className="space-y-8">
-      <Tabs defaultValue="performance" className="w-full">
-        <TabsList className="grid grid-cols-1 md:grid-cols-4 h-auto bg-dark-500 p-1">
-          <TabsTrigger value="performance" className="data-[state=active]:bg-ignite data-[state=active]:text-white py-3">
-            Performans Analizi
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h2 className="text-2xl font-bold">Google Analytics Gösterge Paneli</h2>
+        <Select value={timeRange} onValueChange={setTimeRange}>
+          <SelectTrigger className="w-[180px] bg-dark-500 border-dark-400">
+            <SelectValue placeholder="Zaman aralığı" />
+          </SelectTrigger>
+          <SelectContent className="bg-dark-500 border-dark-400">
+            <SelectItem value="week">Son 7 Gün</SelectItem>
+            <SelectItem value="month">Son 30 Gün</SelectItem>
+            <SelectItem value="quarter">Son 3 Ay</SelectItem>
+            <SelectItem value="year">Son 1 Yıl</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="grid grid-cols-1 md:grid-cols-3 h-auto bg-dark-500 p-1">
+          <TabsTrigger value="overview" className="data-[state=active]:bg-ignite data-[state=active]:text-white py-3">
+            Genel Bakış
           </TabsTrigger>
           <TabsTrigger value="traffic" className="data-[state=active]:bg-ignite data-[state=active]:text-white py-3">
             Trafik Kaynakları
           </TabsTrigger>
-          <TabsTrigger value="campaigns" className="data-[state=active]:bg-ignite data-[state=active]:text-white py-3">
-            Kampanya Performansı
-          </TabsTrigger>
-          <TabsTrigger value="budget" className="data-[state=active]:bg-ignite data-[state=active]:text-white py-3">
-            Bütçe Yönetimi
+          <TabsTrigger value="pages" className="data-[state=active]:bg-ignite data-[state=active]:text-white py-3">
+            Sayfa Analizi
           </TabsTrigger>
         </TabsList>
         
-        {/* Performance Analysis Tab */}
-        <TabsContent value="performance" className="space-y-6 pt-6">
-          <div className="flex justify-between items-center">
-            <h3 className="text-xl font-bold">Platform Performans Karşılaştırması</h3>
-            <div className="flex gap-2">
-              <button 
-                className={`px-3 py-1 text-sm rounded-md ${reportPeriod === 'week' ? 'bg-ignite text-white' : 'bg-dark-400 text-gray-300'}`}
-                onClick={() => setReportPeriod('week')}
-              >
-                Haftalık
-              </button>
-              <button 
-                className={`px-3 py-1 text-sm rounded-md ${reportPeriod === 'month' ? 'bg-ignite text-white' : 'bg-dark-400 text-gray-300'}`}
-                onClick={() => setReportPeriod('month')}
-              >
-                Aylık
-              </button>
-              <button 
-                className={`px-3 py-1 text-sm rounded-md ${reportPeriod === 'year' ? 'bg-ignite text-white' : 'bg-dark-400 text-gray-300'}`}
-                onClick={() => setReportPeriod('year')}
-              >
-                Yıllık
-              </button>
-            </div>
-          </div>
-          
-          <div className="h-80 w-full bg-dark-500 p-4 rounded-lg">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={performanceData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                <XAxis dataKey="name" stroke="#888" />
-                <YAxis stroke="#888" />
-                <Tooltip
-                  contentStyle={{ backgroundColor: "#222", border: "none", borderRadius: "8px" }}
-                  labelStyle={{ color: "#fff" }}
-                />
-                <Bar dataKey="google" name="Google Ads" fill="#4285F4" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="meta" name="Meta Ads" fill="#3b5998" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="linkedin" name="LinkedIn Ads" fill="#0077B5" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="tiktok" name="TikTok Ads" fill="#000000" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-          
+        {/* Overview Tab */}
+        <TabsContent value="overview" className="space-y-6 pt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="bg-dark-500 border-dark-400">
-              <CardHeader className="pb-2 flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle className="text-sm font-medium">Google Ads</CardTitle>
-                </div>
-                <div className="h-8 w-8 text-blue-500">
-                  <MarketingIcon name="google-ads" />
-                </div>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Toplam Ziyaretçi</CardTitle>
+                <CardDescription>Son 30 gün</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">64.853 ₺</div>
-                <p className="text-xs text-gray-400">Harcama</p>
-                <div className="mt-2 text-sm text-green-500 flex items-center">
+                <div className="text-3xl font-bold text-ignite">15,842</div>
+                <p className="text-sm text-green-500 flex items-center mt-2">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 mr-1">
                     <path d="m18 15-6-6-6 6"/>
                   </svg>
-                  +18.3% ROAS
+                  24% artış
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-dark-500 border-dark-400">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Sayfa Görüntüleme</CardTitle>
+                <CardDescription>Son 30 gün</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-ignite">48,325</div>
+                <p className="text-sm text-green-500 flex items-center mt-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 mr-1">
+                    <path d="m18 15-6-6-6 6"/>
+                  </svg>
+                  18% artış
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-dark-500 border-dark-400">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Ortalama Oturum Süresi</CardTitle>
+                <CardDescription>Son 30 gün</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-ignite">3:42</div>
+                <p className="text-sm text-green-500 flex items-center mt-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 mr-1">
+                    <path d="m18 15-6-6-6 6"/>
+                  </svg>
+                  12% artış
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-dark-500 border-dark-400">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Hemen Çıkma Oranı</CardTitle>
+                <CardDescription>Son 30 gün</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-ignite">38%</div>
+                <p className="text-sm text-red-500 flex items-center mt-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 mr-1 rotate-180">
+                    <path d="m18 15-6-6-6 6"/>
+                  </svg>
+                  3% artış
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <Card className="bg-dark-500 border-dark-400">
+            <CardHeader>
+              <CardTitle>Site Trafiği</CardTitle>
+              <CardDescription>Son 7 ayın kullanıcı, sayfa görüntüleme ve oturum verileri</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-80 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={websiteTrafficData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                    <XAxis dataKey="name" stroke="#888" />
+                    <YAxis stroke="#888" />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: "#222", border: "none", borderRadius: "8px" }}
+                      labelStyle={{ color: "#fff" }}
+                    />
+                    <Line type="monotone" dataKey="users" name="Kullanıcılar" stroke="#FF6B00" strokeWidth={2} activeDot={{ r: 8 }} />
+                    <Line type="monotone" dataKey="pageViews" name="Sayfa Görüntüleme" stroke="#4285F4" strokeWidth={2} />
+                    <Line type="monotone" dataKey="sessions" name="Oturumlar" stroke="#34A853" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="bg-dark-500 border-dark-400">
+              <CardHeader>
+                <CardTitle>Cihaz Dağılımı</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={deviceData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        outerRadius={80}
+                        dataKey="value"
+                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      >
+                        {deviceData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        contentStyle={{ backgroundColor: "#222", border: "none", borderRadius: "8px" }}
+                        formatter={(value: any) => [`${value}%`, 'Oran']}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
             
             <Card className="bg-dark-500 border-dark-400">
-              <CardHeader className="pb-2 flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle className="text-sm font-medium">Meta Ads</CardTitle>
-                </div>
-                <div className="h-8 w-8 text-blue-900">
-                  <MarketingIcon name="meta-ads" />
-                </div>
+              <CardHeader>
+                <CardTitle>Coğrafi Dağılım</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">45.320 ₺</div>
-                <p className="text-xs text-gray-400">Harcama</p>
-                <div className="mt-2 text-sm text-green-500 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 mr-1">
-                    <path d="m18 15-6-6-6 6"/>
-                  </svg>
-                  +12.7% ROAS
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-dark-500 border-dark-400">
-              <CardHeader className="pb-2 flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle className="text-sm font-medium">TikTok Ads</CardTitle>
-                </div>
-                <div className="h-8 w-8">
-                  <MarketingIcon name="tiktok-ads" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">32.178 ₺</div>
-                <p className="text-xs text-gray-400">Harcama</p>
-                <div className="mt-2 text-sm text-green-500 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 mr-1">
-                    <path d="m18 15-6-6-6 6"/>
-                  </svg>
-                  +24.5% ROAS
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-dark-500 border-dark-400">
-              <CardHeader className="pb-2 flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle className="text-sm font-medium">LinkedIn Ads</CardTitle>
-                </div>
-                <div className="h-8 w-8 text-blue-600">
-                  <MarketingIcon name="linkedin-ads" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">18.542 ₺</div>
-                <p className="text-xs text-gray-400">Harcama</p>
-                <div className="mt-2 text-sm text-green-500 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 mr-1">
-                    <path d="m18 15-6-6-6 6"/>
-                  </svg>
-                  +9.6% ROAS
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span>Türkiye</span>
+                    <span>68%</span>
+                  </div>
+                  <div className="w-full bg-dark-400 h-2 rounded-full">
+                    <div className="bg-ignite h-2 rounded-full" style={{ width: '68%' }}></div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span>Almanya</span>
+                    <span>12%</span>
+                  </div>
+                  <div className="w-full bg-dark-400 h-2 rounded-full">
+                    <div className="bg-ignite h-2 rounded-full" style={{ width: '12%' }}></div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span>ABD</span>
+                    <span>8%</span>
+                  </div>
+                  <div className="w-full bg-dark-400 h-2 rounded-full">
+                    <div className="bg-ignite h-2 rounded-full" style={{ width: '8%' }}></div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span>İngiltere</span>
+                    <span>5%</span>
+                  </div>
+                  <div className="w-full bg-dark-400 h-2 rounded-full">
+                    <div className="bg-ignite h-2 rounded-full" style={{ width: '5%' }}></div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span>Diğer</span>
+                    <span>7%</span>
+                  </div>
+                  <div className="w-full bg-dark-400 h-2 rounded-full">
+                    <div className="bg-ignite h-2 rounded-full" style={{ width: '7%' }}></div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -202,6 +270,7 @@ const MarketingDashboard = () => {
                       labelLine={false}
                       outerRadius={100}
                       dataKey="value"
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                     >
                       {trafficSourceData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
@@ -241,236 +310,188 @@ const MarketingDashboard = () => {
               ))}
             </div>
           </div>
-        </TabsContent>
-        
-        {/* Budget Management Tab */}
-        <TabsContent value="budget" className="space-y-6 pt-6">
+          
           <Card className="bg-dark-500 border-dark-400">
             <CardHeader>
-              <CardTitle>Pazarlama Bütçesi Dağılımı</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className="h-6 w-6 text-blue-500">
-                      <MarketingIcon name="google-ads" />
-                    </div>
-                    <p>Google Ads</p>
-                  </div>
-                  <span className="font-bold">{budgetAllocation[0]}%</span>
-                </div>
-                <Slider
-                  value={[budgetAllocation[0]]}
-                  min={0}
-                  max={100}
-                  step={1}
-                  onValueChange={(value) => handleBudgetChange(0, value)}
-                  className="py-4"
-                />
-              </div>
-              
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className="h-6 w-6 text-blue-900">
-                      <MarketingIcon name="meta-ads" />
-                    </div>
-                    <p>Meta Ads</p>
-                  </div>
-                  <span className="font-bold">{budgetAllocation[1]}%</span>
-                </div>
-                <Slider
-                  value={[budgetAllocation[1]]}
-                  min={0}
-                  max={100}
-                  step={1}
-                  onValueChange={(value) => handleBudgetChange(1, value)}
-                  className="py-4"
-                />
-              </div>
-              
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className="h-6 w-6">
-                      <MarketingIcon name="tiktok-ads" />
-                    </div>
-                    <p>TikTok Ads</p>
-                  </div>
-                  <span className="font-bold">{budgetAllocation[2]}%</span>
-                </div>
-                <Slider
-                  value={[budgetAllocation[2]]}
-                  min={0}
-                  max={100}
-                  step={1}
-                  onValueChange={(value) => handleBudgetChange(2, value)}
-                  className="py-4"
-                />
-              </div>
-              
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className="h-6 w-6 text-blue-600">
-                      <MarketingIcon name="linkedin-ads" />
-                    </div>
-                    <p>LinkedIn Ads</p>
-                  </div>
-                  <span className="font-bold">{budgetAllocation[3]}%</span>
-                </div>
-                <Slider
-                  value={[budgetAllocation[3]]}
-                  min={0}
-                  max={100}
-                  step={1}
-                  onValueChange={(value) => handleBudgetChange(3, value)}
-                  className="py-4"
-                />
-              </div>
-              
-              <Card className="bg-dark-400 border-dark-300">
-                <CardHeader className="py-4">
-                  <CardTitle className="text-lg">Toplam Bütçe: 160.893 ₺</CardTitle>
-                </CardHeader>
-                <CardContent className="pb-4">
-                  <div className="flex gap-2 flex-wrap">
-                    <div className="flex-1 min-w-[150px] bg-dark-500 p-3 rounded-lg">
-                      <p className="text-sm text-gray-400">Google Ads</p>
-                      <p className="text-lg font-bold">{(160893 * budgetAllocation[0] / 100).toLocaleString('tr-TR')} ₺</p>
-                    </div>
-                    <div className="flex-1 min-w-[150px] bg-dark-500 p-3 rounded-lg">
-                      <p className="text-sm text-gray-400">Meta Ads</p>
-                      <p className="text-lg font-bold">{(160893 * budgetAllocation[1] / 100).toLocaleString('tr-TR')} ₺</p>
-                    </div>
-                    <div className="flex-1 min-w-[150px] bg-dark-500 p-3 rounded-lg">
-                      <p className="text-sm text-gray-400">TikTok Ads</p>
-                      <p className="text-lg font-bold">{(160893 * budgetAllocation[2] / 100).toLocaleString('tr-TR')} ₺</p>
-                    </div>
-                    <div className="flex-1 min-w-[150px] bg-dark-500 p-3 rounded-lg">
-                      <p className="text-sm text-gray-400">LinkedIn Ads</p>
-                      <p className="text-lg font-bold">{(160893 * budgetAllocation[3] / 100).toLocaleString('tr-TR')} ₺</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        {/* Campaign Performance Tab */}
-        <TabsContent value="campaigns" className="space-y-6 pt-6">
-          <Card className="bg-dark-500 border-dark-400">
-            <CardHeader>
-              <CardTitle>Aktif Kampanyalar</CardTitle>
+              <CardTitle>Yönlendiren Siteler</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="bg-dark-400 p-4 rounded-lg">
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="h-6 w-6 text-blue-500">
-                        <MarketingIcon name="google-ads" />
-                      </div>
-                      <p className="font-bold">Yaz Sonu İndirimleri</p>
-                    </div>
-                    <span className="text-green-500 bg-green-500/10 px-2 py-1 rounded text-xs">Aktif</span>
-                  </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                    <div>
-                      <p className="text-xs text-gray-400">Gösterim</p>
-                      <p className="font-semibold">123,456</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-400">Tıklama</p>
-                      <p className="font-semibold">5,432</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-400">CTR</p>
-                      <p className="font-semibold">4.4%</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-400">Dönüşüm</p>
-                      <p className="font-semibold">427</p>
-                    </div>
-                  </div>
-                  <div className="w-full bg-dark-500 h-2 rounded-full mt-4">
-                    <div className="bg-gradient-to-r from-green-500 to-ignite h-2 rounded-full w-3/4"></div>
-                  </div>
-                  <p className="text-xs text-gray-400 mt-1">Kalan Bütçe: 12,500 ₺ (75%)</p>
+                <div className="flex justify-between items-center">
+                  <span>google.com</span>
+                  <span>42%</span>
+                </div>
+                <div className="w-full bg-dark-400 h-2 rounded-full">
+                  <div className="bg-ignite h-2 rounded-full" style={{ width: '42%' }}></div>
                 </div>
                 
-                <div className="bg-dark-400 p-4 rounded-lg">
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="h-6 w-6 text-blue-900">
-                        <MarketingIcon name="meta-ads" />
-                      </div>
-                      <p className="font-bold">Yeni Ürün Lansmanı</p>
-                    </div>
-                    <span className="text-green-500 bg-green-500/10 px-2 py-1 rounded text-xs">Aktif</span>
-                  </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                    <div>
-                      <p className="text-xs text-gray-400">Gösterim</p>
-                      <p className="font-semibold">234,567</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-400">Tıklama</p>
-                      <p className="font-semibold">8,765</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-400">CTR</p>
-                      <p className="font-semibold">3.7%</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-400">Dönüşüm</p>
-                      <p className="font-semibold">612</p>
-                    </div>
-                  </div>
-                  <div className="w-full bg-dark-500 h-2 rounded-full mt-4">
-                    <div className="bg-gradient-to-r from-green-500 to-ignite h-2 rounded-full w-1/2"></div>
-                  </div>
-                  <p className="text-xs text-gray-400 mt-1">Kalan Bütçe: 15,000 ₺ (50%)</p>
+                <div className="flex justify-between items-center">
+                  <span>facebook.com</span>
+                  <span>18%</span>
+                </div>
+                <div className="w-full bg-dark-400 h-2 rounded-full">
+                  <div className="bg-ignite h-2 rounded-full" style={{ width: '18%' }}></div>
                 </div>
                 
-                <div className="bg-dark-400 p-4 rounded-lg">
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="h-6 w-6">
-                        <MarketingIcon name="tiktok-ads" />
-                      </div>
-                      <p className="font-bold">Z Kuşağı Kampanyası</p>
-                    </div>
-                    <span className="text-green-500 bg-green-500/10 px-2 py-1 rounded text-xs">Aktif</span>
-                  </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                    <div>
-                      <p className="text-xs text-gray-400">Gösterim</p>
-                      <p className="font-semibold">345,678</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-400">Tıklama</p>
-                      <p className="font-semibold">15,432</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-400">CTR</p>
-                      <p className="font-semibold">4.5%</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-400">Dönüşüm</p>
-                      <p className="font-semibold">843</p>
-                    </div>
-                  </div>
-                  <div className="w-full bg-dark-500 h-2 rounded-full mt-4">
-                    <div className="bg-gradient-to-r from-green-500 to-ignite h-2 rounded-full w-1/4"></div>
-                  </div>
-                  <p className="text-xs text-gray-400 mt-1">Kalan Bütçe: 5,000 ₺ (25%)</p>
+                <div className="flex justify-between items-center">
+                  <span>linkedin.com</span>
+                  <span>12%</span>
+                </div>
+                <div className="w-full bg-dark-400 h-2 rounded-full">
+                  <div className="bg-ignite h-2 rounded-full" style={{ width: '12%' }}></div>
+                </div>
+                
+                <div className="flex justify-between items-center">
+                  <span>instagram.com</span>
+                  <span>10%</span>
+                </div>
+                <div className="w-full bg-dark-400 h-2 rounded-full">
+                  <div className="bg-ignite h-2 rounded-full" style={{ width: '10%' }}></div>
+                </div>
+                
+                <div className="flex justify-between items-center">
+                  <span>twitter.com</span>
+                  <span>8%</span>
+                </div>
+                <div className="w-full bg-dark-400 h-2 rounded-full">
+                  <div className="bg-ignite h-2 rounded-full" style={{ width: '8%' }}></div>
+                </div>
+                
+                <div className="flex justify-between items-center">
+                  <span>Diğer</span>
+                  <span>10%</span>
+                </div>
+                <div className="w-full bg-dark-400 h-2 rounded-full">
+                  <div className="bg-ignite h-2 rounded-full" style={{ width: '10%' }}></div>
                 </div>
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+        
+        {/* Page Analysis Tab */}
+        <TabsContent value="pages" className="space-y-6 pt-6">
+          <Card className="bg-dark-500 border-dark-400">
+            <CardHeader>
+              <CardTitle>En Çok Ziyaret Edilen Sayfalar</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {pageVisitsData.map((page, index) => (
+                  <div key={index} className="bg-dark-400 p-4 rounded-lg">
+                    <div className="flex justify-between items-center mb-2">
+                      <p className="font-bold">{page.name}</p>
+                      <span className="text-ignite">{page.views.toLocaleString()} Görüntüleme</span>
+                    </div>
+                    <div className="w-full bg-dark-500 h-2 rounded-full">
+                      <div className="bg-gradient-to-r from-ignite to-ignite-500 h-2 rounded-full" style={{ width: `${page.percentage}%` }}></div>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1">Toplam görüntülemelerin {page.percentage}%'si</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="bg-dark-500 border-dark-400">
+              <CardHeader>
+                <CardTitle>Kullanıcı Etkileşimi</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span>Ortalama Sayfa Okunma Süresi</span>
+                      <span className="font-medium">2:15</span>
+                    </div>
+                    <div className="w-full bg-dark-400 h-2 rounded-full">
+                      <div className="bg-ignite h-2 rounded-full" style={{ width: '65%' }}></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span>Sayfa Başına Oturum</span>
+                      <span className="font-medium">4.2</span>
+                    </div>
+                    <div className="w-full bg-dark-400 h-2 rounded-full">
+                      <div className="bg-ignite h-2 rounded-full" style={{ width: '78%' }}></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span>Hemen Çıkma Oranı</span>
+                      <span className="font-medium">38%</span>
+                    </div>
+                    <div className="w-full bg-dark-400 h-2 rounded-full">
+                      <div className="bg-ignite h-2 rounded-full" style={{ width: '38%' }}></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span>Form Gönderim Oranı</span>
+                      <span className="font-medium">3.8%</span>
+                    </div>
+                    <div className="w-full bg-dark-400 h-2 rounded-full">
+                      <div className="bg-ignite h-2 rounded-full" style={{ width: '38%' }}></div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-dark-500 border-dark-400">
+              <CardHeader>
+                <CardTitle>Sayfa Yüklenme Performansı</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span>Ortalama Sayfa Yüklenme Süresi</span>
+                      <span className="font-medium">1.8s</span>
+                    </div>
+                    <div className="w-full bg-dark-400 h-2 rounded-full">
+                      <div className="bg-green-500 h-2 rounded-full" style={{ width: '82%' }}></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span>Ortalama Sunucu Yanıt Süresi</span>
+                      <span className="font-medium">0.4s</span>
+                    </div>
+                    <div className="w-full bg-dark-400 h-2 rounded-full">
+                      <div className="bg-green-500 h-2 rounded-full" style={{ width: '90%' }}></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span>İçerik Yüklenme Süresi</span>
+                      <span className="font-medium">1.2s</span>
+                    </div>
+                    <div className="w-full bg-dark-400 h-2 rounded-full">
+                      <div className="bg-green-500 h-2 rounded-full" style={{ width: '85%' }}></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span>En Yavaş Sayfalar</span>
+                      <span className="font-medium">Portföy</span>
+                    </div>
+                    <div className="w-full bg-dark-400 h-2 rounded-full">
+                      <div className="bg-orange-500 h-2 rounded-full" style={{ width: '65%' }}></div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
