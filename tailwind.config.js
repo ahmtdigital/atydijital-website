@@ -1,3 +1,4 @@
+
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ["class"],
@@ -18,8 +19,17 @@ export default {
     extend: {
       colors: {
         ignite: {
-          DEFAULT: "#E11D48",
-          700: "#BE123C",
+          DEFAULT: "#FF6B00",
+          50: "#FFF3E6",
+          100: "#FFE7CC", 
+          200: "#FFD099",
+          300: "#FFB866",
+          400: "#FFA133",
+          500: "#FF8A00",
+          600: "#FF6B00",
+          700: "#CC5500",
+          800: "#994000",
+          900: "#662A00"
         },
         dark: {
           DEFAULT: "#121212",
@@ -27,6 +37,9 @@ export default {
           400: "#262626",
           500: "#171717",
           600: "#0F0F0F",
+          700: "#0A0A0A",
+          800: "#050505",
+          900: "#000000"
         },
       },
       borderRadius: {
@@ -36,4 +49,5 @@ export default {
       },
     },
   },
+  plugins: [require("tailwindcss-animate")],
 }
