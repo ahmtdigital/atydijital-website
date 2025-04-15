@@ -8,7 +8,6 @@ import StatsSection from '@/components/home/StatsSection';
 import TestimonialsSection from '@/components/home/TestimonialsSection';
 import ContactSection from '@/components/home/ContactSection';
 import MarketingToolsSlider from '@/components/home/MarketingToolsSlider';
-import CaseStudiesSlider from '@/components/home/CaseStudiesSlider';
 import Preloader from '@/components/ui/preloader';
 import { useToast } from '@/hooks/use-toast';
 import { MotionConfig } from 'framer-motion';
@@ -91,7 +90,6 @@ const Index = () => {
         <HeroSection />
         <ServicesSection />
         <MarketingToolsSlider />
-        <CaseStudiesSlider />
         <PortfolioSection />
         <StatsSection />
         <TestimonialsSection />
