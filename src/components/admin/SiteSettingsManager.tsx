@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { Save, Palette, Layout, Image } from 'lucide-react';
+import { Save, Palette, Layout, Image, Briefcase } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const SiteSettingsManager = () => {
@@ -21,6 +21,10 @@ const SiteSettingsManager = () => {
     projectHoverEffect: 'scale',
     showProjectTags: true,
     showProjectCategory: true,
+    showCaseStudies: true,
+    caseStudiesAnimationType: 'fade',
+    caseStudiesAutoplay: true,
+    caseStudiesInterval: 5000,
   });
 
   const handleSave = () => {
@@ -59,6 +63,7 @@ const SiteSettingsManager = () => {
             <TabsList className="bg-dark-600">
               <TabsTrigger value="appearance">Genel Görünüm</TabsTrigger>
               <TabsTrigger value="projects">Proje Görünümü</TabsTrigger>
+              <TabsTrigger value="casestudies">Vaka Çalışmaları</TabsTrigger>
               <TabsTrigger value="animations">Animasyonlar</TabsTrigger>
             </TabsList>
 
@@ -131,6 +136,57 @@ const SiteSettingsManager = () => {
                     onCheckedChange={(checked) => setSettings({...settings, showProjectCategory: checked})}
                   />
                 </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="casestudies" className="space-y-4 mt-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-medium">Vaka Çalışmalarını Göster</h3>
+                  <p className="text-sm text-white/60">Ana sayfada vaka çalışmaları bölümünü görüntüle</p>
+                </div>
+                <Switch 
+                  checked={settings.showCaseStudies}
+                  onCheckedChange={(checked) => setSettings({...settings, showCaseStudies: checked})}
+                />
+              </div>
+
+              <div>
+                <h3 className="font-medium mb-2">Animasyon Tipi</h3>
+                <select 
+                  value={settings.caseStudiesAnimationType}
+                  onChange={(e) => setSettings({...settings, caseStudiesAnimationType: e.target.value})}
+                  className="bg-dark-400 border-dark-300 rounded-md p-2 w-full"
+                >
+                  <option value="fade">Solma Efekti</option>
+                  <option value="slide">Kayma Efekti</option>
+                  <option value="zoom">Yakınlaşma Efekti</option>
+                  <option value="flip">Çevirme Efekti</option>
+                </select>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-medium">Otomatik Oynat</h3>
+                  <p className="text-sm text-white/60">Vaka çalışmalarını otomatik olarak değiştir</p>
+                </div>
+                <Switch 
+                  checked={settings.caseStudiesAutoplay}
+                  onCheckedChange={(checked) => setSettings({...settings, caseStudiesAutoplay: checked})}
+                />
+              </div>
+
+              <div>
+                <h3 className="font-medium mb-2">Değişim Aralığı (ms)</h3>
+                <Input 
+                  type="number" 
+                  value={settings.caseStudiesInterval}
+                  onChange={(e) => setSettings({...settings, caseStudiesInterval: parseInt(e.target.value)})}
+                  min={1000}
+                  max={10000}
+                  step={500}
+                  className="bg-dark-400 border-dark-300 w-32"
+                />
               </div>
             </TabsContent>
 
