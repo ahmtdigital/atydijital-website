@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,10 +8,33 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Save, Palette, Layout, Image, Briefcase } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useDataService } from '@/lib/db';
 
 const SiteSettingsManager = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('appearance');
+  
+  const { 
+    items: siteSettings, 
+    update: updateSettings,
+    add: addSettings,
+    isLoading 
+  } = useDataService('siteSettings', [{
+    id: 1,
+    darkMode: true,
+    glassmorphism: true,
+    animationsEnabled: true,
+    projectsPerRow: 2,
+    projectImageHeight: 400,
+    projectHoverEffect: 'scale',
+    showProjectTags: true,
+    showProjectCategory: true,
+    showCaseStudies: true,
+    caseStudiesAnimationType: 'fade',
+    caseStudiesAutoplay: true,
+    caseStudiesInterval: 5000,
+  }]);
+
   const [settings, setSettings] = useState({
     darkMode: true,
     glassmorphism: true,
@@ -27,12 +50,31 @@ const SiteSettingsManager = () => {
     caseStudiesInterval: 5000,
   });
 
+  useEffect(() => {
+    if (siteSettings && siteSettings.length > 0) {
+      setSettings(siteSettings[0]);
+    }
+  }, [siteSettings]);
+
   const handleSave = () => {
-    // Burada ayarları kaydetme işlemi yapılacak
-    toast({
-      title: "Başarılı",
-      description: "Site ayarları kaydedildi.",
-    });
+    try {
+      if (siteSettings && siteSettings.length > 0) {
+        updateSettings(siteSettings[0].id, { ...settings });
+      } else {
+        addSettings({ ...settings });
+      }
+      
+      toast({
+        title: "Başarılı",
+        description: "Site ayarları kaydedildi.",
+      });
+    } catch (error) {
+      toast({
+        title: "Hata",
+        description: "Ayarlar kaydedilirken bir hata oluştu.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -219,9 +261,13 @@ const SiteSettingsManager = () => {
           </Tabs>
 
           <div className="mt-6 flex justify-end">
-            <Button onClick={handleSave} className="bg-ignite hover:bg-ignite-700">
+            <Button 
+              onClick={handleSave} 
+              className="bg-ignite hover:bg-ignite-700"
+              disabled={isLoading}
+            >
               <Save className="h-4 w-4 mr-2" />
-              Ayarları Kaydet
+              {isLoading ? 'Kaydediliyor...' : 'Ayarları Kaydet'}
             </Button>
           </div>
         </CardContent>

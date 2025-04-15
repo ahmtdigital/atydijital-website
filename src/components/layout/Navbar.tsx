@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown, Bell, Image } from 'lucide-react';
@@ -5,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import QuotePopup from '@/components/ui/quote-popup';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -17,6 +19,7 @@ import {
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [quotePopupOpen, setQuotePopupOpen] = useState(false);
   const location = useLocation();
   const isAdmin = location.pathname.includes('/admin');
 
@@ -143,114 +146,126 @@ const Navbar = () => {
 
   // Standard navigation
   return (
-    <header className={cn(
-      'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-      scrolled ? 'bg-dark/90 backdrop-blur-md py-4 shadow-lg' : 'bg-transparent py-6'
-    )}>
-      <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link to="/" className="relative z-50 flex items-center group">
-          <motion.div 
-            initial={{ scale: 1 }}
-            whileHover={{ scale: 1.1, rotate: 5 }}
-            transition={{ type: "spring", stiffness: 300 }}
-            className="mr-3 bg-ignite rounded-full w-10 h-10 flex items-center justify-center overflow-hidden"
-          >
-            <Image size={20} className="text-white" />
-          </motion.div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">
-              <motion.span 
-                className="text-white inline-block"
-                initial={{ y: 0 }}
-                whileHover={{ y: -2 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                Ignite
-              </motion.span>
-              <motion.span 
-                className="text-ignite inline-block"
-                initial={{ y: 0 }}
-                whileHover={{ y: -2 }}
-                transition={{ type: "spring", stiffness: 300, delay: 0.05 }}
-              >
-                Marketing
-              </motion.span>
-            </h1>
-          </div>
-        </Link>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center space-x-8">
-          {navItems.map((item) => (
-            <Link 
-              key={item.path} 
-              to={item.path}
-              className="text-white/80 hover:text-ignite transition-colors duration-200 relative group"
-            >
-              {item.name}
-              <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-ignite group-hover:w-full transition-all duration-300"></span>
-            </Link>
-          ))}
-          <Button variant="default" className="bg-ignite hover:bg-ignite-700 text-white">
-            Teklif Al
-          </Button>
-        </nav>
-
-        {/* Mobile Menu Button */}
-        <button 
-          className="lg:hidden relative z-50" 
-          onClick={toggleMenu}
-          aria-label="Toggle Menu"
-        >
-          {isOpen ? <X className="h-6 w-6 text-white" /> : <Menu className="h-6 w-6 text-white" />}
-        </button>
-
-        {/* Mobile Navigation */}
-        <AnimatePresence>
-          {isOpen && (
+    <>
+      <header className={cn(
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+        scrolled ? 'bg-dark/90 backdrop-blur-md py-4 shadow-lg' : 'bg-transparent py-6'
+      )}>
+        <div className="container mx-auto px-4 flex justify-between items-center">
+          <Link to="/" className="relative z-50 flex items-center group">
             <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-              className="fixed inset-0 bg-dark/95 z-40 flex flex-col items-center justify-center lg:hidden"
+              initial={{ scale: 1 }}
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              className="mr-3 bg-ignite rounded-full w-10 h-10 flex items-center justify-center overflow-hidden"
             >
-              <div className="flex flex-col items-center space-y-8 py-10">
-                {navItems.map((item) => (
+              <Image size={20} className="text-white" />
+            </motion.div>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">
+                <motion.span 
+                  className="text-white inline-block"
+                  initial={{ y: 0 }}
+                  whileHover={{ y: -2 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  Ignite
+                </motion.span>
+                <motion.span 
+                  className="text-ignite inline-block"
+                  initial={{ y: 0 }}
+                  whileHover={{ y: -2 }}
+                  transition={{ type: "spring", stiffness: 300, delay: 0.05 }}
+                >
+                  Marketing
+                </motion.span>
+              </h1>
+            </div>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center space-x-8">
+            {navItems.map((item) => (
+              <Link 
+                key={item.path} 
+                to={item.path}
+                className="text-white/80 hover:text-ignite transition-colors duration-200 relative group"
+              >
+                {item.name}
+                <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-ignite group-hover:w-full transition-all duration-300"></span>
+              </Link>
+            ))}
+            <Button 
+              variant="default" 
+              className="bg-ignite hover:bg-ignite-700 text-white"
+              onClick={() => setQuotePopupOpen(true)}
+            >
+              Teklif Al
+            </Button>
+          </nav>
+
+          {/* Mobile Menu Button */}
+          <button 
+            className="lg:hidden relative z-50" 
+            onClick={toggleMenu}
+            aria-label="Toggle Menu"
+          >
+            {isOpen ? <X className="h-6 w-6 text-white" /> : <Menu className="h-6 w-6 text-white" />}
+          </button>
+
+          {/* Mobile Navigation */}
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="fixed inset-0 bg-dark/95 z-40 flex flex-col items-center justify-center lg:hidden"
+              >
+                <div className="flex flex-col items-center space-y-8 py-10">
+                  {navItems.map((item) => (
+                    <motion.div
+                      key={item.path}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: navItems.indexOf(item) * 0.1 }}
+                    >
+                      <Link 
+                        to={item.path}
+                        className="text-white text-xl hover:text-ignite transition-colors duration-200"
+                        onClick={toggleMenu}
+                      >
+                        {item.name}
+                      </Link>
+                    </motion.div>
+                  ))}
                   <motion.div
-                    key={item.path}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: navItems.indexOf(item) * 0.1 }}
+                    transition={{ duration: 0.3, delay: navItems.length * 0.1 }}
                   >
-                    <Link 
-                      to={item.path}
-                      className="text-white text-xl hover:text-ignite transition-colors duration-200"
-                      onClick={toggleMenu}
+                    <Button 
+                      variant="default" 
+                      className="bg-ignite hover:bg-ignite-700 text-white mt-4 px-8 py-2"
+                      onClick={() => {
+                        toggleMenu();
+                        setQuotePopupOpen(true);
+                      }}
                     >
-                      {item.name}
-                    </Link>
+                      Teklif Al
+                    </Button>
                   </motion.div>
-                ))}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: navItems.length * 0.1 }}
-                >
-                  <Button 
-                    variant="default" 
-                    className="bg-ignite hover:bg-ignite-700 text-white mt-4 px-8 py-2"
-                    onClick={toggleMenu}
-                  >
-                    Teklif Al
-                  </Button>
-                </motion.div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </header>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </header>
+
+      {/* Quote Popup */}
+      <QuotePopup open={quotePopupOpen} onOpenChange={setQuotePopupOpen} />
+    </>
   );
 };
 

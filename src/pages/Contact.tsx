@@ -8,27 +8,27 @@ import { useToast } from '@/hooks/use-toast';
 import { Mail, Phone, MapPin, Clock, ArrowRight, Instagram, Twitter, Facebook, Linkedin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// FAQ data
+// SSS Verileri
 const faqs = [
   {
-    question: 'What services does Ignite Marketing offer?',
-    answer: 'We offer a comprehensive range of digital marketing services including SEO, social media management, content creation, web development, PPC advertising, email marketing, analytics, and more.'
+    question: 'Ignite Marketing hangi hizmetleri sunuyor?',
+    answer: 'SEO, sosyal medya yönetimi, içerik oluşturma, web geliştirme, PPC reklamcılık, e-posta pazarlama, analitik ve daha fazlasını içeren kapsamlı bir dijital pazarlama hizmetleri yelpazesi sunuyoruz.'
   },
   {
-    question: 'How much do your services cost?',
-    answer: 'Our pricing is customized based on your specific needs and goals. We offer different packages and can create a tailored solution that fits your budget. Contact us for a free consultation and quote.'
+    question: 'Hizmetlerinizin maliyeti nedir?',
+    answer: 'Fiyatlandırmamız, belirli ihtiyaçlarınıza ve hedeflerinize göre özelleştirilmiştir. Farklı paketler sunuyoruz ve bütçenize uygun özel bir çözüm yaratabiliriz. Ücretsiz danışmanlık ve fiyat teklifi için bizimle iletişime geçin.'
   },
   {
-    question: 'How long does it take to see results?',
-    answer: "Results vary depending on the service and your starting point. SEO typically takes 3-6 months to show significant results, while PPC and social media advertising can generate immediate traffic. During our consultation, we'll provide realistic timelines for your specific goals."
+    question: 'Sonuçları görmek ne kadar sürer?',
+    answer: "Sonuçlar, hizmete ve başlangıç noktanıza bağlı olarak değişir. SEO genellikle önemli sonuçlar göstermek için 3-6 ay sürer, PPC ve sosyal medya reklamcılığı anında trafik oluşturabilir. Danışmanlık sırasında, belirli hedefleriniz için gerçekçi zaman çizelgeleri sunacağız."
   },
   {
-    question: 'Do you work with international clients?',
-    answer: 'Yes, we work with clients globally. Our team is experienced in creating digital marketing strategies for various markets and can adapt our approach to suit your target audience, regardless of location.'
+    question: 'Uluslararası müşterilerle çalışıyor musunuz?',
+    answer: 'Evet, global olarak müşterilerle çalışıyoruz. Ekibimiz, çeşitli pazarlar için dijital pazarlama stratejileri oluşturma konusunda deneyimlidir ve yaklaşımımızı, konumundan bağımsız olarak hedef kitlenize uyacak şekilde uyarlayabiliriz.'
   },
   {
-    question: 'Can you help with a specific project or do you only offer ongoing services?',
-    answer: 'We offer both project-based work and ongoing services. Whether you need a website redesign, a one-time campaign, or continuous marketing support, we can accommodate your needs.'
+    question: 'Belirli bir projeye yardımcı olabilir misiniz yoksa yalnızca devam eden hizmetler mi sunuyorsunuz?',
+    answer: 'Hem proje bazlı çalışma hem de devam eden hizmetler sunuyoruz. İster bir web sitesi yenileme, tek seferlik bir kampanya veya sürekli pazarlama desteği ihtiyacınız olsun, ihtiyaçlarınızı karşılayabiliriz.'
   }
 ];
 
@@ -45,13 +45,13 @@ const Contact = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Update page title and meta description for SEO
-    document.title = 'Contact Us | Ignite Marketing';
+    // SEO için sayfa başlığı ve meta açıklamasını güncelle
+    document.title = 'İletişim | Ignite Marketing';
     
-    // Add meta description
+    // Meta açıklama ekle
     let metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Get in touch with Ignite Marketing for all your digital marketing needs. Contact us today for a free consultation and quote.');
+      metaDescription.setAttribute('content', 'Tüm dijital pazarlama ihtiyaçlarınız için Ignite Marketing ile iletişime geçin. Ücretsiz danışmanlık ve fiyat teklifi için bugün bize ulaşın.');
     }
   }, []);
 
@@ -64,12 +64,12 @@ const Contact = () => {
     e.preventDefault();
     setLoading(true);
     
-    // Simulate form submission
+    // Form gönderimi simülasyonu
     setTimeout(() => {
       setLoading(false);
       toast({
-        title: "Message Sent!",
-        description: "Thank you for contacting us. We'll respond to your inquiry within 24 hours.",
+        title: "Mesaj Gönderildi!",
+        description: "Bizimle iletişime geçtiğiniz için teşekkürler. 24 saat içinde sorunuza cevap vereceğiz.",
       });
       setFormData({
         name: '',
@@ -88,12 +88,12 @@ const Contact = () => {
       <section className="py-24 bg-dark-600 relative">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-ignite to-ignite-500"></div>
         <div className="container mx-auto px-4 text-center max-w-3xl">
-          <p className="text-ignite font-semibold mb-4 animate-fade-in">GET IN TOUCH</p>
+          <p className="text-ignite font-semibold mb-4 animate-fade-in">BİZE ULAŞIN</p>
           <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in" style={{animationDelay: '0.2s'}}>
-            Contact Us
+            İletişim
           </h1>
           <p className="text-xl text-gray-300 mb-8 animate-fade-in" style={{animationDelay: '0.4s'}}>
-            Have a question or ready to start your next project? Reach out to our team for a free consultation.
+            Sorunuz mu var veya bir sonraki projenize başlamaya hazır mısınız? Ücretsiz danışmanlık için ekibimizle iletişime geçin.
           </p>
         </div>
       </section>
@@ -105,9 +105,9 @@ const Contact = () => {
             {/* Contact Information */}
             <div className="lg:col-span-1">
               <div className="bg-dark-500 rounded-xl p-8 border border-dark-400 h-full reveal">
-                <h2 className="text-2xl font-bold mb-6">Contact Information</h2>
+                <h2 className="text-2xl font-bold mb-6">İletişim Bilgileri</h2>
                 <p className="text-gray-300 mb-8">
-                  Fill out the form or contact us directly using the information below.
+                  Formu doldurun veya aşağıdaki bilgileri kullanarak doğrudan bizimle iletişime geçin.
                 </p>
                 
                 <div className="space-y-6">
@@ -116,7 +116,7 @@ const Contact = () => {
                       <Mail className="h-6 w-6 text-ignite" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-white">Email</h4>
+                      <h4 className="font-semibold text-white">E-posta</h4>
                       <p className="text-gray-400">info@ignitemarketing.com</p>
                     </div>
                   </div>
@@ -126,8 +126,8 @@ const Contact = () => {
                       <Phone className="h-6 w-6 text-ignite" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-white">Phone</h4>
-                      <p className="text-gray-400">+1 (555) 123-4567</p>
+                      <h4 className="font-semibold text-white">Telefon</h4>
+                      <p className="text-gray-400">+90 (555) 123 4567</p>
                     </div>
                   </div>
                   
@@ -136,8 +136,8 @@ const Contact = () => {
                       <MapPin className="h-6 w-6 text-ignite" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-white">Office</h4>
-                      <p className="text-gray-400">123 Marketing St, Digital City, 10001</p>
+                      <h4 className="font-semibold text-white">Ofis</h4>
+                      <p className="text-gray-400">Dijital Pazarlama Caddesi No:123, İstanbul, 34000</p>
                     </div>
                   </div>
                   
@@ -146,14 +146,14 @@ const Contact = () => {
                       <Clock className="h-6 w-6 text-ignite" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-white">Business Hours</h4>
-                      <p className="text-gray-400">Monday - Friday: 9am - 6pm</p>
+                      <h4 className="font-semibold text-white">Çalışma Saatleri</h4>
+                      <p className="text-gray-400">Pazartesi - Cuma: 09:00 - 18:00</p>
                     </div>
                   </div>
                 </div>
                 
                 <div className="mt-8 pt-8 border-t border-dark-300">
-                  <h4 className="font-semibold text-white mb-4">Follow Us</h4>
+                  <h4 className="font-semibold text-white mb-4">Bizi Takip Edin</h4>
                   <div className="flex space-x-4">
                     <a href="#" className="bg-dark-400 p-2 rounded-full hover:bg-ignite/20 transition-colors">
                       <Instagram className="h-5 w-5 text-white" />
@@ -175,23 +175,23 @@ const Contact = () => {
             {/* Contact Form */}
             <div className="lg:col-span-2">
               <div className="bg-dark-500 rounded-xl p-8 border border-dark-400 reveal">
-                <h2 className="text-2xl font-bold mb-6">Send Us a Message</h2>
+                <h2 className="text-2xl font-bold mb-6">Bize Mesaj Gönderin</h2>
                 <p className="text-gray-300 mb-8">
-                  Tell us about your project and goals. We'll get back to you with a tailored solution.
+                  Projeniz ve hedefleriniz hakkında bilgi verin. Size özel bir çözümle geri dönüş yapacağız.
                 </p>
                 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
-                        Full Name *
+                        Ad Soyad *
                       </label>
                       <Input
                         id="name"
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        placeholder="Your name"
+                        placeholder="Adınız ve soyadınız"
                         required
                         className="bg-dark-400 border-dark-300 focus:border-ignite text-white"
                       />
@@ -199,7 +199,7 @@ const Contact = () => {
                     
                     <div>
                       <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
-                        Email Address *
+                        E-posta Adresi *
                       </label>
                       <Input
                         id="email"
@@ -207,7 +207,7 @@ const Contact = () => {
                         type="email"
                         value={formData.email}
                         onChange={handleChange}
-                        placeholder="your.email@company.com"
+                        placeholder="e-posta@adresiniz.com"
                         required
                         className="bg-dark-400 border-dark-300 focus:border-ignite text-white"
                       />
@@ -217,28 +217,28 @@ const Contact = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-1">
-                        Phone Number
+                        Telefon Numarası
                       </label>
                       <Input
                         id="phone"
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
-                        placeholder="Your phone number"
+                        placeholder="Telefon numaranız"
                         className="bg-dark-400 border-dark-300 focus:border-ignite text-white"
                       />
                     </div>
                     
                     <div>
                       <label htmlFor="company" className="block text-sm font-medium text-gray-300 mb-1">
-                        Company
+                        Firma Adı
                       </label>
                       <Input
                         id="company"
                         name="company"
                         value={formData.company}
                         onChange={handleChange}
-                        placeholder="Your company"
+                        placeholder="Firmanızın adı"
                         className="bg-dark-400 border-dark-300 focus:border-ignite text-white"
                       />
                     </div>
@@ -246,7 +246,7 @@ const Contact = () => {
                   
                   <div>
                     <label htmlFor="service" className="block text-sm font-medium text-gray-300 mb-1">
-                      Service You're Interested In *
+                      İlgilendiğiniz Hizmet *
                     </label>
                     <select
                       id="service"
@@ -256,27 +256,27 @@ const Contact = () => {
                       required
                       className="w-full px-4 py-2 rounded-md bg-dark-400 border border-dark-300 focus:border-ignite text-white"
                     >
-                      <option value="">Select a service</option>
-                      <option value="Digital Marketing">Digital Marketing</option>
-                      <option value="SEO">SEO Optimization</option>
-                      <option value="Social Media">Social Media Management</option>
-                      <option value="Content Creation">Content Creation</option>
-                      <option value="Web Development">Web Development</option>
-                      <option value="PPC">PPC Advertising</option>
-                      <option value="Other">Other</option>
+                      <option value="">Hizmet seçin</option>
+                      <option value="Dijital Pazarlama">Dijital Pazarlama</option>
+                      <option value="SEO">SEO Optimizasyonu</option>
+                      <option value="Sosyal Medya">Sosyal Medya Yönetimi</option>
+                      <option value="İçerik Üretimi">İçerik Üretimi</option>
+                      <option value="Web Geliştirme">Web Geliştirme</option>
+                      <option value="PPC">PPC Reklamcılık</option>
+                      <option value="Diğer">Diğer</option>
                     </select>
                   </div>
                   
                   <div>
                     <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-1">
-                      Message *
+                      Mesajınız *
                     </label>
                     <Textarea
                       id="message"
                       name="message"
                       value={formData.message}
                       onChange={handleChange}
-                      placeholder="Tell us about your project and goals..."
+                      placeholder="Projeniz ve hedefleriniz hakkında bilgi verin..."
                       rows={4}
                       required
                       className="bg-dark-400 border-dark-300 focus:border-ignite text-white"
@@ -288,7 +288,7 @@ const Contact = () => {
                     className="w-full md:w-auto bg-ignite hover:bg-ignite-700 text-white"
                     disabled={loading}
                   >
-                    {loading ? 'Sending...' : 'Send Message'}
+                    {loading ? 'Gönderiliyor...' : 'Mesaj Gönder'}
                   </Button>
                 </form>
               </div>
@@ -301,10 +301,10 @@ const Contact = () => {
       <section className="py-20 bg-dark-600">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <p className="text-ignite font-semibold mb-3 reveal">FAQ</p>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 reveal">Frequently Asked Questions</h2>
+            <p className="text-ignite font-semibold mb-3 reveal">SSS</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 reveal">Sıkça Sorulan Sorular</h2>
             <p className="text-gray-300 reveal">
-              Find answers to some of the most common questions about our services.
+              Hizmetlerimiz hakkında en sık sorulan soruların cevaplarını bulun.
             </p>
           </div>
           
@@ -320,11 +320,11 @@ const Contact = () => {
             
             <div className="text-center mt-12 reveal">
               <p className="text-gray-300 mb-4">
-                Can't find the answer you're looking for?
+                Aradığınız cevabı bulamadınız mı?
               </p>
               <Button className="bg-ignite hover:bg-ignite-700 text-white">
                 <Link to="/contact" className="flex items-center">
-                  Contact Our Team <ArrowRight className="ml-2 h-4 w-4" />
+                  Ekibimizle İletişime Geçin <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>
