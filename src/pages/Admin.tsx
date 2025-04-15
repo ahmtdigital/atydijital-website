@@ -105,12 +105,15 @@ const Admin = () => {
               transition={{ duration: 0.5 }}
               className="max-w-md mx-auto"
             >
-              <Card className="bg-dark-500 border-dark-400 overflow-hidden">
-                <CardHeader className="bg-dark-600 border-b border-dark-400">
+              <Card className="bg-dark-500 border-dark-400 overflow-hidden relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-ignite/5 via-transparent to-transparent" />
+                <CardHeader className="bg-dark-600 border-b border-dark-400 relative">
                   <CardTitle className="text-2xl text-white">Yönetici Girişi</CardTitle>
-                  <CardDescription className="text-white/60">Yönetim paneline erişmek için giriş yapın</CardDescription>
+                  <CardDescription className="text-white/60">
+                    Web sitenizi yönetmek için giriş yapın
+                  </CardDescription>
                 </CardHeader>
-                <CardContent className="pt-6">
+                <CardContent className="pt-6 relative">
                   <form onSubmit={handleLogin} className="space-y-4">
                     {loginError && (
                       <Alert variant="destructive" className="bg-red-900/20 border-red-900/50 text-red-400">
@@ -118,29 +121,29 @@ const Admin = () => {
                       </Alert>
                     )}
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Kullanıcı Adı</label>
+                      <label className="text-sm font-medium text-white/80">Kullanıcı Adı</label>
                       <Input 
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         placeholder="Kullanıcı adınızı girin"
-                        className="bg-dark-400 border-dark-300"
+                        className="bg-dark-400 border-dark-300 focus:border-ignite/50 focus:ring-1 focus:ring-ignite/30"
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Şifre</label>
+                      <label className="text-sm font-medium text-white/80">Şifre</label>
                       <div className="relative">
                         <Input 
                           type={showPassword ? 'text' : 'password'}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           placeholder="Şifrenizi girin"
-                          className="bg-dark-400 border-dark-300 pr-10"
+                          className="bg-dark-400 border-dark-300 focus:border-ignite/50 focus:ring-1 focus:ring-ignite/30 pr-10"
                           required
                         />
                         <button 
                           type="button"
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
                           onClick={() => setShowPassword(!showPassword)}
                         >
                           {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -149,26 +152,32 @@ const Admin = () => {
                     </div>
                     <Button 
                       type="submit" 
-                      className="w-full bg-ignite hover:bg-ignite-700 mt-6" 
+                      className="w-full bg-ignite hover:bg-ignite-700 mt-6 relative overflow-hidden group" 
                       disabled={isLoading}
                     >
+                      <motion.div
+                        className="absolute inset-0 bg-white/10"
+                        initial={{ x: '-100%' }}
+                        animate={isLoading ? { x: '100%' } : { x: '-100%' }}
+                        transition={{ duration: 1, repeat: isLoading ? Infinity : 0 }}
+                      />
                       {isLoading ? (
-                        <div className="flex items-center">
+                        <div className="flex items-center justify-center">
                           <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
                           Giriş Yapılıyor...
                         </div>
                       ) : (
-                        <div className="flex items-center">
+                        <div className="flex items-center justify-center">
                           <LogIn className="mr-2 h-4 w-4" />
                           Giriş Yap
                         </div>
                       )}
                     </Button>
                     
-                    <div className="text-center text-sm mt-4 text-gray-400">
-                      <p>Demo Giriş:</p>
-                      <p>Kullanıcı adı: admin</p>
-                      <p>Şifre: admin123</p>
+                    <div className="text-center text-sm mt-4 p-4 bg-dark-600 rounded-lg border border-dark-400">
+                      <p className="text-white/60 mb-2">Demo Giriş Bilgileri:</p>
+                      <p className="text-white/80">Kullanıcı adı: <span className="text-ignite">admin</span></p>
+                      <p className="text-white/80">Şifre: <span className="text-ignite">admin123</span></p>
                     </div>
                   </form>
                 </CardContent>
