@@ -43,6 +43,16 @@ const caseStudies = [
     image: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=2070',
     link: '/portfolio/sosyal-medya-kampanyasi',
     color: 'from-amber-500/20 to-red-500/20'
+  },
+  {
+    id: 4,
+    title: 'Google Ads Kampanyası',
+    client: 'OtoPlus',
+    description: 'OtoPlus için optimize edilmiş Google Ads kampanyası ile dönüşüm oranını %75 artırdık ve reklam maliyetini %30 düşürdük.',
+    tools: ['google-ads', 'google-analytics', 'facebook-ads'],
+    image: 'https://images.unsplash.com/photo-1533749871411-5e21e14bcc7d?q=80&w=2070',
+    link: '/portfolio/google-ads-kampanyasi',
+    color: 'from-green-500/20 to-teal-500/20'
   }
 ];
 
@@ -127,31 +137,74 @@ const CaseStudiesSlider = ({ animationType = 'fade', autoplay = true, interval =
                 <div className="relative z-20 p-12 flex flex-col justify-center">
                   <div className="flex space-x-2 mb-6">
                     {caseStudies[currentSlide].tools.map((tool, index) => (
-                      <div key={index} className="bg-dark-400/50 backdrop-blur-sm p-2 rounded-full h-10 w-10">
+                      <motion.div 
+                        key={index} 
+                        className="bg-dark-400/50 backdrop-blur-sm p-2 rounded-full h-10 w-10"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: index * 0.1 }}
+                      >
                         <MarketingIcon name={tool} />
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
                   
-                  <h3 className="text-3xl md:text-4xl font-bold mb-3">{caseStudies[currentSlide].title}</h3>
-                  <p className="text-lg text-ignite mb-6">Müşteri: {caseStudies[currentSlide].client}</p>
-                  <p className="text-gray-300 text-lg mb-8">{caseStudies[currentSlide].description}</p>
+                  <motion.h3 
+                    className="text-3xl md:text-4xl font-bold mb-3"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                  >
+                    {caseStudies[currentSlide].title}
+                  </motion.h3>
                   
-                  <div>
-                    <Button className="bg-ignite hover:bg-ignite-700 text-white mr-4">
+                  <motion.p 
+                    className="text-lg text-ignite mb-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                  >
+                    Müşteri: {caseStudies[currentSlide].client}
+                  </motion.p>
+                  
+                  <motion.p 
+                    className="text-gray-300 text-lg mb-8"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
+                  >
+                    {caseStudies[currentSlide].description}
+                  </motion.p>
+                  
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.5 }}
+                  >
+                    <Button className="bg-ignite hover:bg-ignite-700 text-white mr-4 group relative overflow-hidden">
                       <Link to={caseStudies[currentSlide].link} className="flex items-center">
-                        Vaka Çalışmasını İncele <ExternalLink className="ml-2 h-4 w-4" />
+                        Vaka Çalışmasını İncele <ExternalLink className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                       </Link>
+                      <motion.div
+                        className="absolute inset-0 bg-white/10"
+                        initial={{ x: '-100%' }}
+                        whileHover={{ x: '100%' }}
+                        transition={{ duration: 0.5 }}
+                      />
                     </Button>
-                  </div>
+                  </motion.div>
                 </div>
                 
-                <div className="relative h-[400px] lg:h-auto">
-                  <img
+                <div className="relative h-[400px] lg:h-auto overflow-hidden">
+                  <motion.img
                     src={caseStudies[currentSlide].image}
                     alt={caseStudies[currentSlide].title}
                     className="w-full h-full object-cover"
+                    initial={{ scale: 1.1 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 1 }}
                   />
+                  <div className="absolute inset-0 bg-gradient-to-r from-dark-900/50 to-transparent"></div>
                 </div>
               </div>
               
@@ -159,7 +212,7 @@ const CaseStudiesSlider = ({ animationType = 'fade', autoplay = true, interval =
                 <Button 
                   onClick={prevSlide} 
                   className="h-12 w-12 rounded-full bg-dark-500/70 backdrop-blur-sm hover:bg-ignite"
-                  aria-label="Previous case study"
+                  aria-label="Önceki vaka çalışması"
                 >
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
@@ -167,7 +220,7 @@ const CaseStudiesSlider = ({ animationType = 'fade', autoplay = true, interval =
                 <Button 
                   onClick={nextSlide} 
                   className="h-12 w-12 rounded-full bg-dark-500/70 backdrop-blur-sm hover:bg-ignite"
-                  aria-label="Next case study"
+                  aria-label="Sonraki vaka çalışması"
                 >
                   <ArrowRight className="h-5 w-5" />
                 </Button>
@@ -175,11 +228,13 @@ const CaseStudiesSlider = ({ animationType = 'fade', autoplay = true, interval =
               
               <div className="absolute bottom-6 left-6 z-30 flex space-x-2">
                 {caseStudies.map((_, index) => (
-                  <button
+                  <motion.button
                     key={index}
                     onClick={() => setCurrentSlide(index)}
                     className={`h-2 rounded-full transition-all ${currentSlide === index ? 'w-8 bg-ignite' : 'w-2 bg-white/50'}`}
-                    aria-label={`Go to slide ${index + 1}`}
+                    whileHover={{ scale: 1.2 }}
+                    whileTap={{ scale: 0.9 }}
+                    aria-label={`${index + 1} numaralı vaka çalışmasına git`}
                   />
                 ))}
               </div>

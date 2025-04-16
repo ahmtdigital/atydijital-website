@@ -221,9 +221,10 @@ const Navbar = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
-                className="fixed inset-0 bg-dark/95 z-40 flex flex-col items-center justify-center lg:hidden pt-20"
+                className="fixed inset-0 bg-dark/95 z-40 flex flex-col items-center pt-20"
+                style={{ top: 0, height: '100vh', paddingTop: '120px', overflow: 'auto' }}
               >
-                <div className="flex flex-col items-center space-y-6 py-10 mt-10 w-full px-6">
+                <div className="flex flex-col items-center space-y-6 py-10 w-full px-6">
                   {navItems.map((item, index) => (
                     <motion.div
                       key={item.path}

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -106,6 +105,7 @@ const Admin = () => {
   };
 
   if (!isLoggedIn) {
+    
     return (
       <Layout>
         <div className="min-h-screen pt-32 bg-dark">

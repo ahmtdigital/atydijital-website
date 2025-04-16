@@ -14,7 +14,7 @@ const Footer = () => {
               <span className="text-ignite">Marketing</span>
             </h3>
             <p className="text-gray-400 mb-6">
-              Creating powerful digital experiences that elevate brands and drive results.
+              Markanızı bir üst seviyeye taşıyacak güçlü dijital deneyimler yaratıyoruz.
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-ignite transition-colors">
@@ -34,21 +34,21 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-white text-lg font-semibold mb-6">Quick Links</h4>
+            <h4 className="text-white text-lg font-semibold mb-6">Hızlı Bağlantılar</h4>
             <ul className="space-y-3">
               <li>
                 <Link to="/services" className="text-gray-400 hover:text-ignite transition-colors">
-                  Our Services
+                  Hizmetlerimiz
                 </Link>
               </li>
               <li>
                 <Link to="/portfolio" className="text-gray-400 hover:text-ignite transition-colors">
-                  Portfolio
+                  Portfolyo
                 </Link>
               </li>
               <li>
                 <Link to="/about" className="text-gray-400 hover:text-ignite transition-colors">
-                  About Us
+                  Hakkımızda
                 </Link>
               </li>
               <li>
@@ -58,7 +58,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link to="/contact" className="text-gray-400 hover:text-ignite transition-colors">
-                  Contact
+                  İletişim
                 </Link>
               </li>
             </ul>
@@ -66,31 +66,31 @@ const Footer = () => {
 
           {/* Services */}
           <div>
-            <h4 className="text-white text-lg font-semibold mb-6">Services</h4>
+            <h4 className="text-white text-lg font-semibold mb-6">Hizmetler</h4>
             <ul className="space-y-3">
               <li>
                 <Link to="/services/digital-marketing" className="text-gray-400 hover:text-ignite transition-colors">
-                  Digital Marketing
+                  Dijital Pazarlama
                 </Link>
               </li>
               <li>
                 <Link to="/services/seo" className="text-gray-400 hover:text-ignite transition-colors">
-                  SEO Optimization
+                  SEO Optimizasyonu
                 </Link>
               </li>
               <li>
                 <Link to="/services/social-media" className="text-gray-400 hover:text-ignite transition-colors">
-                  Social Media Management
+                  Sosyal Medya Yönetimi
                 </Link>
               </li>
               <li>
                 <Link to="/services/content" className="text-gray-400 hover:text-ignite transition-colors">
-                  Content Creation
+                  İçerik Üretimi
                 </Link>
               </li>
               <li>
                 <Link to="/services/web-development" className="text-gray-400 hover:text-ignite transition-colors">
-                  Web Development
+                  Web Geliştirme
                 </Link>
               </li>
             </ul>
@@ -98,19 +98,19 @@ const Footer = () => {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-white text-lg font-semibold mb-6">Contact Us</h4>
+            <h4 className="text-white text-lg font-semibold mb-6">İletişim</h4>
             <ul className="space-y-4">
               <li className="flex items-start">
                 <MapPin className="text-ignite mr-3 mt-1 flex-shrink-0" size={18} />
-                <span className="text-gray-400">123 Marketing St, Digital City, 10001</span>
+                <span className="text-gray-400">Dijital Cadde No: 123, İstanbul, Türkiye</span>
               </li>
               <li className="flex items-center">
                 <Phone className="text-ignite mr-3 flex-shrink-0" size={18} />
-                <span className="text-gray-400">+1 (555) 123-4567</span>
+                <span className="text-gray-400">+90 (212) 123 4567</span>
               </li>
               <li className="flex items-center">
                 <Mail className="text-ignite mr-3 flex-shrink-0" size={18} />
-                <span className="text-gray-400">info@ignitemarketing.com</span>
+                <span className="text-gray-400">info@ignitemarketing.com.tr</span>
               </li>
             </ul>
           </div>
@@ -119,14 +119,14 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-gray-800 text-center md:flex md:justify-between md:text-left">
           <p className="text-gray-500 text-sm">
-            © {new Date().getFullYear()} Ignite Marketing. All rights reserved.
+            © {new Date().getFullYear()} Ignite Marketing. Tüm hakları saklıdır.
           </p>
           <div className="mt-4 md:mt-0">
             <Link to="/privacy" className="text-gray-500 text-sm hover:text-ignite mr-6 transition-colors">
-              Privacy Policy
+              Gizlilik Politikası
             </Link>
             <Link to="/terms" className="text-gray-500 text-sm hover:text-ignite transition-colors">
-              Terms of Service
+              Kullanım Koşulları
             </Link>
           </div>
         </div>

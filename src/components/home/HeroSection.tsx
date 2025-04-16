@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from 'react';
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight, TrendingUp, BarChart4, Zap, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -23,6 +24,24 @@ const defaultSlides: HeroSlide[] = [
     buttonText: "Portfolyomuzu İnceleyin",
     buttonLink: "/portfolio",
     backgroundImage: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=2070",
+    isActive: false
+  },
+  {
+    id: 3,
+    title: "SEO ve Performans Odaklı Yaklaşım",
+    subtitle: "Veriye dayalı kararlar ve optimize edilmiş stratejilerle organik trafiğinizi artırıyoruz.",
+    buttonText: "SEO Hizmetlerimiz",
+    buttonLink: "/services/seo",
+    backgroundImage: "https://images.unsplash.com/photo-1493397212122-2b85dda8106b?q=80&w=2070",
+    isActive: false
+  },
+  {
+    id: 4,
+    title: "Dijital Pazarlama Çözümleri",
+    subtitle: "Sosyal medya, içerik pazarlaması ve reklam kampanyaları ile hedef kitlenize ulaşın.",
+    buttonText: "Pazarlama Çözümleri",
+    buttonLink: "/services/digital-marketing",
+    backgroundImage: "https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?q=80&w=2070",
     isActive: false
   }
 ];
@@ -80,6 +99,55 @@ const HeroSection = () => {
     };
   }, [autoplay, slides.length]);
 
+  // Animasyonlu yüzen iconlar
+  const FloatingIcons = () => (
+    <>
+      <motion.div
+        className="absolute top-1/3 left-1/5 text-ignite opacity-20 z-10"
+        animate={{ 
+          y: [0, -20, 0],
+          rotate: [0, 5, 0]
+        }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <TrendingUp size={80} />
+      </motion.div>
+      
+      <motion.div
+        className="absolute bottom-1/4 right-1/6 text-ignite opacity-20 z-10"
+        animate={{ 
+          y: [0, 20, 0],
+          rotate: [0, -5, 0]
+        }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+      >
+        <BarChart4 size={60} />
+      </motion.div>
+      
+      <motion.div
+        className="absolute top-2/3 left-1/3 text-ignite opacity-20 z-10"
+        animate={{ 
+          scale: [1, 1.2, 1],
+          rotate: [0, 10, 0]
+        }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+      >
+        <Zap size={50} />
+      </motion.div>
+      
+      <motion.div
+        className="absolute top-1/4 right-1/3 text-ignite opacity-20 z-10"
+        animate={{ 
+          scale: [1, 1.1, 1],
+          y: [0, -15, 0]
+        }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+      >
+        <Target size={70} />
+      </motion.div>
+    </>
+  );
+
   return (
     <section 
       className="relative min-h-[90vh] flex items-center bg-dark overflow-hidden"
@@ -89,6 +157,9 @@ const HeroSection = () => {
     >
       {/* Gradient overlay line */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-ignite via-ignite-400 to-ignite-600 z-10"></div>
+      
+      {/* Floating animated icons */}
+      <FloatingIcons />
       
       {/* Navigation arrows with updated design */}
       {slides.length > 1 && (
