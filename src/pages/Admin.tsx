@@ -8,7 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import AdminNav from '@/components/admin/AdminNav';
 import { motion } from 'framer-motion';
-import { LogIn, Eye, EyeOff, X } from 'lucide-react';
+import { LogIn, Eye, EyeOff, X, Database } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import ServiceManager from '@/components/admin/ServiceManager';
 import ProjectManagerNew from '@/components/admin/ProjectManagerNew';
@@ -22,6 +22,7 @@ import TeamManager from '@/components/admin/TeamManager';
 import HeroSliderManager from '@/components/admin/HeroSliderManager';
 import SiteSettingsManager from '@/components/admin/SiteSettingsManager';
 import SeoManager from '@/components/admin/SeoManager';
+import { useMySQLService } from '@/lib/mysql-service';
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -33,28 +34,29 @@ const Admin = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const mysqlService = useMySQLService();
 
   useEffect(() => {
-    // Check URL parameters for active tab
+    // URL parametrelerinden aktif sekmeyi kontrol et
     const params = new URLSearchParams(window.location.search);
     const tabParam = params.get('tab');
     if (tabParam) {
       setActiveTab(tabParam);
     }
     
-    // Check if user is already logged in (from localStorage)
+    // Kullanıcı zaten giriş yapmış mı kontrol et (localStorage'dan)
     const adminLoggedIn = localStorage.getItem('adminLoggedIn');
     if (adminLoggedIn === 'true') {
       setIsLoggedIn(true);
     }
     
-    // Update page title
+    // Sayfa başlığını güncelle
     document.title = 'Yönetim Paneli | Ignite Pazarlama';
   }, []);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    // Update URL with tab parameter
+    // URL'yi sekme parametresiyle güncelle
     const newUrl = `${window.location.pathname}?tab=${value}`;
     window.history.pushState({ path: newUrl }, '', newUrl);
   };
@@ -63,7 +65,7 @@ const Admin = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simple demo login (in a real app, this would be a backend call)
+    // Demo giriş (gerçek bir uygulamada bu bir backend çağrısı olacaktır)
     setTimeout(() => {
       if (username === 'admin' && password === 'admin123') {
         setIsLoggedIn(true);
@@ -73,6 +75,15 @@ const Admin = () => {
           description: "Hoş geldiniz, Admin!",
         });
         setLoginError('');
+        
+        // MySQL bağlantısını test et
+        mysqlService.testConnection().then(isConnected => {
+          if (isConnected) {
+            console.log('MySQL bağlantısı başarılı');
+          } else {
+            console.log('MySQL bağlantısı kurulamadı');
+          }
+        });
       } else {
         setLoginError('Kullanıcı adı veya şifre hatalı');
         toast({
@@ -196,23 +207,26 @@ const Admin = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="pt-10 pb-6 bg-dark-600 border-b border-dark-500"
+        className="pt-24 md:pt-16 pb-6 bg-dark-600 border-b border-dark-500"
       >
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold mb-2 text-white">Yönetim Paneli</h1>
+              <h1 className="text-3xl font-bold mb-2 text-white flex items-center">
+                <Database className="mr-3 h-6 w-6 text-ignite" />
+                Yönetim Paneli
+              </h1>
               <p className="text-white/60">Web sitenizi yönetin ve içerikleri güncelleyin</p>
             </div>
             <div className="flex items-center gap-2">
               <Button 
                 variant="outline" 
-                size="icon" 
                 onClick={handleLogout} 
                 title="Çıkış Yap"
                 className="border-dark-400 hover:bg-dark-500"
               >
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4 mr-2" />
+                Çıkış Yap
               </Button>
             </div>
           </div>

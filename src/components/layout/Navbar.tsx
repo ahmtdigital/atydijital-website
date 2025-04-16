@@ -34,7 +34,7 @@ const Navbar = () => {
 
     window.addEventListener('scroll', handleScroll);
     
-    // When menu is open, prevent scrolling
+    // Menü açıkken sayfanın kaydırılmasını engelle
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -208,7 +208,7 @@ const Navbar = () => {
           <button 
             className="lg:hidden relative z-50" 
             onClick={toggleMenu}
-            aria-label="Toggle Menu"
+            aria-label="Menüyü Aç/Kapat"
           >
             {isOpen ? <X className="h-6 w-6 text-white" /> : <Menu className="h-6 w-6 text-white" />}
           </button>
@@ -221,20 +221,21 @@ const Navbar = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
-                className="fixed inset-0 bg-dark/95 z-40 flex flex-col items-center justify-center lg:hidden"
+                className="fixed inset-0 bg-dark/95 z-40 flex flex-col items-center justify-center lg:hidden pt-20"
               >
-                <div className="flex flex-col items-center space-y-8 py-10">
-                  {navItems.map((item) => (
+                <div className="flex flex-col items-center space-y-6 py-10 mt-10 w-full px-6">
+                  {navItems.map((item, index) => (
                     <motion.div
                       key={item.path}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: navItems.indexOf(item) * 0.1 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      className="w-full text-center"
                     >
                       <Link 
                         to={item.path}
-                        className="text-white text-xl hover:text-ignite transition-colors duration-200"
-                        onClick={toggleMenu}
+                        className="text-white text-xl hover:text-ignite transition-colors duration-200 block py-2"
+                        onClick={() => setIsOpen(false)}
                       >
                         {item.name}
                       </Link>
@@ -244,12 +245,13 @@ const Navbar = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: navItems.length * 0.1 }}
+                    className="mt-6 w-full"
                   >
                     <Button 
                       variant="default" 
-                      className="bg-ignite hover:bg-ignite-700 text-white mt-4 px-8 py-2"
+                      className="bg-ignite hover:bg-ignite-700 text-white w-full py-6 text-lg"
                       onClick={() => {
-                        toggleMenu();
+                        setIsOpen(false);
                         setQuotePopupOpen(true);
                       }}
                     >

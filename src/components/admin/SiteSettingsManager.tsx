@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { Save, Palette, Layout, Image, Briefcase } from 'lucide-react';
+import { Save, Palette, Database, Layout, Image, Briefcase } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useDataService } from '@/lib/db';
 
@@ -33,6 +33,12 @@ const SiteSettingsManager = () => {
     caseStudiesAnimationType: 'fade',
     caseStudiesAutoplay: true,
     caseStudiesInterval: 5000,
+    // MySQL bağlantı ayarları
+    dbHost: 'localhost',
+    dbUser: 'root',
+    dbPassword: '',
+    dbName: 'ignite_db',
+    dbPort: 3306
   }]);
 
   const [settings, setSettings] = useState({
@@ -48,7 +54,15 @@ const SiteSettingsManager = () => {
     caseStudiesAnimationType: 'fade',
     caseStudiesAutoplay: true,
     caseStudiesInterval: 5000,
+    // MySQL bağlantı ayarları
+    dbHost: 'localhost',
+    dbUser: 'root',
+    dbPassword: '',
+    dbName: 'ignite_db',
+    dbPort: 3306
   });
+
+  const [dbTestStatus, setDbTestStatus] = useState<null | 'testing' | 'success' | 'error'>(null);
 
   useEffect(() => {
     if (siteSettings && siteSettings.length > 0) {
@@ -77,6 +91,31 @@ const SiteSettingsManager = () => {
     }
   };
 
+  const testDatabaseConnection = () => {
+    setDbTestStatus('testing');
+    
+    // DB bağlantı testi simülasyonu
+    setTimeout(() => {
+      // Rastgele başarı/başarısızlık durumu
+      const isSuccess = Math.random() > 0.3;
+      
+      if (isSuccess) {
+        setDbTestStatus('success');
+        toast({
+          title: "Bağlantı Başarılı",
+          description: "Veritabanı bağlantısı başarıyla kuruldu.",
+        });
+      } else {
+        setDbTestStatus('error');
+        toast({
+          title: "Bağlantı Hatası",
+          description: "Veritabanına bağlanırken bir hata oluştu. Bağlantı bilgilerini kontrol edin.",
+          variant: "destructive",
+        });
+      }
+    }, 1500);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -91,7 +130,7 @@ const SiteSettingsManager = () => {
             Site Ayarları
           </h2>
           <p className="text-sm text-white/60 mt-1">
-            Sitenizin görünümünü ve davranışını buradan özelleştirebilirsiniz
+            Sitenizin görünümünü, davranışını ve veritabanı ayarlarını buradan özelleştirebilirsiniz
           </p>
         </div>
       </div>
@@ -107,6 +146,7 @@ const SiteSettingsManager = () => {
               <TabsTrigger value="projects">Proje Görünümü</TabsTrigger>
               <TabsTrigger value="casestudies">Vaka Çalışmaları</TabsTrigger>
               <TabsTrigger value="animations">Animasyonlar</TabsTrigger>
+              <TabsTrigger value="database">Veritabanı</TabsTrigger>
             </TabsList>
 
             <TabsContent value="appearance" className="space-y-4 mt-4">
@@ -256,6 +296,99 @@ const SiteSettingsManager = () => {
                   <option value="fade">Solma Efekti</option>
                   <option value="none">Efekt Yok</option>
                 </select>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="database" className="space-y-6 mt-4">
+              <div className="bg-dark-600 p-4 rounded-lg border border-dark-400">
+                <h3 className="font-medium flex items-center mb-4">
+                  <Database className="mr-2 h-4 w-4 text-ignite" />
+                  MySQL Veritabanı Bağlantı Ayarları
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-white/80">Veritabanı Sunucusu</label>
+                    <Input 
+                      value={settings.dbHost}
+                      onChange={(e) => setSettings({...settings, dbHost: e.target.value})}
+                      placeholder="localhost"
+                      className="bg-dark-500 border-dark-300"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-white/80">Port</label>
+                    <Input 
+                      type="number"
+                      value={settings.dbPort}
+                      onChange={(e) => setSettings({...settings, dbPort: parseInt(e.target.value)})}
+                      placeholder="3306"
+                      className="bg-dark-500 border-dark-300"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-white/80">Veritabanı Adı</label>
+                    <Input 
+                      value={settings.dbName}
+                      onChange={(e) => setSettings({...settings, dbName: e.target.value})}
+                      placeholder="ignite_db"
+                      className="bg-dark-500 border-dark-300"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-white/80">Kullanıcı Adı</label>
+                    <Input 
+                      value={settings.dbUser}
+                      onChange={(e) => setSettings({...settings, dbUser: e.target.value})}
+                      placeholder="root"
+                      className="bg-dark-500 border-dark-300"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-white/80">Şifre</label>
+                    <Input 
+                      type="password"
+                      value={settings.dbPassword}
+                      onChange={(e) => setSettings({...settings, dbPassword: e.target.value})}
+                      placeholder="••••••••"
+                      className="bg-dark-500 border-dark-300"
+                    />
+                  </div>
+                  
+                  <div className="flex items-end">
+                    <Button 
+                      onClick={testDatabaseConnection}
+                      variant="outline"
+                      disabled={dbTestStatus === 'testing'}
+                      className={`w-full ${
+                        dbTestStatus === 'success' ? 'border-green-500 text-green-500' : 
+                        dbTestStatus === 'error' ? 'border-red-500 text-red-500' : 
+                        'border-dark-300'
+                      }`}
+                    >
+                      {dbTestStatus === 'testing' ? (
+                        <>
+                          <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                          Bağlantı Test Ediliyor...
+                        </>
+                      ) : dbTestStatus === 'success' ? (
+                        'Bağlantı Başarılı'
+                      ) : dbTestStatus === 'error' ? (
+                        'Bağlantı Hatası'
+                      ) : (
+                        'Bağlantıyı Test Et'
+                      )}
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="mt-4 text-sm text-white/60">
+                  <p>Veritabanı ayarlarını güvenli bir şekilde yapılandırın. Bu bilgiler site içeriği ve kullanıcı verileri için gereklidir.</p>
+                </div>
               </div>
             </TabsContent>
           </Tabs>

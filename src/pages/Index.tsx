@@ -46,7 +46,20 @@ const Index = () => {
     caseStudiesInterval: 5000,
   }]);
 
-  const settings = siteSettings[0] || {};
+  const settings = siteSettings[0] || {
+    darkMode: true,
+    glassmorphism: true,
+    animationsEnabled: true,
+    projectsPerRow: 2,
+    projectImageHeight: 400,
+    projectHoverEffect: 'scale',
+    showProjectTags: true,
+    showProjectCategory: true,
+    showCaseStudies: true,
+    caseStudiesAnimationType: 'fade',
+    caseStudiesAutoplay: true,
+    caseStudiesInterval: 5000,
+  };
 
   useEffect(() => {
     // SEO için sayfa başlığını güncelle
@@ -109,11 +122,13 @@ const Index = () => {
         <HeroSection />
         <ServicesSection />
         <MarketingToolsSlider />
-        {settings.showCaseStudies && <CaseStudiesSlider 
-          animationType={settings.caseStudiesAnimationType}
-          autoplay={settings.caseStudiesAutoplay}
-          interval={settings.caseStudiesInterval}
-        />}
+        {settings.showCaseStudies && (
+          <CaseStudiesSlider 
+            animationType={settings.caseStudiesAnimationType}
+            autoplay={settings.caseStudiesAutoplay}
+            interval={settings.caseStudiesInterval}
+          />
+        )}
         <StatsSection />
         <TestimonialsSection />
         <ContactSection />
