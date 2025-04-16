@@ -1,10 +1,17 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import MarketingIcon from '@/components/ui/marketing-icon';
+
+// Define props interface
+interface CaseStudiesSliderProps {
+  animationType?: string;
+  autoplay?: boolean;
+  interval?: number;
+}
 
 const caseStudies = [
   {
@@ -39,8 +46,19 @@ const caseStudies = [
   }
 ];
 
-const CaseStudiesSlider = () => {
+const CaseStudiesSlider = ({ animationType = 'fade', autoplay = true, interval = 5000 }: CaseStudiesSliderProps) => {
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Auto-advance slides if autoplay is enabled
+  useEffect(() => {
+    if (!autoplay) return;
+    
+    const timer = setInterval(() => {
+      nextSlide();
+    }, interval);
+    
+    return () => clearInterval(timer);
+  }, [autoplay, interval, currentSlide]);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev === caseStudies.length - 1 ? 0 : prev + 1));
@@ -48,6 +66,37 @@ const CaseStudiesSlider = () => {
 
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev === 0 ? caseStudies.length - 1 : prev - 1));
+  };
+
+  // Define animation variants based on animationType
+  const getAnimationVariants = () => {
+    switch (animationType) {
+      case 'slide':
+        return {
+          initial: { x: 200, opacity: 0 },
+          animate: { x: 0, opacity: 1 },
+          exit: { x: -200, opacity: 0 }
+        };
+      case 'zoom':
+        return {
+          initial: { scale: 0.8, opacity: 0 },
+          animate: { scale: 1, opacity: 1 },
+          exit: { scale: 0.8, opacity: 0 }
+        };
+      case 'flip':
+        return {
+          initial: { rotateY: 90, opacity: 0 },
+          animate: { rotateY: 0, opacity: 1 },
+          exit: { rotateY: -90, opacity: 0 }
+        };
+      case 'fade':
+      default:
+        return {
+          initial: { opacity: 0 },
+          animate: { opacity: 1 },
+          exit: { opacity: 0 }
+        };
+    }
   };
 
   return (
@@ -65,9 +114,9 @@ const CaseStudiesSlider = () => {
           <AnimatePresence mode="wait">
             <motion.div
               key={currentSlide}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={getAnimationVariants().initial}
+              animate={getAnimationVariants().animate}
+              exit={getAnimationVariants().exit}
               transition={{ duration: 0.5 }}
               className="relative"
             >
