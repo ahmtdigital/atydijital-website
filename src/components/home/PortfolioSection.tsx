@@ -1,228 +1,167 @@
 
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Eye } from 'lucide-react';
-import { useDataService } from '@/lib/db';
+import { Badge } from '@/components/ui/badge';
+import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-interface Project {
-  id: number;
-  title: string;
-  category: string;
-  description: string;
-  image: string;
-  link: string;
-  tags: string[];
-  featured: boolean;
+// Define the props interface with site settings parameters
+interface PortfolioSectionProps {
+  projectsPerRow?: number;
+  imageHeight?: number;
+  showTags?: boolean;
+  showCategories?: boolean;
+  hoverEffect?: string;
 }
 
-const PortfolioSection = () => {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const { scrollYProgress } = useScroll();
-  const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
-  
-  const {
-    items: projects,
-    isLoading
-  } = useDataService<Project>('projects', []);
+// Default portfolio project data
+const portfolioProjects = [
+  {
+    id: 1,
+    title: 'E-Ticaret SEO Optimizasyonu',
+    description: 'Türkiye\'nin önde gelen e-ticaret platformları için SEO stratejileri ve organik trafik artışı sağladık.',
+    image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+    category: 'SEO',
+    tags: ['E-Ticaret', 'SEO', 'İçerik Stratejisi', 'Analytics'],
+    slug: 'e-ticaret-seo'
+  },
+  {
+    id: 2,
+    title: 'Sosyal Medya Kampanyası',
+    description: 'Instagram ve Facebook üzerinde etkili reklam kampanyaları ile marka bilinirliğini artırdık.',
+    image: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80',
+    category: 'Sosyal Medya',
+    tags: ['Instagram', 'Facebook', 'İçerik Üretimi', 'Reklam'],
+    slug: 'sosyal-medya-kampanyasi'
+  },
+  {
+    id: 3,
+    title: 'Web Sitesi Yenileme Projesi',
+    description: 'Modern teknolojiler kullanarak yüksek performanslı kurumsal web sitesi tasarımı ve geliştirmesi.',
+    image: 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1169&q=80',
+    category: 'Web Geliştirme',
+    tags: ['UX/UI', 'React', 'Responsive Tasarım', 'Performans'],
+    slug: 'web-sitesi-yenileme'
+  },
+  {
+    id: 4,
+    title: 'İçerik Pazarlama Stratejisi',
+    description: 'Finans sektörüne özel içerik stratejisi ve blog yönetimi ile organik trafik artışı.',
+    image: 'https://images.unsplash.com/photo-1553484771-898ed465e931?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+    category: 'İçerik Pazarlaması',
+    tags: ['Blog', 'SEO İçeriği', 'Finans', 'İçerik Takvimi'],
+    slug: 'icreik-pazarlama'
+  }
+];
 
-  const featuredProjects = projects.filter(project => project.featured);
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3
-      }
+const PortfolioSection: React.FC<PortfolioSectionProps> = ({
+  projectsPerRow = 2,
+  imageHeight = 400,
+  showTags = true,
+  showCategories = true,
+  hoverEffect = 'scale'
+}) => {
+  // Calculate grid columns based on projectsPerRow
+  const gridCols = () => {
+    switch (projectsPerRow) {
+      case 1: return 'grid-cols-1';
+      case 3: return 'grid-cols-1 md:grid-cols-3';
+      case 4: return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4';
+      default: return 'grid-cols-1 md:grid-cols-2';
     }
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 50 },
-    show: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        type: "spring",
-        bounce: 0.4,
-        duration: 0.8
-      }
+  // Define hover effect class based on the hoverEffect prop
+  const getHoverEffectClass = (effect: string) => {
+    switch (effect) {
+      case 'scale': return 'hover:scale-105 transition-transform duration-300';
+      case 'slide': return 'group-hover:translate-y-[-10px] transition-transform duration-300';
+      case 'fade': return 'group-hover:opacity-80 transition-opacity duration-300';
+      default: return '';
     }
   };
 
   return (
-    <section className="py-20 bg-dark relative overflow-hidden">
-      <motion.div 
-        className="absolute inset-0 opacity-30"
-        style={{ y }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.3 }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-br from-ignite/5 via-transparent to-transparent" />
-      </motion.div>
+    <section className="py-24 bg-dark">
+      <div className="container mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Başarı Hikayelerimiz</h2>
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            İşletmelerin dijital dünyada büyümesine nasıl yardımcı olduğumuzu gösteren çalışmalarımızdan bazıları.
+          </p>
+        </motion.div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <motion.div 
-          className="text-center max-w-3xl mx-auto mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-        >
-          <motion.p 
-            className="text-ignite font-semibold mb-3"
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            ÖNE ÇIKAN ÇALIŞMALAR
-          </motion.p>
-          <motion.h2 
-            className="text-3xl md:text-4xl font-bold mb-6"
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            viewport={{ once: true }}
-          >
-            Başarı Hikayelerimiz
-          </motion.h2>
-          <motion.p 
-            className="text-gray-400"
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            viewport={{ once: true }}
-          >
-            En etkileyici projelerimizden bazılarına göz atın ve işletmelerin hedeflerine ulaşmalarına nasıl yardımcı olduğumuzu görün.
-          </motion.p>
-        </motion.div>
-        
-        {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-            {[1, 2, 3, 4].map((_, index) => (
-              <div key={index} className="bg-dark-500/50 animate-pulse h-[400px] rounded-lg" />
-            ))}
-          </div>
-        ) : (
-          <motion.div 
-            className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.2 }}
-          >
-            {featuredProjects.map((item, index) => (
-              <motion.div
-                key={item.id}
-                variants={itemVariants}
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
-                className="group relative overflow-hidden rounded-lg bg-dark-500/20 backdrop-blur-sm border border-dark-400/30"
-              >
-                <Link to={item.link} className="block">
-                  <motion.div 
-                    className="relative h-[400px] overflow-hidden"
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.4 }}
+        <div className={`grid ${gridCols()} gap-8`}>
+          {portfolioProjects.map((project, index) => (
+            <motion.div 
+              key={project.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              viewport={{ once: true }}
+            >
+              <Link to={`/portfolio/${project.slug}`} className="block group">
+                <Card className="bg-dark-500 border-dark-400 overflow-hidden h-full hover:border-ignite/50 transition-colors duration-300">
+                  <div 
+                    className="relative overflow-hidden"
+                    style={{ height: `${imageHeight}px` }}
                   >
-                    <motion.img 
-                      src={item.image} 
-                      alt={item.title} 
-                      className="w-full h-full object-cover"
-                      initial={{ scale: 1.1 }}
-                      animate={{ 
-                        scale: hoveredIndex === index ? 1.15 : 1.1,
-                      }}
-                      transition={{ duration: 0.6 }}
+                    <img 
+                      src={project.image} 
+                      alt={project.title}
+                      className={`w-full h-full object-cover ${getHoverEffectClass(hoverEffect)}`}
                     />
-                    <motion.div 
-                      className="absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/50 to-transparent"
-                      initial={{ opacity: 0.7 }}
-                      animate={{ 
-                        opacity: hoveredIndex === index ? 0.85 : 0.7
-                      }}
-                      transition={{ duration: 0.3 }}
-                    />
-                    
-                    <div className="absolute bottom-0 left-0 p-8 w-full">
-                      <motion.div
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.1 * index }}
-                      >
-                        <span className="text-ignite text-sm font-medium mb-2 block">
-                          {item.category}
-                        </span>
-                        <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
-                          {item.title}
-                        </h3>
-                        <p className="text-white/70 mb-4 line-clamp-2">
-                          {item.description}
-                        </p>
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {item.tags.map((tag, tagIndex) => (
-                            <span 
-                              key={tagIndex}
-                              className="bg-dark-600/50 text-white/80 text-sm px-3 py-1 rounded-full"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                        <motion.div 
-                          className="flex items-center gap-2 text-white font-medium"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ 
-                            opacity: hoveredIndex === index ? 1 : 0,
-                            y: hoveredIndex === index ? 0 : 20
-                          }}
-                          transition={{ duration: 0.3 }}
-                        >
-                          <Eye className="h-5 w-5 mr-2" />
-                          Projeyi İncele <ArrowRight className="h-4 w-4 ml-1" />
-                        </motion.div>
-                      </motion.div>
-                    </div>
-                  </motion.div>
-                </Link>
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
-        
-        <motion.div 
-          className="text-center"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          viewport={{ once: true }}
-        >
-          <Button 
-            size="lg" 
-            className="bg-ignite hover:bg-ignite-700 text-white group relative overflow-hidden"
-          >
+                    {showCategories && (
+                      <Badge className="absolute top-4 right-4 bg-ignite text-white border-none">
+                        {project.category}
+                      </Badge>
+                    )}
+                  </div>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-xl group-hover:text-ignite transition-colors">
+                      {project.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pb-4">
+                    <CardDescription className="text-white/70">
+                      {project.description}
+                    </CardDescription>
+                    {showTags && (
+                      <div className="flex flex-wrap gap-2 mt-4">
+                        {project.tags.map((tag, i) => (
+                          <Badge key={i} variant="outline" className="border-ignite/30 text-ignite/90">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                  <CardFooter>
+                    <Button variant="ghost" className="text-ignite p-0 hover:text-ignite hover:bg-transparent">
+                      Detayları Gör <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mt-16 text-center">
+          <Button size="lg" className="bg-ignite hover:bg-ignite-700">
             <Link to="/portfolio" className="flex items-center">
-              <span className="relative z-10">Tüm Projeleri Görüntüle</span>
-              <motion.span
-                className="relative z-10"
-                whileHover={{ x: 5 }}
-                transition={{ duration: 0.3 }}
-              >
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </motion.span>
+              Tüm Projelerimizi İnceleyin <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
-            <motion.span 
-              className="absolute inset-0 bg-ignite-700"
-              initial={{ x: "-100%" }}
-              whileHover={{ x: "0%" }}
-              transition={{ duration: 0.3 }}
-            />
           </Button>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

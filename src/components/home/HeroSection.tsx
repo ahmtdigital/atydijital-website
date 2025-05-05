@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useDataService } from '@/lib/db';
 import { HeroSlide } from '@/types/HeroSlideTypes';
 
-const defaultSlides: HeroSlide[] = [
+const defaultSlides = [
   {
     id: 1,
     title: "Dijital Dönüşümünüzün Mimarı",
@@ -15,7 +15,10 @@ const defaultSlides: HeroSlide[] = [
     buttonText: "Hizmetlerimizi Keşfedin",
     buttonLink: "/services",
     backgroundImage: "https://images.unsplash.com/photo-1560472355-536de3962603?q=80&w=2070",
-    isActive: true
+    isActive: true,
+    animation: "fade",
+    textColor: "white",
+    overlayOpacity: 60
   },
   {
     id: 2,
@@ -24,7 +27,10 @@ const defaultSlides: HeroSlide[] = [
     buttonText: "Portfolyomuzu İnceleyin",
     buttonLink: "/portfolio",
     backgroundImage: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=2070",
-    isActive: false
+    isActive: false,
+    animation: "slide",
+    textColor: "white",
+    overlayOpacity: 65
   },
   {
     id: 3,
@@ -33,21 +39,37 @@ const defaultSlides: HeroSlide[] = [
     buttonText: "SEO Hizmetlerimiz",
     buttonLink: "/services/seo",
     backgroundImage: "https://images.unsplash.com/photo-1493397212122-2b85dda8106b?q=80&w=2070",
-    isActive: false
-  },
-  {
-    id: 4,
-    title: "Dijital Pazarlama Çözümleri",
-    subtitle: "Sosyal medya, içerik pazarlaması ve reklam kampanyaları ile hedef kitlenize ulaşın.",
-    buttonText: "Pazarlama Çözümleri",
-    buttonLink: "/services/digital-marketing",
-    backgroundImage: "https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?q=80&w=2070",
-    isActive: false
+    isActive: false,
+    animation: "zoom",
+    textColor: "white",
+    overlayOpacity: 70
   }
 ];
 
+interface SliderSettings {
+  autoplay: boolean;
+  autoplaySpeed: number;
+  effect: string;
+  animationSpeed: number;
+  arrows: boolean;
+  dots: boolean;
+  infinite: boolean;
+}
+
+const defaultSettings: SliderSettings = {
+  autoplay: true,
+  autoplaySpeed: 5000,
+  effect: 'fade',
+  animationSpeed: 500,
+  arrows: true,
+  dots: true,
+  infinite: true
+};
+
 const HeroSection = () => {
-  const { items: slides } = useDataService<HeroSlide>('heroSlides', defaultSlides);
+  // Get the slider items from local storage or default values
+  const [sliderItems, setSliderItems] = useState<any[]>([]);
+  const [sliderSettings, setSliderSettings] = useState<SliderSettings>(defaultSettings);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [autoplay, setAutoplay] = useState(true);
   const [touchStart, setTouchStart] = useState(0);
@@ -71,33 +93,88 @@ const HeroSection = () => {
       goToPrevSlide();
     }
   };
+
+  useEffect(() => {
+    // Load slider items from local storage
+    const storedSliderItems = localStorage.getItem('sliderItems');
+    if (storedSliderItems) {
+      setSliderItems(JSON.parse(storedSliderItems));
+    } else {
+      setSliderItems(defaultSlides);
+    }
+
+    // Load slider settings from local storage
+    const storedSliderSettings = localStorage.getItem('sliderSettings');
+    if (storedSliderSettings) {
+      setSliderSettings(JSON.parse(storedSliderSettings));
+      setAutoplay(JSON.parse(storedSliderSettings).autoplay);
+    }
+  }, []);
   
   const goToNextSlide = () => {
-    setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+    if (sliderSettings.infinite || currentSlide < sliderItems.length - 1) {
+      setCurrentSlide((prev) => (prev === sliderItems.length - 1 ? 0 : prev + 1));
+    }
     setAutoplay(false); // Pause autoplay when manually navigating
     setTimeout(() => setAutoplay(true), 5000); // Resume after 5 seconds
   };
   
   const goToPrevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+    if (sliderSettings.infinite || currentSlide > 0) {
+      setCurrentSlide((prev) => (prev === 0 ? sliderItems.length - 1 : prev - 1));
+    }
     setAutoplay(false); // Pause autoplay when manually navigating
     setTimeout(() => setAutoplay(true), 5000); // Resume after 5 seconds
   };
   
   useEffect(() => {
-    // Auto-advance slides every 5 seconds if autoplay is true
+    // Auto-advance slides if autoplay is enabled
     let interval: NodeJS.Timeout;
     
-    if (autoplay && slides.length > 1) {
+    if (autoplay && sliderSettings.autoplay && sliderItems.length > 1) {
       interval = setInterval(() => {
-        setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
-      }, 5000);
+        if (sliderSettings.infinite || currentSlide < sliderItems.length - 1) {
+          setCurrentSlide((prev) => (prev === sliderItems.length - 1 ? 0 : prev + 1));
+        } else {
+          setCurrentSlide(0); // Reset to beginning if infinite is off and we're at the end
+        }
+      }, sliderSettings.autoplaySpeed);
     }
     
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [autoplay, slides.length]);
+  }, [autoplay, sliderItems.length, currentSlide, sliderSettings]);
+
+  // Helper function to get animation variants based on slide animation type
+  const getAnimationVariants = (animation: string = 'fade') => {
+    switch(animation) {
+      case 'slide':
+        return {
+          initial: { opacity: 0, x: 100 },
+          animate: { opacity: 1, x: 0 },
+          exit: { opacity: 0, x: -100 }
+        };
+      case 'zoom':
+        return {
+          initial: { opacity: 0, scale: 1.2 },
+          animate: { opacity: 1, scale: 1 },
+          exit: { opacity: 0, scale: 0.8 }
+        };
+      case 'flip':
+        return {
+          initial: { opacity: 0, rotateY: 90 },
+          animate: { opacity: 1, rotateY: 0 },
+          exit: { opacity: 0, rotateY: -90 }
+        };
+      default: // fade
+        return {
+          initial: { opacity: 0, scale: 1.05 },
+          animate: { opacity: 1, scale: 1 },
+          exit: { opacity: 0, scale: 0.95 }
+        };
+    }
+  };
 
   // Animasyonlu yüzen iconlar
   const FloatingIcons = () => (
@@ -148,6 +225,18 @@ const HeroSection = () => {
     </>
   );
 
+  // Handle empty slider items case
+  if (sliderItems.length === 0) {
+    return (
+      <section className="relative min-h-[90vh] flex items-center bg-dark overflow-hidden">
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">Henüz Slider Eklenmemiş</h1>
+          <p className="text-xl text-gray-300 mb-8">Admin panelinden slider ekleyebilirsiniz.</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section 
       className="relative min-h-[90vh] flex items-center bg-dark overflow-hidden"
@@ -162,7 +251,7 @@ const HeroSection = () => {
       <FloatingIcons />
       
       {/* Navigation arrows with updated design */}
-      {slides.length > 1 && (
+      {sliderSettings.arrows && sliderItems.length > 1 && (
         <>
           <motion.button 
             whileHover={{ scale: 1.1 }}
@@ -187,21 +276,21 @@ const HeroSection = () => {
       
       {/* Slides with enhanced animations */}
       <AnimatePresence mode="wait">
-        {slides.map((slide, index) => (
+        {sliderItems.map((slide, index) => (
           index === currentSlide && (
             <motion.div 
               key={slide.id}
               className="absolute inset-0 z-0"
-              initial={{ opacity: 0, scale: 1.1 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1.0] }}
+              initial={getAnimationVariants(slide.animation).initial}
+              animate={getAnimationVariants(slide.animation).animate}
+              exit={getAnimationVariants(slide.animation).exit}
+              transition={{ duration: sliderSettings.animationSpeed / 1000, ease: [0.25, 0.1, 0.25, 1.0] }}
             >
               {/* Background image with enhanced overlay */}
               <div className="absolute inset-0">
                 {slide.backgroundImage && (
                   <>
-                    <div className="absolute inset-0 bg-gradient-to-r from-dark/90 via-dark/70 to-dark/90 z-10"></div>
+                    <div className={`absolute inset-0 bg-gradient-to-r from-dark/${Math.min(90, slide.overlayOpacity || 60)} via-dark/${Math.max(1, (slide.overlayOpacity || 60) - 20)} to-dark/${Math.min(90, slide.overlayOpacity || 60)} z-10`}></div>
                     <motion.img 
                       src={slide.backgroundImage} 
                       alt="Arkaplan" 
@@ -231,8 +320,9 @@ const HeroSection = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.4 }}
+                    style={{ color: slide.textColor === 'ignite' ? 'var(--ignite)' : slide.textColor }}
                   >
-                    {slide.title.split(' ').map((word, i, arr) => (
+                    {slide.title.split(' ').map((word: string, i: number, arr: string[]) => (
                       <span key={i} className={i === arr.length - 1 ? 'text-gradient-orange' : ''}>
                         {word}{' '}
                       </span>
@@ -244,8 +334,9 @@ const HeroSection = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.6 }}
+                    style={{ color: slide.textColor === 'ignite' ? 'var(--ignite)' : slide.textColor === 'black' ? '#000' : 'rgba(255,255,255,0.8)' }}
                   >
-                    {slide.subtitle}
+                    {slide.description || slide.subtitle}
                   </motion.p>
                   
                   <motion.div 
@@ -258,8 +349,8 @@ const HeroSection = () => {
                       size="lg" 
                       className="bg-ignite hover:bg-ignite-700 text-white group relative overflow-hidden"
                     >
-                      <Link to={slide.buttonLink} className="flex items-center">
-                        {slide.buttonText} 
+                      <Link to={slide.buttonLink || slide.link} className="flex items-center">
+                        {slide.buttonText || "Daha Fazla"} 
                         <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                       </Link>
                       <motion.div
@@ -274,7 +365,7 @@ const HeroSection = () => {
                       variant="outline" 
                       className="border-ignite text-ignite hover:bg-ignite/10 relative overflow-hidden"
                     >
-                      <Link to="/contact">Ücretsiz Danışmanlık</Link>
+                      <Link to="/contact">İletişime Geçin</Link>
                       <motion.div
                         className="absolute inset-0 bg-ignite/5"
                         initial={{ x: '-100%' }}
@@ -291,9 +382,9 @@ const HeroSection = () => {
       </AnimatePresence>
       
       {/* Enhanced slide indicators */}
-      {slides.length > 1 && (
+      {sliderSettings.dots && sliderItems.length > 1 && (
         <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-2 z-20">
-          {slides.map((_, index) => (
+          {sliderItems.map((_, index) => (
             <motion.button
               key={index}
               className={`h-3 rounded-full transition-all duration-300 ${

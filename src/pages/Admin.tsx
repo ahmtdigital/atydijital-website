@@ -22,6 +22,7 @@ import HeroSliderManager from '@/components/admin/HeroSliderManager';
 import SiteSettingsManager from '@/components/admin/SiteSettingsManager';
 import SeoManager from '@/components/admin/SeoManager';
 import { useMySQLService } from '@/lib/mysql-service';
+import BreadcrumbManager from '@/components/admin/BreadcrumbManager';
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -360,6 +361,9 @@ const Admin = () => {
               transition={{ duration: 0.5 }}
             >
               <PageManager />
+              <div className="mt-8">
+                <BreadcrumbManager />
+              </div>
             </motion.div>
           )}
           

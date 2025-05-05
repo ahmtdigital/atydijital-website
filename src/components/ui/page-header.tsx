@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
+import { useDataService } from '@/lib/db';
 
 export interface BreadcrumbItem {
   name: string;
@@ -23,6 +24,36 @@ const PageHeader = ({
   backgroundImage = "https://images.unsplash.com/photo-1560472355-536de3962603?q=80&w=2070",
   className = ""
 }: PageHeaderProps) => {
+  // Get site settings for breadcrumb configurations
+  const { items: siteSettings } = useDataService('siteSettings', [{
+    enableBreadcrumbs: true,
+    breadcrumbSeparator: '/'
+  }]);
+
+  // Get breadcrumb pages for dynamic breadcrumb generation
+  const { items: breadcrumbPages } = useDataService('breadcrumbPages', []);
+  
+  const settings = siteSettings[0] || { enableBreadcrumbs: true, breadcrumbSeparator: '/' };
+  const showBreadcrumbs = settings.enableBreadcrumbs && breadcrumbs && breadcrumbs.length > 0;
+
+  // Helper function to render breadcrumb separator based on settings
+  const renderSeparator = () => {
+    switch (settings.breadcrumbSeparator) {
+      case '/':
+        return <span className="mx-2 text-white/40">/</span>;
+      case '>':
+        return <ChevronRight className="h-4 w-4 mx-2 text-white/40" />;
+      case '•':
+        return <span className="mx-2 text-white/40">•</span>;
+      case '-':
+        return <span className="mx-2 text-white/40">-</span>;
+      case '|':
+        return <span className="mx-2 text-white/40">|</span>;
+      default:
+        return <ChevronRight className="h-4 w-4 mx-2 text-white/40" />;
+    }
+  };
+
   return (
     <section className={`relative py-24 overflow-hidden ${className}`}>
       {/* Background image with overlay */}
@@ -51,14 +82,14 @@ const PageHeader = ({
       {/* Content */}
       <div className="container mx-auto px-4 relative z-10">
         {/* Breadcrumbs */}
-        {breadcrumbs && breadcrumbs.length > 0 && (
+        {showBreadcrumbs && (
           <div className="flex items-center text-sm text-white/60 mb-6 flex-wrap">
             <Link to="/" className="hover:text-ignite transition-colors">
               Ana Sayfa
             </Link>
             {breadcrumbs.map((item, index) => (
               <span key={index} className="flex items-center">
-                <ChevronRight className="h-4 w-4 mx-2" />
+                {renderSeparator()}
                 {index === breadcrumbs.length - 1 ? (
                   <span className="text-ignite">{item.name}</span>
                 ) : (

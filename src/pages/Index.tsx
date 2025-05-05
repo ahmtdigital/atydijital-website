@@ -44,6 +44,8 @@ const Index = () => {
     caseStudiesAnimationType: 'fade',
     caseStudiesAutoplay: true,
     caseStudiesInterval: 5000,
+    siteTitle: 'Ignite Dijital Pazarlama',
+    siteDescription: 'SEO ve Dijital Pazarlama Çözümleri',
   }]);
 
   const settings = siteSettings[0] || {
@@ -59,24 +61,26 @@ const Index = () => {
     caseStudiesAnimationType: 'fade',
     caseStudiesAutoplay: true,
     caseStudiesInterval: 5000,
+    siteTitle: 'Ignite Dijital Pazarlama',
+    siteDescription: 'SEO ve Dijital Pazarlama Çözümleri',
   };
 
   useEffect(() => {
     // SEO için sayfa başlığını güncelle
-    document.title = 'Ignite Dijital Pazarlama | Web Geliştirme, SEO ve Dijital Pazarlama Ajansı';
+    document.title = settings.siteTitle || 'Ignite Dijital Pazarlama | Web Geliştirme, SEO ve Dijital Pazarlama Ajansı';
     
     // Karşılama bildirimi
     setTimeout(() => {
       toast({
         title: "Hoş Geldiniz!",
-        description: "Ignite Dijital Pazarlama web sitesine hoş geldiniz.",
+        description: settings.siteDescription || "Ignite Dijital Pazarlama web sitesine hoş geldiniz.",
       });
     }, 2000);
     
     // Meta açıklama ekle
     let metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Ignite Dijital Pazarlama, işletmenizi büyütmek için SEO, sosyal medya, içerik pazarlaması ve web geliştirme hizmetleri sunan lider dijital pazarlama ajansıdır.');
+      metaDescription.setAttribute('content', settings.siteDescription || 'Ignite Dijital Pazarlama, işletmenizi büyütmek için SEO, sosyal medya, içerik pazarlaması ve web geliştirme hizmetleri sunan lider dijital pazarlama ajansıdır.');
     }
     
     // Analytics izleme
@@ -113,7 +117,7 @@ const Index = () => {
       });
       document.head.removeChild(analyticsScript);
     };
-  }, [toast]);
+  }, [toast, settings]);
 
   return (
     <MotionConfig reducedMotion="user">
@@ -129,7 +133,13 @@ const Index = () => {
             interval={settings.caseStudiesInterval}
           />
         )}
-        <StatsSection />
+        <PortfolioSection 
+          projectsPerRow={settings.projectsPerRow}
+          imageHeight={settings.projectImageHeight}
+          showTags={settings.showProjectTags}
+          showCategories={settings.showProjectCategory}
+          hoverEffect={settings.projectHoverEffect}
+        />
         <TestimonialsSection />
         <ContactSection />
       </Layout>
