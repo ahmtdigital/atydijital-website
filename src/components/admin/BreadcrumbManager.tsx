@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -142,11 +141,8 @@ const BreadcrumbManager = () => {
         return;
       }
 
-      const pageId = uuidv4();
-      addBreadcrumb({
-        id: pageId,
-        ...newPage
-      });
+      // Fixed: Don't include id in the newPage object, let addBreadcrumb handle it
+      addBreadcrumb(newPage);
 
       setNewPage({
         title: '',
