@@ -7,7 +7,7 @@ import SiteSettings from '@/components/admin/SiteSettings';
 import { Database, Globe, Palette } from 'lucide-react';
 
 const SiteSettingsManager = () => {
-  const [activeTab, setActiveTab] = useState('general');
+  const [activeTab, setActiveTab] = useState('appearance');
 
   return (
     <div className="space-y-6">

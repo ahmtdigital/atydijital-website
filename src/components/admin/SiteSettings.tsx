@@ -599,7 +599,7 @@ const SiteSettings = () => {
                     className="bg-dark-400 border-dark-300 rounded-md p-2 w-full text-white"
                   >
                     <option value="/">/</option>
-                    <option value=">">></option>
+                    <option value="&gt;">&gt;</option>
                     <option value="•">•</option>
                     <option value="-">-</option>
                     <option value="|">|</option>
