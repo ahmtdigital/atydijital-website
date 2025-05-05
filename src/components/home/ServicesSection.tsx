@@ -106,7 +106,7 @@ const ServicesSection = () => {
             HİZMETLERİMİZ
           </motion.p>
           <motion.h2 
-            className="text-3xl md:text-4xl font-bold mb-6 reveal"
+            className="text-3xl md:text-4xl font-bold mb-6 reveal text-white" /* Text color updated to white */
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -115,7 +115,7 @@ const ServicesSection = () => {
             Kapsamlı Dijital Çözümler
           </motion.h2>
           <motion.p 
-            className="text-gray-400 reveal"
+            className="text-gray-200 reveal" /* Text color updated to lighter gray for better visibility */
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
@@ -147,10 +147,10 @@ const ServicesSection = () => {
                   >
                     {service.icon}
                   </motion.div>
-                  <CardTitle className="text-xl font-bold">{service.title}</CardTitle>
+                  <CardTitle className="text-xl font-bold text-white">{service.title}</CardTitle> {/* Text color updated to white */}
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-gray-400">
+                  <CardDescription className="text-gray-200"> {/* Text color updated to lighter gray for better visibility */}
                     {service.description}
                   </CardDescription>
                 </CardContent>

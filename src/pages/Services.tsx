@@ -8,74 +8,74 @@ import { ArrowRight, BarChart, Globe, TrendingUp, PenTool, Smartphone, Code, Lin
 
 const services = [
   {
-    title: 'Digital Marketing',
-    description: 'Strategic campaigns that deliver measurable results through multiple digital channels. We create customized marketing plans that connect with your target audience and drive conversions.',
+    title: 'Dijital Pazarlama',
+    description: 'Birden çok dijital kanal aracılığıyla ölçülebilir sonuçlar veren stratejik kampanyalar. Hedef kitlenizle bağlantı kuran ve dönüşümleri artıran özelleştirilmiş pazarlama planları oluşturuyoruz.',
     icon: <BarChart className="h-12 w-12 text-ignite" />,
     link: '/services/digital-marketing'
   },
   {
-    title: 'SEO Optimization',
-    description: 'Boost your visibility with data-driven SEO strategies that improve rankings and drive traffic. Our technical and content optimization approaches help you rank higher on search engines.',
+    title: 'SEO Optimizasyonu',
+    description: 'Görünürlüğünüzü artıran, sıralamaları iyileştiren ve trafiği artıran veri odaklı SEO stratejileri. Teknik ve içerik optimizasyon yaklaşımlarımız arama motorlarında daha üst sıralarda yer almanıza yardımcı olur.',
     icon: <Globe className="h-12 w-12 text-ignite" />,
     link: '/services/seo'
   },
   {
-    title: 'Social Media Management',
-    description: 'Engaging social strategies that build communities and strengthen your brand presence. We manage your social profiles, create content, and engage with your audience.',
+    title: 'Sosyal Medya Yönetimi',
+    description: 'Topluluklar oluşturan ve marka varlığınızı güçlendiren ilgi çekici sosyal stratejiler. Sosyal profillerinizi yönetiyor, içerik oluşturuyor ve kitlenizle etkileşim kuruyoruz.',
     icon: <TrendingUp className="h-12 w-12 text-ignite" />,
     link: '/services/social-media'
   },
   {
-    title: 'Content Creation',
-    description: 'Compelling content that tells your brand story and connects with your target audience. From blog posts to videos, we create content that resonates and converts.',
+    title: 'İçerik Oluşturma',
+    description: 'Marka hikayenizi anlatan ve hedef kitlenizle bağlantı kuran ilgi çekici içerikler. Blog yazılarından videolara, rezonans uyandıran ve dönüşüm sağlayan içerikler oluşturuyoruz.',
     icon: <PenTool className="h-12 w-12 text-ignite" />,
     link: '/services/content'
   },
   {
-    title: 'Mobile Marketing',
-    description: 'Reach customers on the go with targeted mobile marketing and app promotion strategies. Our mobile-first approach ensures your brand connects with users wherever they are.',
+    title: 'Mobil Pazarlama',
+    description: 'Hedefli mobil pazarlama ve uygulama tanıtım stratejileriyle müşterilere her yerde ulaşın. Mobil öncelikli yaklaşımımız, markanızın kullanıcılarla her nerede olurlarsa olsunlar bağlantı kurmasını sağlar.',
     icon: <Smartphone className="h-12 w-12 text-ignite" />,
     link: '/services/mobile-marketing'
   },
   {
-    title: 'Web Development',
-    description: 'Custom, responsive websites and applications built to convert visitors into customers. We create digital experiences that align with your brand and business goals.',
+    title: 'Web Geliştirme',
+    description: 'Ziyaretçileri müşterilere dönüştürmek için özel, duyarlı web siteleri ve uygulamalar. Markanız ve işletme hedeflerinizle uyumlu dijital deneyimler yaratıyoruz.',
     icon: <Code className="h-12 w-12 text-ignite" />,
     link: '/services/web-development'
   },
   {
-    title: 'Analytics & Reporting',
-    description: 'Comprehensive data analysis and regular reporting to track performance and optimize your digital marketing strategies for maximum ROI.',
+    title: 'Analitik ve Raporlama',
+    description: 'Performansı takip etmek ve dijital pazarlama stratejilerinizi maksimum ROI için optimize etmek amacıyla kapsamlı veri analizi ve düzenli raporlama.',
     icon: <LineChart className="h-12 w-12 text-ignite" />,
     link: '/services/analytics'
   },
   {
-    title: 'Influencer Marketing',
-    description: 'Connect with relevant influencers to expand your reach and build credibility with new audiences through authentic partnerships.',
+    title: 'Influencer Pazarlama',
+    description: 'Erişiminizi genişletmek ve yeni kitlelerle otantik ortaklıklar yoluyla güvenilirlik oluşturmak için ilgili etkileyicilerle bağlantı kurun.',
     icon: <Users className="h-12 w-12 text-ignite" />,
     link: '/services/influencer-marketing'
   },
   {
-    title: 'PPC Advertising',
-    description: 'Targeted pay-per-click campaigns across search engines and social platforms to drive immediate traffic and conversions with measurable results.',
+    title: 'PPC Reklamcılığı',
+    description: 'Ölçülebilir sonuçlarla anında trafik ve dönüşüm sağlamak için arama motorları ve sosyal platformlarda hedefli tıklama başına ödeme kampanyaları.',
     icon: <Target className="h-12 w-12 text-ignite" />,
     link: '/services/ppc'
   },
   {
-    title: 'Local SEO',
-    description: 'Specialized optimization strategies to improve your visibility in local search results and attract nearby customers to your business.',
+    title: 'Yerel SEO',
+    description: 'Yerel arama sonuçlarında görünürlüğünüzü artırmak ve yakındaki müşterileri işletmenize çekmek için özel optimizasyon stratejileri.',
     icon: <Search className="h-12 w-12 text-ignite" />,
     link: '/services/local-seo'
   },
   {
-    title: 'UI/UX Design',
-    description: 'User-centered design services that create intuitive, engaging interfaces for websites and applications to enhance user experience and conversion rates.',
+    title: 'UI/UX Tasarım',
+    description: 'Kullanıcı deneyimini ve dönüşüm oranlarını artırmak için web siteleri ve uygulamalar için sezgisel, ilgi çekici arayüzler oluşturan kullanıcı merkezli tasarım hizmetleri.',
     icon: <Monitor className="h-12 w-12 text-ignite" />,
     link: '/services/ui-ux-design'
   },
   {
-    title: 'Brand Strategy',
-    description: 'Comprehensive brand development services including positioning, messaging, visual identity, and guidelines to build a cohesive and memorable brand.',
+    title: 'Marka Stratejisi',
+    description: 'Tutarlı ve akılda kalıcı bir marka oluşturmak için konumlandırma, mesajlaşma, görsel kimlik ve yönergeler dahil olmak üzere kapsamlı marka geliştirme hizmetleri.',
     icon: <Briefcase className="h-12 w-12 text-ignite" />,
     link: '/services/brand-strategy'
   }
@@ -83,13 +83,13 @@ const services = [
 
 const Services = () => {
   useEffect(() => {
-    // Update page title and meta description for SEO
-    document.title = 'Our Services | Ignite Marketing';
+    // SEO için sayfa başlığı ve meta açıklamasını güncelle
+    document.title = 'Hizmetlerimiz | Ignite Pazarlama';
     
-    // Add meta description
+    // Meta açıklama ekle
     let metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Explore our comprehensive digital marketing services including SEO, social media management, content creation, web development, and more.');
+      metaDescription.setAttribute('content', 'SEO, sosyal medya yönetimi, içerik oluşturma, web geliştirme ve daha fazlası dahil olmak üzere kapsamlı dijital pazarlama hizmetlerimizi keşfedin.');
     }
   }, []);
 
@@ -99,12 +99,12 @@ const Services = () => {
       <section className="py-24 bg-dark-600 relative">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-ignite-500 to-ignite"></div>
         <div className="container mx-auto px-4 text-center max-w-3xl">
-          <p className="text-ignite font-semibold mb-4 animate-fade-in">OUR EXPERTISE</p>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in" style={{animationDelay: '0.2s'}}>
-            Comprehensive Digital Marketing Services
+          <p className="text-ignite font-semibold mb-4 animate-fade-in">UZMANLIĞIMIZ</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in text-white" style={{animationDelay: '0.2s'}}>
+            Kapsamlı Dijital Pazarlama Hizmetleri
           </h1>
           <p className="text-xl text-gray-300 mb-8 animate-fade-in" style={{animationDelay: '0.4s'}}>
-            From SEO to social media, content creation to web development, we offer end-to-end solutions to grow your brand online.
+            SEO'dan sosyal medyaya, içerik oluşturmadan web geliştirmeye kadar markanızı çevrimiçi büyütmek için uçtan uca çözümler sunuyoruz.
           </p>
         </div>
       </section>
@@ -117,16 +117,16 @@ const Services = () => {
               <Card key={index} className="bg-dark-500 border-dark-400 hover:border-ignite/50 transition-all duration-300 card-hover reveal">
                 <CardHeader>
                   <div className="mb-4">{service.icon}</div>
-                  <CardTitle className="text-2xl font-bold">{service.title}</CardTitle>
+                  <CardTitle className="text-2xl font-bold text-white">{service.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-gray-400">
+                  <CardDescription className="text-gray-200">
                     {service.description}
                   </CardDescription>
                 </CardContent>
                 <CardFooter>
                   <Link to={service.link} className="text-ignite hover:text-ignite-400 font-medium flex items-center gap-2 transition-colors">
-                    Learn More <ArrowRight className="h-4 w-4" />
+                    Daha Fazla Bilgi <ArrowRight className="h-4 w-4" />
                   </Link>
                 </CardFooter>
               </Card>
@@ -140,12 +140,12 @@ const Services = () => {
         <div className="container mx-auto px-4 max-w-5xl">
           <div className="bg-gradient-to-r from-dark-500 to-dark-400 rounded-2xl p-8 md:p-12 shadow-lg border border-dark-300 reveal">
             <div className="text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Grow Your Business?</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">İşletmenizi Büyütmeye Hazır mısınız?</h2>
               <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-                Let's discuss how our services can help you achieve your business goals and drive measurable results.
+                Hizmetlerimizin işletme hedeflerinize ulaşmanıza ve ölçülebilir sonuçlar elde etmenize nasıl yardımcı olabileceğini tartışalım.
               </p>
               <Button size="lg" className="bg-ignite hover:bg-ignite-700 text-white">
-                <Link to="/contact">Get a Free Consultation</Link>
+                <Link to="/contact">Ücretsiz Danışmanlık Alın</Link>
               </Button>
             </div>
           </div>
