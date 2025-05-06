@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SiteSettings from '@/components/admin/SiteSettings';
+import DatabaseManager from '@/components/admin/DatabaseManager';
 import { Database, Globe, Palette } from 'lucide-react';
 
 const SiteSettingsManager = () => {
@@ -60,7 +61,7 @@ const SiteSettingsManager = () => {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
               >
-                <SiteSettings />
+                <DatabaseManager />
               </motion.div>
             </TabsContent>
             
