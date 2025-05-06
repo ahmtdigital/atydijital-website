@@ -409,8 +409,8 @@ const PageContentManager = () => {
   ];
 
   // Safely access nested arrays with defaults
-  const valueItems = formData?.sections?.values?.items || [];
-  const storyItems = formData?.sections?.story?.sections || [];
+  const valueItems = formData.sections?.values?.items || [];
+  const storyItems = formData.sections?.story?.sections || [];
 
   return (
     <div className="space-y-6">
@@ -500,7 +500,7 @@ const PageContentManager = () => {
                   
                   <ScrollArea className="h-[300px] p-3">
                     <div className="space-y-4">
-                      {valueItems.map((item, index) => (
+                      {valueItems.length > 0 ? valueItems.map((item, index) => (
                         <Card key={item.id} className="bg-dark-600 border-dark-400">
                           <CardHeader className="p-3 pb-2">
                             <div className="flex justify-between items-center">
@@ -561,7 +561,9 @@ const PageContentManager = () => {
                             </CardContent>
                           )}
                         </Card>
-                      ))}
+                      )) : (
+                        <div className="text-center py-8 text-gray-400">Henüz değer öğesi eklenmemiş. Yeni bir değer ekleyin.</div>
+                      )}
                     </div>
                   </ScrollArea>
                 </div>
@@ -604,7 +606,7 @@ const PageContentManager = () => {
                   
                   <ScrollArea className="h-[400px] p-3">
                     <div className="space-y-4">
-                      {storyItems.map((section, index) => (
+                      {storyItems.length > 0 ? storyItems.map((section, index) => (
                         <Card key={section.id} className="bg-dark-600 border-dark-400">
                           <CardHeader className="p-3 pb-2">
                             <div className="flex justify-between items-center">
@@ -678,7 +680,9 @@ const PageContentManager = () => {
                             </CardContent>
                           )}
                         </Card>
-                      ))}
+                      )) : (
+                        <div className="text-center py-8 text-gray-400">Henüz hikaye bölümü eklenmemiş. Yeni bir bölüm ekleyin.</div>
+                      )}
                     </div>
                   </ScrollArea>
                 </div>

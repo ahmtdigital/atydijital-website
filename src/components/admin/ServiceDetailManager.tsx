@@ -38,6 +38,21 @@ interface ServiceDetail {
   stats: ServiceStat[];
 }
 
+const defaultServiceDetail: ServiceDetail = {
+  id: '',
+  slug: '',
+  title: '',
+  description: '',
+  longDescription: '',
+  image: '',
+  images: [],
+  features: [],
+  benefits: [],
+  process: [],
+  platforms: [],
+  stats: []
+};
+
 const ServiceDetailManager = () => {
   const { toast } = useToast();
   const { items: serviceItems, update } = useDataService('services', [
@@ -131,21 +146,12 @@ const ServiceDetailManager = () => {
     }
   ]);
 
-  const [selectedServiceId, setSelectedServiceId] = useState(serviceItems[0]?.id || '');
-  const currentService = serviceItems.find(s => s.id === selectedServiceId) || serviceItems[0] || {
-    id: '',
-    slug: '',
-    title: '',
-    description: '',
-    longDescription: '',
-    image: '',
-    images: [],
-    features: [],
-    benefits: [],
-    process: [],
-    platforms: [],
-    stats: []
-  }; // Provide a fallback object with empty arrays to avoid undefined.map errors
+  const [selectedServiceId, setSelectedServiceId] = useState(serviceItems && serviceItems.length > 0 ? serviceItems[0]?.id : '');
+  
+  // Güvenli bir şekilde mevcut hizmeti al, yoksa varsayılan değeri kullan
+  const currentService = serviceItems && serviceItems.length > 0 
+    ? serviceItems.find(s => s.id === selectedServiceId) || serviceItems[0] 
+    : defaultServiceDetail;
   
   const [formData, setFormData] = useState<ServiceDetail>(currentService);
   const [activeTab, setActiveTab] = useState('general');
@@ -168,7 +174,10 @@ const ServiceDetailManager = () => {
 
   // Handle service selection change
   const handleServiceChange = (id: string) => {
-    const selectedService = serviceItems.find(s => s.id === id);
+    const selectedService = serviceItems && serviceItems.length > 0 
+      ? serviceItems.find(s => s.id === id)
+      : null;
+      
     if (selectedService) {
       setSelectedServiceId(id);
       setFormData(selectedService);
@@ -356,10 +365,19 @@ const ServiceDetailManager = () => {
         description: "İçerik kaydedilirken bir hata oluştu.",
         variant: "destructive",
       });
+      console.error("Save error:", error);
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Güvenli erişim için varsayılan boş diziler oluştur
+  const features = formData.features || [];
+  const benefits = formData.benefits || [];
+  const process = formData.process || [];
+  const images = formData.images || [];
+  const stats = formData.stats || [];
+  const platforms = formData.platforms || [];
 
   return (
     <div className="space-y-6">
@@ -376,7 +394,7 @@ const ServiceDetailManager = () => {
                 onChange={(e) => handleServiceChange(e.target.value)}
                 className="w-full bg-dark-400 border-dark-300 rounded-md p-2"
               >
-                {serviceItems.map((service) => (
+                {serviceItems && serviceItems.length > 0 && serviceItems.map((service) => (
                   <option key={service.id} value={service.id}>{service.title}</option>
                 ))}
               </select>
@@ -398,7 +416,7 @@ const ServiceDetailManager = () => {
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Başlık</label>
                       <Input 
-                        value={formData.title} 
+                        value={formData.title || ''} 
                         onChange={(e) => handleInputChange('title', e.target.value)}
                         className="bg-dark-400 border-dark-300"
                       />
@@ -406,7 +424,7 @@ const ServiceDetailManager = () => {
                     <div className="space-y-2">
                       <label className="text-sm font-medium">URL Slug</label>
                       <Input 
-                        value={formData.slug} 
+                        value={formData.slug || ''} 
                         onChange={(e) => handleInputChange('slug', e.target.value)}
                         className="bg-dark-400 border-dark-300"
                       />
@@ -415,7 +433,7 @@ const ServiceDetailManager = () => {
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Kısa Açıklama</label>
                     <Input 
-                      value={formData.description} 
+                      value={formData.description || ''} 
                       onChange={(e) => handleInputChange('description', e.target.value)}
                       className="bg-dark-400 border-dark-300"
                     />
@@ -423,7 +441,7 @@ const ServiceDetailManager = () => {
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Detaylı Açıklama</label>
                     <Textarea 
-                      value={formData.longDescription} 
+                      value={formData.longDescription || ''} 
                       onChange={(e) => handleInputChange('longDescription', e.target.value)}
                       className="bg-dark-400 border-dark-300"
                       rows={5}
@@ -432,7 +450,7 @@ const ServiceDetailManager = () => {
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Ana Görsel URL</label>
                     <Input 
-                      value={formData.image} 
+                      value={formData.image || ''} 
                       onChange={(e) => handleInputChange('image', e.target.value)}
                       className="bg-dark-400 border-dark-300"
                     />
@@ -458,7 +476,7 @@ const ServiceDetailManager = () => {
                   
                   <ScrollArea className="h-[300px] p-3">
                     <div className="space-y-2">
-                      {formData.features && formData.features.map((feature, index) => (
+                      {features.length > 0 ? features.map((feature, index) => (
                         <div key={index} className="flex gap-2 items-center p-2 bg-dark-600 rounded-md">
                           <Input 
                             value={feature} 
@@ -474,7 +492,9 @@ const ServiceDetailManager = () => {
                             <Trash className="h-4 w-4" />
                           </Button>
                         </div>
-                      ))}
+                      )) : (
+                        <div className="text-center py-8 text-gray-400">Henüz hizmet kapsamı öğesi eklenmemiş. Yeni bir öğe ekleyin.</div>
+                      )}
                     </div>
                   </ScrollArea>
                 </div>
@@ -501,7 +521,7 @@ const ServiceDetailManager = () => {
                   
                   <ScrollArea className="h-[300px] p-3">
                     <div className="space-y-2">
-                      {formData.benefits && formData.benefits.map((benefit, index) => (
+                      {benefits.length > 0 ? benefits.map((benefit, index) => (
                         <div key={index} className="flex gap-2 items-center p-2 bg-dark-600 rounded-md">
                           <Input 
                             value={benefit} 
@@ -517,7 +537,9 @@ const ServiceDetailManager = () => {
                             <Trash className="h-4 w-4" />
                           </Button>
                         </div>
-                      ))}
+                      )) : (
+                        <div className="text-center py-8 text-gray-400">Henüz fayda öğesi eklenmemiş. Yeni bir fayda ekleyin.</div>
+                      )}
                     </div>
                   </ScrollArea>
                 </div>
@@ -544,15 +566,15 @@ const ServiceDetailManager = () => {
                   
                   <ScrollArea className="h-[400px] p-3">
                     <div className="space-y-4">
-                      {formData.process && formData.process.map((process, index) => (
-                        <Card key={process.id} className="bg-dark-600 border-dark-400">
+                      {process.length > 0 ? process.map((step, index) => (
+                        <Card key={step.id} className="bg-dark-600 border-dark-400">
                           <CardHeader className="p-3 pb-2">
                             <div className="flex justify-between items-center">
                               <CardTitle className="text-sm flex items-center">
                                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-500/20 text-blue-400 mr-2 text-xs">
                                   {index + 1}
                                 </span>
-                                {process.title}
+                                {step.title}
                               </CardTitle>
                               <div className="flex gap-1">
                                 <Button 
@@ -579,7 +601,7 @@ const ServiceDetailManager = () => {
                               <div className="space-y-2">
                                 <label className="text-xs font-medium">Adım Başlığı</label>
                                 <Input 
-                                  value={process.title} 
+                                  value={step.title} 
                                   onChange={(e) => handleProcessStepChange(index, 'title', e.target.value)}
                                   className="bg-dark-400 border-dark-300"
                                 />
@@ -587,7 +609,7 @@ const ServiceDetailManager = () => {
                               <div className="space-y-2">
                                 <label className="text-xs font-medium">Açıklama</label>
                                 <Textarea 
-                                  value={process.description} 
+                                  value={step.description} 
                                   onChange={(e) => handleProcessStepChange(index, 'description', e.target.value)}
                                   className="bg-dark-400 border-dark-300"
                                   rows={2}
@@ -596,7 +618,9 @@ const ServiceDetailManager = () => {
                             </CardContent>
                           )}
                         </Card>
-                      ))}
+                      )) : (
+                        <div className="text-center py-8 text-gray-400">Henüz süreç adımı eklenmemiş. Yeni bir adım ekleyin.</div>
+                      )}
                     </div>
                   </ScrollArea>
                 </div>
@@ -607,7 +631,7 @@ const ServiceDetailManager = () => {
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Ana Görsel URL</label>
                     <Input 
-                      value={formData.image} 
+                      value={formData.image || ''} 
                       onChange={(e) => handleInputChange('image', e.target.value)}
                       className="bg-dark-400 border-dark-300"
                     />
@@ -628,7 +652,7 @@ const ServiceDetailManager = () => {
                     
                     <ScrollArea className="h-[300px] p-3">
                       <div className="space-y-4">
-                        {formData.images && formData.images.map((image, index) => (
+                        {images.length > 0 ? images.map((image, index) => (
                           <div key={index} className="p-2 bg-dark-600 rounded-md">
                             <div className="flex gap-2 items-center mb-2">
                               <Input 
@@ -658,7 +682,9 @@ const ServiceDetailManager = () => {
                               </div>
                             )}
                           </div>
-                        ))}
+                        )) : (
+                          <div className="text-center py-8 text-gray-400">Henüz görsel eklenmemiş. Yeni bir görsel ekleyin.</div>
+                        )}
                       </div>
                     </ScrollArea>
                   </div>
@@ -683,7 +709,7 @@ const ServiceDetailManager = () => {
                   
                   <ScrollArea className="h-[300px] p-3">
                     <div className="space-y-4">
-                      {formData.stats && formData.stats.map((stat, index) => (
+                      {stats.length > 0 ? stats.map((stat, index) => (
                         <Card key={stat.id} className="bg-dark-600 border-dark-400">
                           <CardHeader className="p-3 pb-2">
                             <div className="flex justify-between items-center">
@@ -732,7 +758,9 @@ const ServiceDetailManager = () => {
                             </CardContent>
                           )}
                         </Card>
-                      ))}
+                      )) : (
+                        <div className="text-center py-8 text-gray-400">Henüz istatistik eklenmemiş. Yeni bir istatistik ekleyin.</div>
+                      )}
                     </div>
                   </ScrollArea>
                 </div>

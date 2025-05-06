@@ -12,8 +12,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ConnectionGuide from './database/ConnectionGuide';
 import ConnectionTab from './database/ConnectionTab';
 import SupportCards from './database/SupportCards';
+import { useToast } from '@/hooks/use-toast';
 
 const DatabaseManager = () => {
+  const { toast } = useToast();
   const { 
     config, 
     saveConfig, 
@@ -24,6 +26,40 @@ const DatabaseManager = () => {
   } = useDatabaseConnection();
   
   const [activeTab, setActiveTab] = useState('connection');
+
+  const handleTestConnection = async () => {
+    try {
+      const result = await testConnection();
+      if (result) {
+        toast({
+          title: "Bağlantı Başarılı",
+          description: "Veritabanına başarıyla bağlandı.",
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "Bağlantı Hatası",
+        description: "Bağlantı sırasında bir hata oluştu.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDisconnect = async () => {
+    try {
+      await disconnect();
+      toast({
+        title: "Bağlantı Kesildi",
+        description: "Veritabanı bağlantısı başarıyla kesildi.",
+      });
+    } catch (err) {
+      toast({
+        title: "Hata",
+        description: "Bağlantı kesilirken bir hata oluştu.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <motion.div
@@ -101,7 +137,7 @@ const DatabaseManager = () => {
           {config.isConnected ? (
             <Button 
               variant="destructive" 
-              onClick={disconnect}
+              onClick={handleDisconnect}
               disabled={isLoading}
               className="bg-red-600/20 text-red-400 border border-red-500/30 hover:bg-red-500/30"
             >
@@ -111,7 +147,7 @@ const DatabaseManager = () => {
           ) : (
             <Button 
               className="bg-ignite hover:bg-ignite-700 border-ignite/50"
-              onClick={testConnection}
+              onClick={handleTestConnection}
               disabled={isLoading || !config.apiKey}
             >
               <Save className="h-4 w-4 mr-2" />
