@@ -132,7 +132,21 @@ const ServiceDetailManager = () => {
   ]);
 
   const [selectedServiceId, setSelectedServiceId] = useState(serviceItems[0]?.id || '');
-  const currentService = serviceItems.find(s => s.id === selectedServiceId) as ServiceDetail;
+  const currentService = serviceItems.find(s => s.id === selectedServiceId) || serviceItems[0] || {
+    id: '',
+    slug: '',
+    title: '',
+    description: '',
+    longDescription: '',
+    image: '',
+    images: [],
+    features: [],
+    benefits: [],
+    process: [],
+    platforms: [],
+    stats: []
+  }; // Provide a fallback object with empty arrays to avoid undefined.map errors
+  
   const [formData, setFormData] = useState<ServiceDetail>(currentService);
   const [activeTab, setActiveTab] = useState('general');
   const [editingProcessIndex, setEditingProcessIndex] = useState<number | null>(null);
@@ -154,11 +168,13 @@ const ServiceDetailManager = () => {
 
   // Handle service selection change
   const handleServiceChange = (id: string) => {
-    const selectedService = serviceItems.find(s => s.id === id) as ServiceDetail;
-    setSelectedServiceId(id);
-    setFormData(selectedService);
-    setEditingProcessIndex(null);
-    setEditingStatIndex(null);
+    const selectedService = serviceItems.find(s => s.id === id);
+    if (selectedService) {
+      setSelectedServiceId(id);
+      setFormData(selectedService);
+      setEditingProcessIndex(null);
+      setEditingStatIndex(null);
+    }
   };
 
   // Handle general input changes
@@ -170,68 +186,82 @@ const ServiceDetailManager = () => {
   };
 
   // Handle array-based field updates (features, benefits, platforms, images)
-  const handleArrayItemChange = (field: string, index: number, value: string) => {
-    const updatedArray = [...(formData[field as keyof ServiceDetail] as string[])];
-    updatedArray[index] = value;
-    
-    setFormData({
-      ...formData,
-      [field]: updatedArray
-    });
+  const handleArrayItemChange = (field: keyof ServiceDetail, index: number, value: string) => {
+    if (Array.isArray(formData[field])) {
+      const updatedArray = [...(formData[field] as string[])];
+      updatedArray[index] = value;
+      
+      setFormData({
+        ...formData,
+        [field]: updatedArray
+      });
+    }
   };
 
   // Add new item to array field
-  const addArrayItem = (field: string, defaultValue: string = '') => {
-    const updatedArray = [...(formData[field as keyof ServiceDetail] as string[]), defaultValue];
-    
-    setFormData({
-      ...formData,
-      [field]: updatedArray
-    });
-    
-    toast({
-      title: "Yeni Öğe Eklendi",
-      description: `${field.charAt(0).toUpperCase() + field.slice(1)} listesine yeni bir öğe eklendi.`,
-    });
+  const addArrayItem = (field: keyof ServiceDetail, defaultValue: string = '') => {
+    if (Array.isArray(formData[field])) {
+      const updatedArray = [...(formData[field] as string[]), defaultValue];
+      
+      setFormData({
+        ...formData,
+        [field]: updatedArray
+      });
+      
+      toast({
+        title: "Yeni Öğe Eklendi",
+        description: `${field.charAt(0).toUpperCase() + field.slice(1)} listesine yeni bir öğe eklendi.`,
+      });
+    }
   };
 
   // Remove item from array field
-  const removeArrayItem = (field: string, index: number) => {
-    const updatedArray = [...(formData[field as keyof ServiceDetail] as string[])];
-    updatedArray.splice(index, 1);
-    
-    setFormData({
-      ...formData,
-      [field]: updatedArray
-    });
-    
-    toast({
-      title: "Öğe Kaldırıldı",
-      description: `${field.charAt(0).toUpperCase() + field.slice(1)} listesinden bir öğe kaldırıldı.`,
-    });
+  const removeArrayItem = (field: keyof ServiceDetail, index: number) => {
+    if (Array.isArray(formData[field])) {
+      const updatedArray = [...(formData[field] as string[])];
+      updatedArray.splice(index, 1);
+      
+      setFormData({
+        ...formData,
+        [field]: updatedArray
+      });
+      
+      toast({
+        title: "Öğe Kaldırıldı",
+        description: `${field.charAt(0).toUpperCase() + field.slice(1)} listesinden bir öğe kaldırıldı.`,
+      });
+    }
   };
 
   // Handle process step changes
-  const handleProcessStepChange = (index: number, field: string, value: string) => {
-    const updatedProcess = [...formData.process];
-    updatedProcess[index] = {
-      ...updatedProcess[index],
-      [field]: value
-    };
+  const handleProcessStepChange = (index: number, field: keyof ProcessStep, value: string) => {
+    if (Array.isArray(formData.process)) {
+      const updatedProcess = [...formData.process];
+      updatedProcess[index] = {
+        ...updatedProcess[index],
+        [field]: value
+      };
+      
+      setFormData({
+        ...formData,
+        process: updatedProcess
+      });
+    }
+  };
+
+  // Add new process step
+  const addProcessStep = () => {
+    const updatedProcess = Array.isArray(formData.process) 
+      ? [...formData.process, {...newProcessTemplate, id: Date.now().toString()}]
+      : [{...newProcessTemplate, id: Date.now().toString()}];
     
     setFormData({
       ...formData,
       process: updatedProcess
     });
-  };
-
-  // Add new process step
-  const addProcessStep = () => {
-    setFormData({
-      ...formData,
-      process: [...formData.process, {...newProcessTemplate, id: Date.now().toString()}]
-    });
-    setEditingProcessIndex(formData.process.length);
+    
+    setEditingProcessIndex(updatedProcess.length - 1);
+    
     toast({
       title: "Yeni Süreç Adımı Eklendi",
       description: "Yeni bir süreç adımı eklendi. Lütfen içeriği düzenleyin.",
@@ -240,42 +270,52 @@ const ServiceDetailManager = () => {
 
   // Remove process step
   const removeProcessStep = (index: number) => {
-    const updatedProcess = [...formData.process];
-    updatedProcess.splice(index, 1);
-    
-    setFormData({
-      ...formData,
-      process: updatedProcess
-    });
-    
-    setEditingProcessIndex(null);
-    toast({
-      title: "Süreç Adımı Kaldırıldı",
-      description: "Süreç adımı başarıyla kaldırıldı.",
-    });
+    if (Array.isArray(formData.process)) {
+      const updatedProcess = [...formData.process];
+      updatedProcess.splice(index, 1);
+      
+      setFormData({
+        ...formData,
+        process: updatedProcess
+      });
+      
+      setEditingProcessIndex(null);
+      toast({
+        title: "Süreç Adımı Kaldırıldı",
+        description: "Süreç adımı başarıyla kaldırıldı.",
+      });
+    }
   };
 
   // Handle stat item changes
-  const handleStatChange = (index: number, field: string, value: string) => {
-    const updatedStats = [...formData.stats];
-    updatedStats[index] = {
-      ...updatedStats[index],
-      [field]: value
-    };
-    
-    setFormData({
-      ...formData,
-      stats: updatedStats
-    });
+  const handleStatChange = (index: number, field: keyof ServiceStat, value: string) => {
+    if (Array.isArray(formData.stats)) {
+      const updatedStats = [...formData.stats];
+      updatedStats[index] = {
+        ...updatedStats[index],
+        [field]: value
+      };
+      
+      setFormData({
+        ...formData,
+        stats: updatedStats
+      });
+    }
   };
 
   // Add new stat item
   const addStat = () => {
+    const updatedStats = Array.isArray(formData.stats)
+      ? [...formData.stats, {...newStatTemplate, id: Date.now().toString()}]
+      : [{...newStatTemplate, id: Date.now().toString()}];
+      
     setFormData({
       ...formData,
-      stats: [...formData.stats, {...newStatTemplate, id: Date.now().toString()}]
+      stats: updatedStats
     });
-    setEditingStatIndex(formData.stats.length);
+    
+    setEditingStatIndex(updatedStats.length - 1);
+    
     toast({
       title: "Yeni İstatistik Eklendi",
       description: "Yeni bir istatistik eklendi. Lütfen içeriği düzenleyin.",
@@ -284,19 +324,21 @@ const ServiceDetailManager = () => {
 
   // Remove stat item
   const removeStat = (index: number) => {
-    const updatedStats = [...formData.stats];
-    updatedStats.splice(index, 1);
-    
-    setFormData({
-      ...formData,
-      stats: updatedStats
-    });
-    
-    setEditingStatIndex(null);
-    toast({
-      title: "İstatistik Kaldırıldı",
-      description: "İstatistik başarıyla kaldırıldı.",
-    });
+    if (Array.isArray(formData.stats)) {
+      const updatedStats = [...formData.stats];
+      updatedStats.splice(index, 1);
+      
+      setFormData({
+        ...formData,
+        stats: updatedStats
+      });
+      
+      setEditingStatIndex(null);
+      toast({
+        title: "İstatistik Kaldırıldı",
+        description: "İstatistik başarıyla kaldırıldı.",
+      });
+    }
   };
 
   // Save changes
@@ -416,7 +458,7 @@ const ServiceDetailManager = () => {
                   
                   <ScrollArea className="h-[300px] p-3">
                     <div className="space-y-2">
-                      {formData.features.map((feature, index) => (
+                      {formData.features && formData.features.map((feature, index) => (
                         <div key={index} className="flex gap-2 items-center p-2 bg-dark-600 rounded-md">
                           <Input 
                             value={feature} 
@@ -459,7 +501,7 @@ const ServiceDetailManager = () => {
                   
                   <ScrollArea className="h-[300px] p-3">
                     <div className="space-y-2">
-                      {formData.benefits.map((benefit, index) => (
+                      {formData.benefits && formData.benefits.map((benefit, index) => (
                         <div key={index} className="flex gap-2 items-center p-2 bg-dark-600 rounded-md">
                           <Input 
                             value={benefit} 
@@ -502,7 +544,7 @@ const ServiceDetailManager = () => {
                   
                   <ScrollArea className="h-[400px] p-3">
                     <div className="space-y-4">
-                      {formData.process.map((process, index) => (
+                      {formData.process && formData.process.map((process, index) => (
                         <Card key={process.id} className="bg-dark-600 border-dark-400">
                           <CardHeader className="p-3 pb-2">
                             <div className="flex justify-between items-center">
@@ -586,7 +628,7 @@ const ServiceDetailManager = () => {
                     
                     <ScrollArea className="h-[300px] p-3">
                       <div className="space-y-4">
-                        {formData.images.map((image, index) => (
+                        {formData.images && formData.images.map((image, index) => (
                           <div key={index} className="p-2 bg-dark-600 rounded-md">
                             <div className="flex gap-2 items-center mb-2">
                               <Input 
@@ -641,7 +683,7 @@ const ServiceDetailManager = () => {
                   
                   <ScrollArea className="h-[300px] p-3">
                     <div className="space-y-4">
-                      {formData.stats.map((stat, index) => (
+                      {formData.stats && formData.stats.map((stat, index) => (
                         <Card key={stat.id} className="bg-dark-600 border-dark-400">
                           <CardHeader className="p-3 pb-2">
                             <div className="flex justify-between items-center">
