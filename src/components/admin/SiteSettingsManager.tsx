@@ -5,10 +5,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SiteSettings from '@/components/admin/SiteSettings';
 import DatabaseManager from '@/components/admin/DatabaseManager';
-import { Database, Globe, Palette } from 'lucide-react';
+import GeneralSettings from '@/components/admin/GeneralSettings';
+import { Database, Globe, Palette, Server, Boxes } from 'lucide-react';
+import { useDataService } from '@/lib/db';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const SiteSettingsManager = () => {
   const [activeTab, setActiveTab] = useState('appearance');
+  const { items: settings } = useDataService('siteSettings', []);
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+  };
 
   return (
     <div className="space-y-6">
@@ -27,7 +35,7 @@ const SiteSettingsManager = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <Tabs defaultValue="appearance" className="w-full">
+          <Tabs defaultValue="appearance" value={activeTab} onValueChange={handleTabChange} className="w-full">
             <div className="flex justify-between items-center p-6">
               <TabsList className="bg-dark-600">
                 <TabsTrigger value="appearance">
@@ -41,6 +49,14 @@ const SiteSettingsManager = () => {
                 <TabsTrigger value="general">
                   <Globe className="mr-2 h-4 w-4" />
                   Genel Ayarlar
+                </TabsTrigger>
+                <TabsTrigger value="backups">
+                  <Server className="mr-2 h-4 w-4" />
+                  Yedekleme
+                </TabsTrigger>
+                <TabsTrigger value="structure">
+                  <Boxes className="mr-2 h-4 w-4" />
+                  İçerik Yapısı
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -71,7 +87,113 @@ const SiteSettingsManager = () => {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
               >
-                <SiteSettings />
+                <GeneralSettings />
+              </motion.div>
+            </TabsContent>
+            
+            <TabsContent value="backups" className="p-6 pt-0">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="space-y-4">
+                  <Alert className="bg-dark-600 border-ignite/30">
+                    <AlertDescription>
+                      Veritabanı yedekleme özelliği yakında eklenecektir. Bu özellik sayesinde sitenizin 
+                      içeriklerini ve ayarlarını düzenli olarak yedekleyebileceksiniz.
+                    </AlertDescription>
+                  </Alert>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Card className="bg-dark-600 border-dark-400 shadow-sm">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-lg flex items-center">
+                          <Server className="h-4 w-4 mr-2 text-ignite" /> Manuel Yedekleme
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-sm text-white/70">
+                          Sitenizin tüm içeriklerini ve ayarlarını manuel olarak yedekleyebilirsiniz. 
+                          Yedek dosyası indirilebilir bir JSON formatında oluşturulacaktır.
+                        </p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-dark-600 border-dark-400 shadow-sm">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-lg flex items-center">
+                          <Server className="h-4 w-4 mr-2 text-ignite" /> Otomatik Yedekleme
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-sm text-white/70">
+                          Sitenizin içeriklerini ve ayarlarını belirli aralıklarla otomatik olarak 
+                          yedekleyebilirsiniz. Yedekler güvenli bir şekilde saklanacaktır.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              </motion.div>
+            </TabsContent>
+            
+            <TabsContent value="structure" className="p-6 pt-0">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="space-y-4">
+                  <p className="text-sm text-white/70 mb-4">
+                    İçerik yapınızı özelleştirin ve web sitenizin organizasyonunu düzenleyin. 
+                    Özel içerik tipleri ekleyebilir ve mevcut yapıyı değiştirebilirsiniz.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <Card className="bg-dark-600 border-dark-400">
+                      <CardContent className="pt-6">
+                        <h3 className="font-semibold mb-2 flex items-center">
+                          <div className="w-8 h-8 bg-ignite/10 rounded-md flex items-center justify-center mr-2">
+                            <Boxes className="h-5 w-5 text-ignite" />
+                          </div>
+                          Hizmetler
+                        </h3>
+                        <p className="text-sm text-white/70">
+                          Hizmet içerik tipi: başlık, açıklama, ikon, bağlantı
+                        </p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-dark-600 border-dark-400">
+                      <CardContent className="pt-6">
+                        <h3 className="font-semibold mb-2 flex items-center">
+                          <div className="w-8 h-8 bg-blue-500/10 rounded-md flex items-center justify-center mr-2">
+                            <Boxes className="h-5 w-5 text-blue-400" />
+                          </div>
+                          Projeler
+                        </h3>
+                        <p className="text-sm text-white/70">
+                          Proje içerik tipi: başlık, açıklama, resim, kategori, etiketler
+                        </p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-dark-600 border-dark-400">
+                      <CardContent className="pt-6">
+                        <h3 className="font-semibold mb-2 flex items-center">
+                          <div className="w-8 h-8 bg-purple-500/10 rounded-md flex items-center justify-center mr-2">
+                            <Boxes className="h-5 w-5 text-purple-400" />
+                          </div>
+                          Blog Yazıları
+                        </h3>
+                        <p className="text-sm text-white/70">
+                          Blog içerik tipi: başlık, içerik, yazar, tarih, kategori
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
               </motion.div>
             </TabsContent>
           </Tabs>
