@@ -6,7 +6,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SiteSettings from '@/components/admin/SiteSettings';
 import DatabaseManager from '@/components/admin/DatabaseManager';
 import GeneralSettings from '@/components/admin/GeneralSettings';
-import { Database, Globe, Palette, Server, Boxes } from 'lucide-react';
+import PageContentManager from '@/components/admin/PageContentManager';
+import ServiceDetailManager from '@/components/admin/ServiceDetailManager';
+import { Database, Globe, Palette, Server, Boxes, FileText, LayoutGrid } from 'lucide-react';
 import { useDataService } from '@/lib/db';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -36,7 +38,7 @@ const SiteSettingsManager = () => {
         </CardHeader>
         <CardContent className="p-0">
           <Tabs defaultValue="appearance" value={activeTab} onValueChange={handleTabChange} className="w-full">
-            <div className="flex justify-between items-center p-6">
+            <div className="flex items-center p-6 overflow-x-auto">
               <TabsList className="bg-dark-600">
                 <TabsTrigger value="appearance">
                   <Palette className="mr-2 h-4 w-4" />
@@ -49,6 +51,14 @@ const SiteSettingsManager = () => {
                 <TabsTrigger value="general">
                   <Globe className="mr-2 h-4 w-4" />
                   Genel Ayarlar
+                </TabsTrigger>
+                <TabsTrigger value="pages">
+                  <FileText className="mr-2 h-4 w-4" />
+                  Sayfa İçerikleri
+                </TabsTrigger>
+                <TabsTrigger value="services">
+                  <LayoutGrid className="mr-2 h-4 w-4" />
+                  Hizmet Detayları
                 </TabsTrigger>
                 <TabsTrigger value="backups">
                   <Server className="mr-2 h-4 w-4" />
@@ -88,6 +98,26 @@ const SiteSettingsManager = () => {
                 transition={{ duration: 0.3 }}
               >
                 <GeneralSettings />
+              </motion.div>
+            </TabsContent>
+            
+            <TabsContent value="pages" className="p-6 pt-0">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <PageContentManager />
+              </motion.div>
+            </TabsContent>
+            
+            <TabsContent value="services" className="p-6 pt-0">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <ServiceDetailManager />
               </motion.div>
             </TabsContent>
             

@@ -9,6 +9,33 @@ import { useDataService } from '@/lib/db';
 import { useToast } from '@/hooks/use-toast';
 import { Save, Mail, Phone, MapPin, Globe, Facebook, Twitter, Instagram, Linkedin, Youtube } from 'lucide-react';
 
+// Define proper type for site settings
+interface SiteSettingsData {
+  id: number;
+  siteTitle: string;
+  siteDescription: string;
+  logoUrl: string;
+  favicon: string;
+  primaryColor: string;
+  secondaryColor: string;
+  footerText: string;
+  contactEmail: string;
+  contactPhone: string;
+  contactAddress: string;
+  socialLinks: {
+    facebook: string;
+    twitter: string;
+    instagram: string;
+    linkedin: string;
+    youtube: string;
+  };
+  metaTags: {
+    title: string;
+    description: string;
+    keywords: string;
+  };
+}
+
 const GeneralSettings = () => {
   const { toast } = useToast();
   const { items: settings, update } = useDataService('siteSettings', [{
@@ -37,8 +64,8 @@ const GeneralSettings = () => {
     }
   }]);
 
-  const currentSettings = settings[0] || {};
-  const [formData, setFormData] = useState(currentSettings);
+  const currentSettings = settings[0] as SiteSettingsData;
+  const [formData, setFormData] = useState<SiteSettingsData>(currentSettings);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {

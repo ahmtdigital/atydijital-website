@@ -21,6 +21,8 @@ import TeamManager from '@/components/admin/TeamManager';
 import HeroSliderManager from '@/components/admin/HeroSliderManager';
 import SiteSettingsManager from '@/components/admin/SiteSettingsManager';
 import SeoManager from '@/components/admin/SeoManager';
+import PageContentManager from '@/components/admin/PageContentManager';
+import ServiceDetailManager from '@/components/admin/ServiceDetailManager';
 import { useMySQLService } from '@/lib/mysql-service';
 import BreadcrumbManager from '@/components/admin/BreadcrumbManager';
 
@@ -271,8 +273,10 @@ const Admin = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
+              className="space-y-8"
             >
               <ServiceManager />
+              <ServiceDetailManager />
             </motion.div>
           )}
           
@@ -359,8 +363,10 @@ const Admin = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
+              className="space-y-8"
             >
               <PageManager />
+              <PageContentManager />
               <div className="mt-8">
                 <BreadcrumbManager />
               </div>
