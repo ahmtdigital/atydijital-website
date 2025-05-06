@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Database, Save, RotateCcw, CheckCircle, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -67,7 +68,7 @@ const DatabaseManager = () => {
     >
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold flex items-center">
+          <h2 className="text-2xl font-bold flex items-center text-white">
             <Database className="mr-2 h-6 w-6 text-ignite" />
             Veri Yönetimi
           </h2>
@@ -81,11 +82,11 @@ const DatabaseManager = () => {
         <CardHeader className="bg-gradient-to-r from-dark-600 to-dark-500 border-b border-dark-400">
           <div className="flex justify-between items-start">
             <div>
-              <CardTitle className="flex items-center text-xl">
+              <CardTitle className="flex items-center text-xl text-white">
                 <Database className="mr-2 h-5 w-5 text-ignite" />
                 Veritabanı Bağlantısı
               </CardTitle>
-              <CardDescription>Veri yönetimi ve API entegrasyonu için bağlantı ayarları</CardDescription>
+              <CardDescription className="text-white/60">Veri yönetimi ve API entegrasyonu için bağlantı ayarları</CardDescription>
             </div>
             <div className="flex items-center">
               {config.isConnected ? (
@@ -114,7 +115,7 @@ const DatabaseManager = () => {
           </div>
           
           <TabsContent value="connection" className="m-0">
-            <CardContent className="space-y-4 pt-6">
+            <CardContent className="space-y-4 pt-6 text-white">
               <ConnectionTab 
                 config={config} 
                 saveConfig={saveConfig} 
@@ -124,7 +125,7 @@ const DatabaseManager = () => {
           </TabsContent>
           
           <TabsContent value="guide" className="m-0">
-            <CardContent className="space-y-4 pt-6">
+            <CardContent className="space-y-4 pt-6 text-white">
               <ConnectionGuide />
             </CardContent>
           </TabsContent>

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -240,7 +241,7 @@ const Admin = () => {
       <AdminNav activeTab={activeTab} setActiveTab={handleTabChange} />
 
       {/* Admin Content */}
-      <section className="py-10 bg-dark min-h-screen">
+      <section className="py-10 bg-dark min-h-screen text-white">
         <div className="container mx-auto px-4">
           {/* Dashboard */}
           {activeTab === 'dashboard' && (
