@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -22,7 +21,7 @@ interface StorySection {
   id: string;
   title: string;
   content: string;
-  image?: string;
+  image: string; // Changed from optional to required
   alignment: 'left' | 'right';
 }
 
@@ -136,7 +135,7 @@ const PageContentManager = () => {
     id: Date.now().toString(),
     title: 'Yeni Bölüm',
     content: 'Bu bölüm hakkında içerik yazınız.',
-    image: '/images/about/placeholder.jpg',
+    image: '/images/about/placeholder.jpg', // Now required
     alignment: 'right'
   };
 
@@ -320,7 +319,22 @@ const PageContentManager = () => {
   const saveChanges = async () => {
     setIsLoading(true);
     try {
-      await update(formData.id, formData);
+      // Fix: Ensure all story sections have image property before saving
+      const updatedFormData = {
+        ...formData,
+        sections: {
+          ...formData.sections,
+          story: {
+            ...formData.sections.story,
+            sections: formData.sections.story.sections.map(section => ({
+              ...section,
+              image: section.image || '/images/about/placeholder.jpg'  // Provide default image if missing
+            }))
+          }
+        }
+      };
+      
+      await update(updatedFormData.id, updatedFormData);
       toast({
         title: "Değişiklikler Kaydedildi",
         description: "Sayfa içeriği başarıyla güncellendi.",

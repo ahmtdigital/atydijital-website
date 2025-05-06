@@ -110,7 +110,8 @@ const SupportCards = () => {
               <span>Güvenlik Durumu</span>
               <span className="text-green-400">İyi</span>
             </div>
-            <Progress value={85} className="h-1.5 bg-dark-400" indicatorClassName="bg-green-500" />
+            {/* Fixed the Progress component - removed indicatorClassName */}
+            <Progress value={85} className="h-1.5 bg-dark-400" />
           </div>
         </CardContent>
       </Card>
