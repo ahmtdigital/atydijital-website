@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -44,6 +45,27 @@ interface PageContent {
     };
   };
 }
+
+// Default templates for new items
+const defaultPageContent: PageContent = {
+  id: 'about',
+  pageTitle: 'Hakkımızda',
+  pageDescription: 'Ignite Pazarlama hakkında bilgi edinin',
+  metaTitle: 'Hakkımızda | Ignite Pazarlama',
+  metaDescription: 'Ignite Pazarlama ekibi, değerleri ve hikayesi hakkında daha fazla bilgi edinin.',
+  sections: {
+    values: {
+      sectionTitle: 'Değerlerimiz',
+      sectionSubtitle: 'Bizi özel yapan prensiplerimiz',
+      items: []
+    },
+    story: {
+      sectionTitle: 'Hikayemiz',
+      sectionSubtitle: 'Nereden başladık ve nereye gidiyoruz',
+      sections: []
+    }
+  }
+};
 
 const PageContentManager = () => {
   const { toast } = useToast();
@@ -116,7 +138,11 @@ const PageContentManager = () => {
     }
   ]);
 
-  const currentPage = pageItems[0] as PageContent;
+  // Handle the case when no data is available
+  const currentPage = pageItems && pageItems.length > 0 
+    ? pageItems[0] as PageContent 
+    : { ...defaultPageContent };
+    
   const [formData, setFormData] = useState<PageContent>(currentPage);
   const [activeTab, setActiveTab] = useState('values');
   const [editingValueIndex, setEditingValueIndex] = useState<number | null>(null);
@@ -173,7 +199,11 @@ const PageContentManager = () => {
 
   // Handle value item changes
   const handleValueItemChange = (index: number, field: string, value: string) => {
-    const updatedItems = [...formData.sections.values.items];
+    // Ensure items array exists before updating it
+    const items = formData.sections?.values?.items || [];
+    if (index < 0 || index >= items.length) return;
+
+    const updatedItems = [...items];
     updatedItems[index] = {
       ...updatedItems[index],
       [field]: value
@@ -193,7 +223,11 @@ const PageContentManager = () => {
 
   // Handle story section changes
   const handleStorySectionChange = (index: number, field: string, value: string) => {
-    const updatedSections = [...formData.sections.story.sections];
+    // Ensure sections array exists before updating it
+    const sections = formData.sections?.story?.sections || [];
+    if (index < 0 || index >= sections.length) return;
+
+    const updatedSections = [...sections];
     updatedSections[index] = {
       ...updatedSections[index],
       [field]: value
@@ -213,17 +247,19 @@ const PageContentManager = () => {
 
   // Add new value item
   const addValueItem = () => {
+    const items = formData.sections?.values?.items || [];
+
     setFormData({
       ...formData,
       sections: {
         ...formData.sections,
         values: {
           ...formData.sections.values,
-          items: [...formData.sections.values.items, {...newValueTemplate, id: Date.now().toString()}]
+          items: [...items, {...newValueTemplate, id: Date.now().toString()}]
         }
       }
     });
-    setEditingValueIndex(formData.sections.values.items.length);
+    setEditingValueIndex(items.length);
     toast({
       title: "Yeni Değer Eklendi",
       description: "Yeni bir değer öğesi eklendi. Lütfen içeriği düzenleyin.",
@@ -232,7 +268,10 @@ const PageContentManager = () => {
 
   // Remove value item
   const removeValueItem = (index: number) => {
-    const updatedItems = [...formData.sections.values.items];
+    const items = formData.sections?.values?.items || [];
+    if (index < 0 || index >= items.length) return;
+
+    const updatedItems = [...items];
     updatedItems.splice(index, 1);
     
     setFormData({
@@ -255,17 +294,19 @@ const PageContentManager = () => {
 
   // Add new story section
   const addStorySection = () => {
+    const sections = formData.sections?.story?.sections || [];
+
     setFormData({
       ...formData,
       sections: {
         ...formData.sections,
         story: {
           ...formData.sections.story,
-          sections: [...formData.sections.story.sections, {...newStoryTemplate, id: Date.now().toString()}]
+          sections: [...sections, {...newStoryTemplate, id: Date.now().toString()}]
         }
       }
     });
-    setEditingStoryIndex(formData.sections.story.sections.length);
+    setEditingStoryIndex(sections.length);
     toast({
       title: "Yeni Hikaye Bölümü Eklendi",
       description: "Yeni bir hikaye bölümü eklendi. Lütfen içeriği düzenleyin.",
@@ -274,7 +315,10 @@ const PageContentManager = () => {
 
   // Remove story section
   const removeStorySection = (index: number) => {
-    const updatedSections = [...formData.sections.story.sections];
+    const sections = formData.sections?.story?.sections || [];
+    if (index < 0 || index >= sections.length) return;
+
+    const updatedSections = [...sections];
     updatedSections.splice(index, 1);
     
     setFormData({
@@ -297,7 +341,10 @@ const PageContentManager = () => {
 
   // Toggle story section alignment
   const toggleAlignment = (index: number) => {
-    const updatedSections = [...formData.sections.story.sections];
+    const sections = formData.sections?.story?.sections || [];
+    if (index < 0 || index >= sections.length) return;
+
+    const updatedSections = [...sections];
     updatedSections[index] = {
       ...updatedSections[index],
       alignment: updatedSections[index].alignment === 'left' ? 'right' : 'left'
@@ -319,14 +366,19 @@ const PageContentManager = () => {
   const saveChanges = async () => {
     setIsLoading(true);
     try {
-      // Fix: Ensure all story sections have image property before saving
+      // Ensure all properties exist and have proper values before saving
       const updatedFormData = {
         ...formData,
         sections: {
-          ...formData.sections,
+          values: {
+            sectionTitle: formData.sections?.values?.sectionTitle || 'Değerlerimiz',
+            sectionSubtitle: formData.sections?.values?.sectionSubtitle || 'Bizi özel yapan prensiplerimiz',
+            items: formData.sections?.values?.items || []
+          },
           story: {
-            ...formData.sections.story,
-            sections: formData.sections.story.sections.map(section => ({
+            sectionTitle: formData.sections?.story?.sectionTitle || 'Hikayemiz',
+            sectionSubtitle: formData.sections?.story?.sectionSubtitle || 'Nereden başladık ve nereye gidiyoruz',
+            sections: (formData.sections?.story?.sections || []).map(section => ({
               ...section,
               image: section.image || '/images/about/placeholder.jpg'  // Provide default image if missing
             }))
@@ -345,6 +397,7 @@ const PageContentManager = () => {
         description: "İçerik kaydedilirken bir hata oluştu.",
         variant: "destructive",
       });
+      console.error("Save error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -354,6 +407,10 @@ const PageContentManager = () => {
     "Star", "Users", "Lightbulb", "Target", "Heart", "Shield", "Globe", "Clock", 
     "Check", "BarChart", "Award", "Smile", "ThumbsUp", "MessageCircle"
   ];
+
+  // Safely access nested arrays with defaults
+  const valueItems = formData?.sections?.values?.items || [];
+  const storyItems = formData?.sections?.story?.sections || [];
 
   return (
     <div className="space-y-6">
@@ -367,7 +424,7 @@ const PageContentManager = () => {
               <div className="space-y-2">
                 <label className="text-sm font-medium">Sayfa Başlığı</label>
                 <Input 
-                  value={formData.pageTitle} 
+                  value={formData.pageTitle || ''} 
                   onChange={(e) => handleInputChange('page', 'pageTitle', e.target.value)}
                   className="bg-dark-400 border-dark-300"
                 />
@@ -375,7 +432,7 @@ const PageContentManager = () => {
               <div className="space-y-2">
                 <label className="text-sm font-medium">Sayfa Açıklaması</label>
                 <Input 
-                  value={formData.pageDescription} 
+                  value={formData.pageDescription || ''} 
                   onChange={(e) => handleInputChange('page', 'pageDescription', e.target.value)}
                   className="bg-dark-400 border-dark-300"
                 />
@@ -385,7 +442,7 @@ const PageContentManager = () => {
               <div className="space-y-2">
                 <label className="text-sm font-medium">Meta Başlığı</label>
                 <Input 
-                  value={formData.metaTitle} 
+                  value={formData.metaTitle || ''} 
                   onChange={(e) => handleInputChange('page', 'metaTitle', e.target.value)}
                   className="bg-dark-400 border-dark-300"
                 />
@@ -393,7 +450,7 @@ const PageContentManager = () => {
               <div className="space-y-2">
                 <label className="text-sm font-medium">Meta Açıklaması</label>
                 <Textarea 
-                  value={formData.metaDescription} 
+                  value={formData.metaDescription || ''} 
                   onChange={(e) => handleInputChange('page', 'metaDescription', e.target.value)}
                   className="bg-dark-400 border-dark-300 h-[42px]"
                 />
@@ -413,7 +470,7 @@ const PageContentManager = () => {
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Bölüm Başlığı</label>
                     <Input 
-                      value={formData.sections.values.sectionTitle} 
+                      value={formData.sections?.values?.sectionTitle || ''} 
                       onChange={(e) => handleInputChange('values', 'sectionTitle', e.target.value)}
                       className="bg-dark-400 border-dark-300"
                     />
@@ -421,7 +478,7 @@ const PageContentManager = () => {
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Bölüm Alt Başlığı</label>
                     <Input 
-                      value={formData.sections.values.sectionSubtitle} 
+                      value={formData.sections?.values?.sectionSubtitle || ''} 
                       onChange={(e) => handleInputChange('values', 'sectionSubtitle', e.target.value)}
                       className="bg-dark-400 border-dark-300"
                     />
@@ -443,7 +500,7 @@ const PageContentManager = () => {
                   
                   <ScrollArea className="h-[300px] p-3">
                     <div className="space-y-4">
-                      {formData.sections.values.items.map((item, index) => (
+                      {valueItems.map((item, index) => (
                         <Card key={item.id} className="bg-dark-600 border-dark-400">
                           <CardHeader className="p-3 pb-2">
                             <div className="flex justify-between items-center">
@@ -517,7 +574,7 @@ const PageContentManager = () => {
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Bölüm Başlığı</label>
                     <Input 
-                      value={formData.sections.story.sectionTitle} 
+                      value={formData.sections?.story?.sectionTitle || ''} 
                       onChange={(e) => handleInputChange('story', 'sectionTitle', e.target.value)}
                       className="bg-dark-400 border-dark-300"
                     />
@@ -525,7 +582,7 @@ const PageContentManager = () => {
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Bölüm Alt Başlığı</label>
                     <Input 
-                      value={formData.sections.story.sectionSubtitle} 
+                      value={formData.sections?.story?.sectionSubtitle || ''} 
                       onChange={(e) => handleInputChange('story', 'sectionSubtitle', e.target.value)}
                       className="bg-dark-400 border-dark-300"
                     />
@@ -547,7 +604,7 @@ const PageContentManager = () => {
                   
                   <ScrollArea className="h-[400px] p-3">
                     <div className="space-y-4">
-                      {formData.sections.story.sections.map((section, index) => (
+                      {storyItems.map((section, index) => (
                         <Card key={section.id} className="bg-dark-600 border-dark-400">
                           <CardHeader className="p-3 pb-2">
                             <div className="flex justify-between items-center">
