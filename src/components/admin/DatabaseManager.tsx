@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Database, Save, RotateCcw, CheckCircle, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -29,13 +28,11 @@ const DatabaseManager = () => {
 
   const handleTestConnection = async () => {
     try {
-      const result = await testConnection();
-      if (result) {
-        toast({
-          title: "Bağlantı Başarılı",
-          description: "Veritabanına başarıyla bağlandı.",
-        });
-      }
+      await testConnection();
+      toast({
+        title: "Bağlantı Başarılı",
+        description: "Veritabanına başarıyla bağlandı.",
+      });
     } catch (err) {
       toast({
         title: "Bağlantı Hatası",
