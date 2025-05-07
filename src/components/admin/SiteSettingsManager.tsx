@@ -6,9 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SiteSettings from '@/components/admin/SiteSettings';
 import DatabaseManager from '@/components/admin/DatabaseManager';
 import GeneralSettings from '@/components/admin/GeneralSettings';
-import PageContentManager from '@/components/admin/PageContentManager';
-import ServiceDetailManager from '@/components/admin/ServiceDetailManager';
-import { Database, Globe, Palette, Server, Boxes, FileText, LayoutGrid } from 'lucide-react';
+import { Database, Globe, Palette, Server, Boxes } from 'lucide-react';
 import { useDataService } from '@/lib/db';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -24,14 +22,14 @@ const SiteSettingsManager = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold">Site Yönetimi</h2>
-          <p className="text-sm text-white/60 mt-1">Web sitenizin tüm ayarlarını buradan yönetin</p>
+          <h2 className="text-2xl font-bold text-white">Site Yönetimi</h2>
+          <p className="text-sm text-white/60 mt-1">Web sitenizin temel ayarlarını buradan yönetin</p>
         </div>
       </div>
 
       <Card className="bg-dark-500 border-dark-400 shadow-lg overflow-hidden">
         <CardHeader className="bg-dark-600 border-b border-dark-400">
-          <CardTitle className="flex items-center text-xl">
+          <CardTitle className="flex items-center text-xl text-white">
             <Palette className="mr-2 h-5 w-5 text-ignite" />
             Site Ayarları Yönetimi
           </CardTitle>
@@ -40,31 +38,23 @@ const SiteSettingsManager = () => {
           <Tabs defaultValue="appearance" value={activeTab} onValueChange={handleTabChange} className="w-full">
             <div className="flex items-center p-6 overflow-x-auto">
               <TabsList className="bg-dark-600">
-                <TabsTrigger value="appearance">
+                <TabsTrigger value="appearance" className="text-white">
                   <Palette className="mr-2 h-4 w-4" />
                   Görünüm ve İçerik
                 </TabsTrigger>
-                <TabsTrigger value="database">
+                <TabsTrigger value="database" className="text-white">
                   <Database className="mr-2 h-4 w-4" />
                   Veritabanı
                 </TabsTrigger>
-                <TabsTrigger value="general">
+                <TabsTrigger value="general" className="text-white">
                   <Globe className="mr-2 h-4 w-4" />
                   Genel Ayarlar
                 </TabsTrigger>
-                <TabsTrigger value="pages">
-                  <FileText className="mr-2 h-4 w-4" />
-                  Sayfa İçerikleri
-                </TabsTrigger>
-                <TabsTrigger value="services">
-                  <LayoutGrid className="mr-2 h-4 w-4" />
-                  Hizmet Detayları
-                </TabsTrigger>
-                <TabsTrigger value="backups">
+                <TabsTrigger value="backups" className="text-white">
                   <Server className="mr-2 h-4 w-4" />
                   Yedekleme
                 </TabsTrigger>
-                <TabsTrigger value="structure">
+                <TabsTrigger value="structure" className="text-white">
                   <Boxes className="mr-2 h-4 w-4" />
                   İçerik Yapısı
                 </TabsTrigger>
@@ -101,26 +91,6 @@ const SiteSettingsManager = () => {
               </motion.div>
             </TabsContent>
             
-            <TabsContent value="pages" className="p-6 pt-0">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                <PageContentManager />
-              </motion.div>
-            </TabsContent>
-            
-            <TabsContent value="services" className="p-6 pt-0">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                <ServiceDetailManager />
-              </motion.div>
-            </TabsContent>
-            
             <TabsContent value="backups" className="p-6 pt-0">
               <motion.div
                 initial={{ opacity: 0 }}
@@ -129,7 +99,7 @@ const SiteSettingsManager = () => {
               >
                 <div className="space-y-4">
                   <Alert className="bg-dark-600 border-ignite/30">
-                    <AlertDescription>
+                    <AlertDescription className="text-white">
                       Veritabanı yedekleme özelliği yakında eklenecektir. Bu özellik sayesinde sitenizin 
                       içeriklerini ve ayarlarını düzenli olarak yedekleyebileceksiniz.
                     </AlertDescription>
@@ -138,7 +108,7 @@ const SiteSettingsManager = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Card className="bg-dark-600 border-dark-400 shadow-sm">
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-lg flex items-center">
+                        <CardTitle className="text-lg flex items-center text-white">
                           <Server className="h-4 w-4 mr-2 text-ignite" /> Manuel Yedekleme
                         </CardTitle>
                       </CardHeader>
@@ -152,7 +122,7 @@ const SiteSettingsManager = () => {
                     
                     <Card className="bg-dark-600 border-dark-400 shadow-sm">
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-lg flex items-center">
+                        <CardTitle className="text-lg flex items-center text-white">
                           <Server className="h-4 w-4 mr-2 text-ignite" /> Otomatik Yedekleme
                         </CardTitle>
                       </CardHeader>
@@ -183,7 +153,7 @@ const SiteSettingsManager = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <Card className="bg-dark-600 border-dark-400">
                       <CardContent className="pt-6">
-                        <h3 className="font-semibold mb-2 flex items-center">
+                        <h3 className="font-semibold mb-2 flex items-center text-white">
                           <div className="w-8 h-8 bg-ignite/10 rounded-md flex items-center justify-center mr-2">
                             <Boxes className="h-5 w-5 text-ignite" />
                           </div>
@@ -197,7 +167,7 @@ const SiteSettingsManager = () => {
                     
                     <Card className="bg-dark-600 border-dark-400">
                       <CardContent className="pt-6">
-                        <h3 className="font-semibold mb-2 flex items-center">
+                        <h3 className="font-semibold mb-2 flex items-center text-white">
                           <div className="w-8 h-8 bg-blue-500/10 rounded-md flex items-center justify-center mr-2">
                             <Boxes className="h-5 w-5 text-blue-400" />
                           </div>
@@ -211,7 +181,7 @@ const SiteSettingsManager = () => {
                     
                     <Card className="bg-dark-600 border-dark-400">
                       <CardContent className="pt-6">
-                        <h3 className="font-semibold mb-2 flex items-center">
+                        <h3 className="font-semibold mb-2 flex items-center text-white">
                           <div className="w-8 h-8 bg-purple-500/10 rounded-md flex items-center justify-center mr-2">
                             <Boxes className="h-5 w-5 text-purple-400" />
                           </div>
