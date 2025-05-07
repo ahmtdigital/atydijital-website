@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useDataService } from '@/lib/db';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Save, Plus, Trash, Edit, CheckCircle, List, BarChart } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Define types for service details
 interface ProcessStep {
@@ -56,7 +56,7 @@ const defaultServiceDetail: ServiceDetail = {
 
 const ServiceDetailManager = () => {
   const { toast } = useToast();
-  const { items: serviceItems, update } = useDataService('services', [
+  const { items: serviceItems, update } = useDataService<ServiceDetail>('services', [
     {
       id: 'digital-marketing',
       slug: 'dijital-pazarlama',
@@ -147,7 +147,7 @@ const ServiceDetailManager = () => {
     }
   ]);
 
-  const [selectedServiceId, setSelectedServiceId] = useState(serviceItems && serviceItems.length > 0 ? serviceItems[0]?.id : '');
+  const [selectedServiceId, setSelectedServiceId] = useState(serviceItems && serviceItems.length > 0 ? serviceItems[0]?.id : 'default-service');
   
   // Güvenli bir şekilde mevcut hizmeti al, yoksa varsayılan değeri kullan
   const currentService = serviceItems && serviceItems.length > 0 
@@ -175,6 +175,10 @@ const ServiceDetailManager = () => {
 
   // Handle service selection change
   const handleServiceChange = (id: string) => {
+    if (!id || id === '') {
+      id = serviceItems && serviceItems.length > 0 ? serviceItems[0]?.id : 'default-service';
+    }
+    
     const selectedService = serviceItems && serviceItems.length > 0 
       ? serviceItems.find(s => s.id === id)
       : null;
@@ -391,18 +395,22 @@ const ServiceDetailManager = () => {
             <div className="space-y-2">
               <label className="text-sm font-medium text-white">Hizmet Seçin</label>
               <Select 
-                value={selectedServiceId}
+                value={selectedServiceId || "default-service"}
                 onValueChange={handleServiceChange}
               >
                 <SelectTrigger className="w-full bg-dark-400 border-dark-300 text-white">
                   <SelectValue placeholder="Bir hizmet seçin" />
                 </SelectTrigger>
                 <SelectContent className="bg-dark-600 border-dark-300 text-white">
-                  {serviceItems && serviceItems.length > 0 && serviceItems.map((service) => (
-                    <SelectItem key={service.id} value={service.id} className="text-white hover:bg-dark-500">
-                      {service.title}
+                  {serviceItems && serviceItems.length > 0 ? serviceItems.map((service) => (
+                    <SelectItem key={service.id} value={service.id || "default-service"} className="text-white hover:bg-dark-500">
+                      {service.title || "İsimsiz Hizmet"}
                     </SelectItem>
-                  ))}
+                  )) : (
+                    <SelectItem value="no-services" className="text-white hover:bg-dark-500">
+                      Hizmet bulunamadı
+                    </SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             </div>
