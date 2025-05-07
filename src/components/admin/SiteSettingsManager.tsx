@@ -4,16 +4,75 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import GeneralSettings from '@/components/admin/GeneralSettings';
-import { Globe, Palette, Server, Boxes } from 'lucide-react';
+import { Globe, Server, Boxes } from 'lucide-react';
 import { useDataService } from '@/lib/db';
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 const SiteSettingsManager = () => {
   const [activeTab, setActiveTab] = useState('general');
-  const { items: settings } = useDataService('siteSettings', []);
+  const { items: settings, update: updateSettings } = useDataService('siteSettings', [
+    {
+      id: 'general',
+      siteName: 'Ignite Pazarlama',
+      siteTagline: 'Dijital Pazarlama Çözümleri',
+      siteDescription: 'Profesyonel dijital pazarlama hizmetleri sunuyoruz',
+      contactEmail: 'info@ignitepazarlama.com',
+      contactPhone: '0212 555 7890',
+      socialLinks: {
+        facebook: 'https://facebook.com/ignitepazarlama',
+        twitter: 'https://twitter.com/ignitepazarlama',
+        instagram: 'https://instagram.com/ignitepazarlama',
+        linkedin: 'https://linkedin.com/company/ignitepazarlama'
+      },
+      address: 'İstanbul, Türkiye',
+      googleAnalyticsId: 'UA-12345678-1',
+      faviconUrl: '/favicon.ico',
+      logoUrl: '/logo.png',
+      colorScheme: {
+        primary: '#f97316',
+        secondary: '#6b7280',
+        accent: '#8b5cf6'
+      }
+    }
+  ]);
+  const [formData, setFormData] = useState(settings[0] || {});
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData({
+      ...formData,
+      [field]: value
+    });
+  };
+
+  const handleSocialLinkChange = (platform: string, value: string) => {
+    setFormData({
+      ...formData,
+      socialLinks: {
+        ...formData.socialLinks,
+        [platform]: value
+      }
+    });
+  };
+
+  const handleColorChange = (type: string, value: string) => {
+    setFormData({
+      ...formData,
+      colorScheme: {
+        ...formData.colorScheme,
+        [type]: value
+      }
+    });
+  };
+
+  const handleSaveSettings = () => {
+    updateSettings(formData.id, formData);
   };
 
   return (
@@ -28,7 +87,7 @@ const SiteSettingsManager = () => {
       <Card className="bg-dark-500 border-dark-400 shadow-lg overflow-hidden">
         <CardHeader className="bg-dark-600 border-b border-dark-400">
           <CardTitle className="flex items-center text-xl text-white">
-            <Palette className="mr-2 h-5 w-5 text-ignite" />
+            <Globe className="mr-2 h-5 w-5 text-ignite" />
             Site Ayarları Yönetimi
           </CardTitle>
         </CardHeader>
@@ -56,8 +115,210 @@ const SiteSettingsManager = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
+                className="space-y-6"
               >
-                <GeneralSettings />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Card className="bg-dark-600 border-dark-400">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg text-white">Site Bilgileri</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-white">Site Adı</label>
+                        <Input 
+                          value={formData.siteName || ''}
+                          onChange={(e) => handleInputChange('siteName', e.target.value)}
+                          className="bg-dark-400 border-dark-300 text-white"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-white">Site Sloganı</label>
+                        <Input 
+                          value={formData.siteTagline || ''}
+                          onChange={(e) => handleInputChange('siteTagline', e.target.value)}
+                          className="bg-dark-400 border-dark-300 text-white"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-white">Site Açıklaması</label>
+                        <Input 
+                          value={formData.siteDescription || ''}
+                          onChange={(e) => handleInputChange('siteDescription', e.target.value)}
+                          className="bg-dark-400 border-dark-300 text-white"
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="bg-dark-600 border-dark-400">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg text-white">İletişim Bilgileri</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-white">E-posta Adresi</label>
+                        <Input 
+                          value={formData.contactEmail || ''}
+                          onChange={(e) => handleInputChange('contactEmail', e.target.value)}
+                          className="bg-dark-400 border-dark-300 text-white"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-white">Telefon Numarası</label>
+                        <Input 
+                          value={formData.contactPhone || ''}
+                          onChange={(e) => handleInputChange('contactPhone', e.target.value)}
+                          className="bg-dark-400 border-dark-300 text-white"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-white">Adres</label>
+                        <Input 
+                          value={formData.address || ''}
+                          onChange={(e) => handleInputChange('address', e.target.value)}
+                          className="bg-dark-400 border-dark-300 text-white"
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="bg-dark-600 border-dark-400">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg text-white">Sosyal Medya Bağlantıları</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-white">Facebook</label>
+                        <Input 
+                          value={formData.socialLinks?.facebook || ''}
+                          onChange={(e) => handleSocialLinkChange('facebook', e.target.value)}
+                          className="bg-dark-400 border-dark-300 text-white"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-white">Twitter</label>
+                        <Input 
+                          value={formData.socialLinks?.twitter || ''}
+                          onChange={(e) => handleSocialLinkChange('twitter', e.target.value)}
+                          className="bg-dark-400 border-dark-300 text-white"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-white">Instagram</label>
+                        <Input 
+                          value={formData.socialLinks?.instagram || ''}
+                          onChange={(e) => handleSocialLinkChange('instagram', e.target.value)}
+                          className="bg-dark-400 border-dark-300 text-white"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-white">LinkedIn</label>
+                        <Input 
+                          value={formData.socialLinks?.linkedin || ''}
+                          onChange={(e) => handleSocialLinkChange('linkedin', e.target.value)}
+                          className="bg-dark-400 border-dark-300 text-white"
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="bg-dark-600 border-dark-400">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg text-white">Analitik ve Görsel</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-white">Google Analytics ID</label>
+                        <Input 
+                          value={formData.googleAnalyticsId || ''}
+                          onChange={(e) => handleInputChange('googleAnalyticsId', e.target.value)}
+                          className="bg-dark-400 border-dark-300 text-white"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-white">Logo URL</label>
+                        <Input 
+                          value={formData.logoUrl || ''}
+                          onChange={(e) => handleInputChange('logoUrl', e.target.value)}
+                          className="bg-dark-400 border-dark-300 text-white"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-white">Favicon URL</label>
+                        <Input 
+                          value={formData.faviconUrl || ''}
+                          onChange={(e) => handleInputChange('faviconUrl', e.target.value)}
+                          className="bg-dark-400 border-dark-300 text-white"
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="bg-dark-600 border-dark-400">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg text-white">Renk Şeması</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-white">Ana Renk</label>
+                        <div className="flex gap-2">
+                          <Input 
+                            type="color"
+                            value={formData.colorScheme?.primary || '#f97316'}
+                            onChange={(e) => handleColorChange('primary', e.target.value)}
+                            className="w-12 h-10 p-1 bg-dark-400"
+                          />
+                          <Input 
+                            value={formData.colorScheme?.primary || '#f97316'}
+                            onChange={(e) => handleColorChange('primary', e.target.value)}
+                            className="bg-dark-400 border-dark-300 text-white"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-white">İkincil Renk</label>
+                        <div className="flex gap-2">
+                          <Input 
+                            type="color"
+                            value={formData.colorScheme?.secondary || '#6b7280'}
+                            onChange={(e) => handleColorChange('secondary', e.target.value)}
+                            className="w-12 h-10 p-1 bg-dark-400"
+                          />
+                          <Input 
+                            value={formData.colorScheme?.secondary || '#6b7280'}
+                            onChange={(e) => handleColorChange('secondary', e.target.value)}
+                            className="bg-dark-400 border-dark-300 text-white"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-white">Vurgu Rengi</label>
+                        <div className="flex gap-2">
+                          <Input 
+                            type="color"
+                            value={formData.colorScheme?.accent || '#8b5cf6'}
+                            onChange={(e) => handleColorChange('accent', e.target.value)}
+                            className="w-12 h-10 p-1 bg-dark-400"
+                          />
+                          <Input 
+                            value={formData.colorScheme?.accent || '#8b5cf6'}
+                            onChange={(e) => handleColorChange('accent', e.target.value)}
+                            className="bg-dark-400 border-dark-300 text-white"
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                <div className="flex justify-end">
+                  <Button 
+                    onClick={handleSaveSettings}
+                    className="bg-ignite hover:bg-ignite-700"
+                  >
+                    Ayarları Kaydet
+                  </Button>
+                </div>
               </motion.div>
             </TabsContent>
             

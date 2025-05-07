@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useDataService } from '@/lib/db';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Save, Plus, Trash, Edit, CheckCircle, List, BarChart } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 // Define types for service details
 interface ProcessStep {
@@ -383,76 +384,82 @@ const ServiceDetailManager = () => {
     <div className="space-y-6">
       <Card className="bg-dark-500 border-dark-400">
         <CardHeader>
-          <CardTitle className="text-xl">Hizmet Detay Yönetimi</CardTitle>
+          <CardTitle className="text-xl text-white">Hizmet Detay Yönetimi</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Hizmet Seçin</label>
-              <select
+              <label className="text-sm font-medium text-white">Hizmet Seçin</label>
+              <Select 
                 value={selectedServiceId}
-                onChange={(e) => handleServiceChange(e.target.value)}
-                className="w-full bg-dark-400 border-dark-300 rounded-md p-2"
+                onValueChange={handleServiceChange}
               >
-                {serviceItems && serviceItems.length > 0 && serviceItems.map((service) => (
-                  <option key={service.id} value={service.id}>{service.title}</option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full bg-dark-400 border-dark-300 text-white">
+                  <SelectValue placeholder="Bir hizmet seçin" />
+                </SelectTrigger>
+                <SelectContent className="bg-dark-600 border-dark-300 text-white">
+                  {serviceItems && serviceItems.length > 0 && serviceItems.map((service) => (
+                    <SelectItem key={service.id} value={service.id} className="text-white hover:bg-dark-500">
+                      {service.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="w-full bg-dark-600">
-                <TabsTrigger value="general" className="flex-1">Genel Bilgiler</TabsTrigger>
-                <TabsTrigger value="features" className="flex-1">Hizmet Kapsamı</TabsTrigger>
-                <TabsTrigger value="benefits" className="flex-1">Faydalar</TabsTrigger>
-                <TabsTrigger value="process" className="flex-1">Çalışma Süreci</TabsTrigger>
-                <TabsTrigger value="visuals" className="flex-1">Görseller</TabsTrigger>
-                <TabsTrigger value="stats" className="flex-1">İstatistikler</TabsTrigger>
+                <TabsTrigger value="general" className="flex-1 text-white">Genel Bilgiler</TabsTrigger>
+                <TabsTrigger value="features" className="flex-1 text-white">Hizmet Kapsamı</TabsTrigger>
+                <TabsTrigger value="benefits" className="flex-1 text-white">Faydalar</TabsTrigger>
+                <TabsTrigger value="process" className="flex-1 text-white">Çalışma Süreci</TabsTrigger>
+                <TabsTrigger value="visuals" className="flex-1 text-white">Görseller</TabsTrigger>
+                <TabsTrigger value="stats" className="flex-1 text-white">İstatistikler</TabsTrigger>
               </TabsList>
               
               <TabsContent value="general" className="pt-4">
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Başlık</label>
+                      <label className="text-sm font-medium text-white">Başlık</label>
                       <Input 
                         value={formData.title || ''} 
                         onChange={(e) => handleInputChange('title', e.target.value)}
-                        className="bg-dark-400 border-dark-300"
+                        className="bg-dark-400 border-dark-300 text-white"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">URL Slug</label>
+                      <label className="text-sm font-medium text-white">URL Slug</label>
                       <Input 
                         value={formData.slug || ''} 
                         onChange={(e) => handleInputChange('slug', e.target.value)}
-                        className="bg-dark-400 border-dark-300"
+                        className="bg-dark-400 border-dark-300 text-white"
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Kısa Açıklama</label>
+                    <label className="text-sm font-medium text-white">Kısa Açıklama</label>
                     <Input 
                       value={formData.description || ''} 
                       onChange={(e) => handleInputChange('description', e.target.value)}
-                      className="bg-dark-400 border-dark-300"
+                      className="bg-dark-400 border-dark-300 text-white"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Detaylı Açıklama</label>
+                    <label className="text-sm font-medium text-white">Detaylı Açıklama</label>
                     <Textarea 
                       value={formData.longDescription || ''} 
                       onChange={(e) => handleInputChange('longDescription', e.target.value)}
-                      className="bg-dark-400 border-dark-300"
+                      className="bg-dark-400 border-dark-300 text-white"
                       rows={5}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Ana Görsel URL</label>
+                    <label className="text-sm font-medium text-white">Ana Görsel URL</label>
                     <Input 
                       value={formData.image || ''} 
                       onChange={(e) => handleInputChange('image', e.target.value)}
-                      className="bg-dark-400 border-dark-300"
+                      className="bg-dark-400 border-dark-300 text-white"
                     />
                   </div>
                 </div>
@@ -461,7 +468,7 @@ const ServiceDetailManager = () => {
               <TabsContent value="features" className="pt-4">
                 <div className="border border-dark-400 rounded-md">
                   <div className="bg-dark-600 p-3 border-b border-dark-400 flex justify-between items-center">
-                    <h3 className="text-sm font-medium flex items-center">
+                    <h3 className="text-sm font-medium flex items-center text-white">
                       <CheckCircle className="h-4 w-4 mr-2 text-ignite" /> Hizmet Kapsamı
                     </h3>
                     <Button 
@@ -481,7 +488,7 @@ const ServiceDetailManager = () => {
                           <Input 
                             value={feature} 
                             onChange={(e) => handleArrayItemChange('features', index, e.target.value)}
-                            className="bg-dark-400 border-dark-300"
+                            className="bg-dark-400 border-dark-300 text-white"
                           />
                           <Button 
                             size="sm" 
@@ -506,7 +513,7 @@ const ServiceDetailManager = () => {
               <TabsContent value="benefits" className="pt-4">
                 <div className="border border-dark-400 rounded-md">
                   <div className="bg-dark-600 p-3 border-b border-dark-400 flex justify-between items-center">
-                    <h3 className="text-sm font-medium flex items-center">
+                    <h3 className="text-sm font-medium flex items-center text-white">
                       <CheckCircle className="h-4 w-4 mr-2 text-green-400" /> Hizmet Faydaları
                     </h3>
                     <Button 
@@ -526,7 +533,7 @@ const ServiceDetailManager = () => {
                           <Input 
                             value={benefit} 
                             onChange={(e) => handleArrayItemChange('benefits', index, e.target.value)}
-                            className="bg-dark-400 border-dark-300"
+                            className="bg-dark-400 border-dark-300 text-white"
                           />
                           <Button 
                             size="sm" 
@@ -551,7 +558,7 @@ const ServiceDetailManager = () => {
               <TabsContent value="process" className="pt-4">
                 <div className="border border-dark-400 rounded-md">
                   <div className="bg-dark-600 p-3 border-b border-dark-400 flex justify-between items-center">
-                    <h3 className="text-sm font-medium flex items-center">
+                    <h3 className="text-sm font-medium flex items-center text-white">
                       <List className="h-4 w-4 mr-2 text-blue-400" /> Çalışma Süreci Adımları
                     </h3>
                     <Button 
@@ -570,7 +577,7 @@ const ServiceDetailManager = () => {
                         <Card key={step.id} className="bg-dark-600 border-dark-400">
                           <CardHeader className="p-3 pb-2">
                             <div className="flex justify-between items-center">
-                              <CardTitle className="text-sm flex items-center">
+                              <CardTitle className="text-sm flex items-center text-white">
                                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-500/20 text-blue-400 mr-2 text-xs">
                                   {index + 1}
                                 </span>
@@ -599,19 +606,19 @@ const ServiceDetailManager = () => {
                           {editingProcessIndex === index && (
                             <CardContent className="p-3 pt-2 space-y-3">
                               <div className="space-y-2">
-                                <label className="text-xs font-medium">Adım Başlığı</label>
+                                <label className="text-xs font-medium text-white">Adım Başlığı</label>
                                 <Input 
                                   value={step.title} 
                                   onChange={(e) => handleProcessStepChange(index, 'title', e.target.value)}
-                                  className="bg-dark-400 border-dark-300"
+                                  className="bg-dark-400 border-dark-300 text-white"
                                 />
                               </div>
                               <div className="space-y-2">
-                                <label className="text-xs font-medium">Açıklama</label>
+                                <label className="text-xs font-medium text-white">Açıklama</label>
                                 <Textarea 
                                   value={step.description} 
                                   onChange={(e) => handleProcessStepChange(index, 'description', e.target.value)}
-                                  className="bg-dark-400 border-dark-300"
+                                  className="bg-dark-400 border-dark-300 text-white"
                                   rows={2}
                                 />
                               </div>
@@ -619,7 +626,7 @@ const ServiceDetailManager = () => {
                           )}
                         </Card>
                       )) : (
-                        <div className="text-center py-8 text-gray-400">Henüz süreç adımı eklenmemiş. Yeni bir adım ekleyin.</div>
+                        <div className="text-center py-8 text-white/60">Henüz süreç adımı eklenmemiş. Yeni bir adım ekleyin.</div>
                       )}
                     </div>
                   </ScrollArea>
@@ -629,17 +636,17 @@ const ServiceDetailManager = () => {
               <TabsContent value="visuals" className="pt-4">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Ana Görsel URL</label>
+                    <label className="text-sm font-medium text-white">Ana Görsel URL</label>
                     <Input 
                       value={formData.image || ''} 
                       onChange={(e) => handleInputChange('image', e.target.value)}
-                      className="bg-dark-400 border-dark-300"
+                      className="bg-dark-400 border-dark-300 text-white"
                     />
                   </div>
                   
                   <div className="border border-dark-400 rounded-md">
                     <div className="bg-dark-600 p-3 border-b border-dark-400 flex justify-between items-center">
-                      <h3 className="text-sm font-medium">Galeri Görselleri</h3>
+                      <h3 className="text-sm font-medium text-white">Galeri Görselleri</h3>
                       <Button 
                         size="sm" 
                         variant="ghost" 
@@ -658,7 +665,7 @@ const ServiceDetailManager = () => {
                               <Input 
                                 value={image} 
                                 onChange={(e) => handleArrayItemChange('images', index, e.target.value)}
-                                className="bg-dark-400 border-dark-300"
+                                className="bg-dark-400 border-dark-300 text-white"
                               />
                               <Button 
                                 size="sm" 
@@ -694,7 +701,7 @@ const ServiceDetailManager = () => {
               <TabsContent value="stats" className="pt-4">
                 <div className="border border-dark-400 rounded-md">
                   <div className="bg-dark-600 p-3 border-b border-dark-400 flex justify-between items-center">
-                    <h3 className="text-sm font-medium flex items-center">
+                    <h3 className="text-sm font-medium flex items-center text-white">
                       <BarChart className="h-4 w-4 mr-2 text-purple-400" /> İstatistikler
                     </h3>
                     <Button 
@@ -713,7 +720,7 @@ const ServiceDetailManager = () => {
                         <Card key={stat.id} className="bg-dark-600 border-dark-400">
                           <CardHeader className="p-3 pb-2">
                             <div className="flex justify-between items-center">
-                              <CardTitle className="text-sm">
+                              <CardTitle className="text-sm text-white">
                                 {stat.label}: <span className="font-bold text-ignite">{stat.value}</span>
                               </CardTitle>
                               <div className="flex gap-1">
@@ -739,19 +746,19 @@ const ServiceDetailManager = () => {
                           {editingStatIndex === index && (
                             <CardContent className="p-3 pt-2 space-y-3">
                               <div className="space-y-2">
-                                <label className="text-xs font-medium">Etiket</label>
+                                <label className="text-xs font-medium text-white">Etiket</label>
                                 <Input 
                                   value={stat.label} 
                                   onChange={(e) => handleStatChange(index, 'label', e.target.value)}
-                                  className="bg-dark-400 border-dark-300"
+                                  className="bg-dark-400 border-dark-300 text-white"
                                 />
                               </div>
                               <div className="space-y-2">
-                                <label className="text-xs font-medium">Değer</label>
+                                <label className="text-xs font-medium text-white">Değer</label>
                                 <Input 
                                   value={stat.value} 
                                   onChange={(e) => handleStatChange(index, 'value', e.target.value)}
-                                  className="bg-dark-400 border-dark-300"
+                                  className="bg-dark-400 border-dark-300 text-white"
                                   placeholder="98%"
                                 />
                               </div>
@@ -759,7 +766,7 @@ const ServiceDetailManager = () => {
                           )}
                         </Card>
                       )) : (
-                        <div className="text-center py-8 text-gray-400">Henüz istatistik eklenmemiş. Yeni bir istatistik ekleyin.</div>
+                        <div className="text-center py-8 text-white/60">Henüz istatistik eklenmemiş. Yeni bir istatistik ekleyin.</div>
                       )}
                     </div>
                   </ScrollArea>

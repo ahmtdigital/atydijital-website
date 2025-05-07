@@ -71,6 +71,30 @@ const ServiceDetailFixedManager = () => {
     setOpenDialog(true);
   };
 
+  const handleNewProcessClick = () => {
+    const newProcess = {
+      id: Date.now(),
+      title: "Yeni Süreç",
+      description: "Süreç açıklamasını buraya yazın.",
+      order: serviceDetails[0].process.length + 1
+    };
+    setCurrentProcess(newProcess);
+    setDialogType("process");
+    setOpenDialog(true);
+  };
+
+  const handleNewFaqClick = () => {
+    const newFaq = {
+      id: Date.now(),
+      question: "Yeni Soru",
+      answer: "Cevabınızı buraya yazın.",
+      order: serviceDetails[0].faqs.length + 1
+    };
+    setCurrentFaq(newFaq);
+    setDialogType("faq");
+    setOpenDialog(true);
+  };
+
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setCurrentProcess(null);
@@ -179,7 +203,7 @@ const ServiceDetailFixedManager = () => {
             <FileText className="mr-2 h-6 w-6 text-ignite" />
             Hizmet Detay Düzenleme
           </h2>
-          <p className="text-sm text-white/60 mt-1">
+          <p className="text-sm text-white mt-1">
             Her hizmet için detaylı bilgiler ve süreçleri yönetin
           </p>
         </div>
@@ -214,7 +238,7 @@ const ServiceDetailFixedManager = () => {
               <div className="flex justify-between items-center">
                 <CardTitle className="text-xl text-white">Çalışma Süreci</CardTitle>
                 <Button 
-                  onClick={() => handleOpenDialog("process")} 
+                  onClick={handleNewProcessClick} 
                   className="bg-ignite hover:bg-ignite-700"
                 >
                   <Plus className="h-4 w-4 mr-2" /> Yeni Süreç Ekle
@@ -229,7 +253,7 @@ const ServiceDetailFixedManager = () => {
                       <div className="flex justify-between items-start">
                         <div>
                           <h3 className="font-semibold text-lg text-white">{index + 1}. {process.title}</h3>
-                          <p className="text-sm mt-1 text-white/70">{process.description}</p>
+                          <p className="text-sm mt-1 text-white">{process.description}</p>
                         </div>
                         <div className="flex space-x-2">
                           <Button 
@@ -256,9 +280,9 @@ const ServiceDetailFixedManager = () => {
                 
                 {serviceDetails[0].process.length === 0 && (
                   <div className="text-center py-8 border border-dashed border-dark-400 rounded-md">
-                    <p className="text-white/60">Henüz çalışma süreci eklenmemiş</p>
+                    <p className="text-white">Henüz çalışma süreci eklenmemiş</p>
                     <Button 
-                      onClick={() => handleOpenDialog("process")} 
+                      onClick={handleNewProcessClick} 
                       className="mt-2 bg-dark-400 hover:bg-dark-300"
                     >
                       <Plus className="h-4 w-4 mr-2" /> Süreç Ekle
@@ -274,7 +298,7 @@ const ServiceDetailFixedManager = () => {
               <div className="flex justify-between items-center">
                 <CardTitle className="text-xl text-white">Sık Sorulan Sorular</CardTitle>
                 <Button 
-                  onClick={() => handleOpenDialog("faq")} 
+                  onClick={handleNewFaqClick} 
                   className="bg-ignite hover:bg-ignite-700"
                 >
                   <Plus className="h-4 w-4 mr-2" /> Yeni SSS Ekle
@@ -289,7 +313,7 @@ const ServiceDetailFixedManager = () => {
                       <div className="flex justify-between items-start">
                         <div>
                           <h3 className="font-semibold text-lg text-white">S: {faq.question}</h3>
-                          <p className="text-sm mt-2 text-white/70">C: {faq.answer}</p>
+                          <p className="text-sm mt-2 text-white">C: {faq.answer}</p>
                         </div>
                         <div className="flex space-x-2">
                           <Button 
@@ -316,9 +340,9 @@ const ServiceDetailFixedManager = () => {
                 
                 {serviceDetails[0].faqs.length === 0 && (
                   <div className="text-center py-8 border border-dashed border-dark-400 rounded-md">
-                    <p className="text-white/60">Henüz sık sorulan soru eklenmemiş</p>
+                    <p className="text-white">Henüz sık sorulan soru eklenmemiş</p>
                     <Button 
-                      onClick={() => handleOpenDialog("faq")} 
+                      onClick={handleNewFaqClick} 
                       className="mt-2 bg-dark-400 hover:bg-dark-300"
                     >
                       <Plus className="h-4 w-4 mr-2" /> SSS Ekle
@@ -335,8 +359,8 @@ const ServiceDetailFixedManager = () => {
       <Dialog open={openDialog && dialogType === "process"} onOpenChange={(open) => !open && handleCloseDialog()}>
         <DialogContent className="bg-dark-500 border-dark-400 text-white">
           <DialogHeader>
-            <DialogTitle>{currentProcess?.id ? "Süreci Düzenle" : "Yeni Süreç Ekle"}</DialogTitle>
-            <DialogDescription className="text-white/60">
+            <DialogTitle className="text-white">{currentProcess?.id ? "Süreci Düzenle" : "Yeni Süreç Ekle"}</DialogTitle>
+            <DialogDescription className="text-white">
               Hizmet sürecini tanımlayan adımı ekleyin veya düzenleyin.
             </DialogDescription>
           </DialogHeader>
@@ -378,8 +402,8 @@ const ServiceDetailFixedManager = () => {
       <Dialog open={openDialog && dialogType === "faq"} onOpenChange={(open) => !open && handleCloseDialog()}>
         <DialogContent className="bg-dark-500 border-dark-400 text-white">
           <DialogHeader>
-            <DialogTitle>{currentFaq?.id ? "SSS Düzenle" : "Yeni SSS Ekle"}</DialogTitle>
-            <DialogDescription className="text-white/60">
+            <DialogTitle className="text-white">{currentFaq?.id ? "SSS Düzenle" : "Yeni SSS Ekle"}</DialogTitle>
+            <DialogDescription className="text-white">
               Hizmetle ilgili sık sorulan soruyu ekleyin veya düzenleyin.
             </DialogDescription>
           </DialogHeader>

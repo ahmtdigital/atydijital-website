@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -11,9 +12,8 @@ import { LogIn, Eye, EyeOff, X, Database } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import ServiceManager from '@/components/admin/ServiceManager';
 import ProjectManagerNew from '@/components/admin/ProjectManagerNew';
-import BlogManager from '@/components/admin/BlogManager';
+import BlogManagerEnhanced from '@/components/admin/BlogManagerEnhanced';
 import PageManager from '@/components/admin/PageManager';
-import DatabaseManager from '@/components/admin/DatabaseManager';
 import MarketingDashboard from '@/components/admin/MarketingDashboard';
 import AnalyticsSettings from '@/components/admin/AnalyticsSettings';
 import MediaManager from '@/components/admin/MediaManager';
@@ -26,6 +26,7 @@ import ServiceDetailFixedManager from '@/components/admin/ServiceDetailFixedMana
 import { useMySQLService } from '@/lib/mysql-service';
 import BreadcrumbManager from '@/components/admin/BreadcrumbManager';
 import MarketingToolsManager from '@/components/admin/MarketingToolsManager';
+import ServiceDetailManager from '@/components/admin/ServiceDetailManager';
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -252,7 +253,7 @@ const Admin = () => {
               className="space-y-8"
             >
               <div className="grid grid-cols-1 gap-6">
-                <DatabaseManager />
+                <MarketingDashboard />
               </div>
             </motion.div>
           )}
@@ -279,6 +280,7 @@ const Admin = () => {
               className="space-y-8"
             >
               <ServiceManager />
+              <ServiceDetailManager />
               <ServiceDetailFixedManager />
             </motion.div>
           )}
@@ -301,7 +303,7 @@ const Admin = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <BlogManager />
+              <BlogManagerEnhanced />
             </motion.div>
           )}
           
@@ -369,6 +371,7 @@ const Admin = () => {
               className="space-y-8"
             >
               <PageManager />
+              <PageContentManager />
               <div className="mt-8">
                 <BreadcrumbManager />
               </div>
