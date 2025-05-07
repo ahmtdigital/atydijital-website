@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Plus, Edit, Trash2, Save, X, Eye, Layout, Layers, Settings, Link } from 'lucide-react';
+import { FileText, Plus, Edit, Trash2, Save, X, Eye, Layout, Layers, Settings, Link, Search } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,6 +25,11 @@ interface Page {
   headerImage: string;
   lastModified: string;
   sections: PageSection[];
+  keywords: string;
+  canonicalUrl: string;
+  customCss: string;
+  customJs: string;
+  excludeFromSitemap: boolean;
 }
 
 interface PageSection {
@@ -33,6 +38,9 @@ interface PageSection {
   title: string;
   content: string;
   order: number;
+  imageUrl?: string;
+  buttonText?: string;
+  buttonUrl?: string;
 }
 
 const defaultPage: Omit<Page, 'id'> = {
@@ -45,7 +53,12 @@ const defaultPage: Omit<Page, 'id'> = {
   published: false,
   headerImage: '/placeholder.svg',
   lastModified: new Date().toISOString(),
-  sections: []
+  sections: [],
+  keywords: '',
+  canonicalUrl: '',
+  customCss: '',
+  customJs: '',
+  excludeFromSitemap: false
 };
 
 const templates = [
@@ -53,7 +66,9 @@ const templates = [
   { value: 'landing', label: 'İniş Sayfası' },
   { value: 'contact', label: 'İletişim Sayfası' },
   { value: 'about', label: 'Hakkımızda Sayfası' },
-  { value: 'services', label: 'Hizmetler Sayfası' }
+  { value: 'services', label: 'Hizmetler Sayfası' },
+  { value: 'portfolio', label: 'Portföy Sayfası' },
+  { value: 'blog', label: 'Blog Sayfası' }
 ];
 
 const sectionTypes = [
@@ -62,7 +77,11 @@ const sectionTypes = [
   { value: 'features', label: 'Özellikler' },
   { value: 'testimonials', label: 'Müşteri Yorumları' },
   { value: 'cta', label: 'Aksiyon Çağrısı' },
-  { value: 'gallery', label: 'Galeri' }
+  { value: 'gallery', label: 'Galeri' },
+  { value: 'video', label: 'Video' },
+  { value: 'team', label: 'Ekip Üyeleri' },
+  { value: 'pricing', label: 'Fiyatlandırma' },
+  { value: 'contact', label: 'İletişim Formu' }
 ];
 
 const PageManager = () => {
@@ -70,6 +89,8 @@ const PageManager = () => {
   const [currentPage, setCurrentPage] = useState<Partial<Page>>(defaultPage);
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('general');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterTemplate, setFilterTemplate] = useState<string | null>(null);
   const { toast } = useToast();
   
   const {
@@ -105,7 +126,12 @@ const PageManager = () => {
           content: 'Müşterilerimizin dijital başarısı için çalışıyoruz.',
           order: 2
         }
-      ]
+      ],
+      keywords: 'hakkımızda, ajans, pazarlama',
+      canonicalUrl: '',
+      customCss: '',
+      customJs: '',
+      excludeFromSitemap: false
     },
     {
       id: 2,
@@ -133,9 +159,22 @@ const PageManager = () => {
           content: 'Dijital pazarlama, web tasarım, sosyal medya yönetimi',
           order: 2
         }
-      ]
+      ],
+      keywords: 'hizmetler, dijital pazarlama, web tasarım',
+      canonicalUrl: '',
+      customCss: '',
+      customJs: '',
+      excludeFromSitemap: false
     }
   ]);
+
+  // Filter pages based on search term and template
+  const filteredPages = pages.filter(page => {
+    const matchesSearch = page.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                         page.slug.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesTemplate = !filterTemplate || page.template === filterTemplate;
+    return matchesSearch && matchesTemplate;
+  });
 
   const handleOpenDialog = (page?: Page) => {
     if (page) {
@@ -157,6 +196,15 @@ const PageManager = () => {
 
   const handleSavePage = () => {
     try {
+      if (!currentPage.title || !currentPage.slug) {
+        toast({
+          title: "Hata",
+          description: "Başlık ve URL (Slug) alanları zorunludur.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       const now = new Date().toISOString();
       const updatedPage = {
         ...currentPage,
@@ -261,16 +309,39 @@ const PageManager = () => {
     }
   };
 
+  // Generate slug from title
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '') // Remove special chars
+      .replace(/\s+/g, '-') // Replace spaces with -
+      .replace(/--+/g, '-') // Replace multiple - with single -
+      .trim();
+  };
+  
+  // Handle title change and auto-generate slug if it's a new page
+  const handleTitleChange = (title: string) => {
+    setCurrentPage({
+      ...currentPage,
+      title,
+      slug: isEditing ? currentPage.slug : generateSlug(title)
+    });
+  };
+
   // Format date for display
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('tr-TR', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('tr-TR', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (error) {
+      return dateString;
+    }
   };
 
   return (
@@ -282,7 +353,7 @@ const PageManager = () => {
     >
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold flex items-center">
+          <h2 className="text-2xl font-bold flex items-center text-white">
             <FileText className="mr-2 h-6 w-6 text-ignite" />
             Sayfaları Yönet
           </h2>
@@ -298,8 +369,34 @@ const PageManager = () => {
         </Button>
       </div>
 
+      <div className="flex flex-col md:flex-row gap-4 mb-4">
+        <div className="relative flex-grow">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 h-4 w-4" />
+          <Input
+            placeholder="Sayfa ara..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 bg-dark-400 border-dark-300 text-white"
+          />
+        </div>
+        <Select 
+          value={filterTemplate || ""} 
+          onValueChange={(value) => setFilterTemplate(value || null)}
+        >
+          <SelectTrigger className="bg-dark-400 border-dark-300 text-white w-auto min-w-[180px]">
+            <SelectValue placeholder="Tüm Şablonlar" />
+          </SelectTrigger>
+          <SelectContent className="bg-dark-500 border-dark-400">
+            <SelectItem value="">Tüm Şablonlar</SelectItem>
+            {templates.map(template => (
+              <SelectItem key={template.value} value={template.value}>{template.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
       <div className="grid grid-cols-1 gap-4">
-        {pages.map((page) => (
+        {filteredPages.map((page) => (
           <Card key={page.id} className="bg-dark-500 border-dark-400 overflow-hidden">
             <div className="flex flex-col md:flex-row">
               <div className="w-full md:w-1/4 bg-dark-600 p-4 flex flex-col items-start justify-center">
@@ -323,10 +420,10 @@ const PageManager = () => {
                     </p>
                     <div className="mt-3">
                       <p className="text-sm text-white/70">
-                        <span className="font-medium">Meta Başlık:</span> {page.metaTitle || page.title}
+                        <span className="font-medium text-white">Meta Başlık:</span> {page.metaTitle || page.title}
                       </p>
                       <p className="text-sm text-white/70 truncate max-w-md">
-                        <span className="font-medium">Meta Açıklama:</span> {page.metaDescription || 'Tanımlanmamış'}
+                        <span className="font-medium text-white">Meta Açıklama:</span> {page.metaDescription || 'Tanımlanmamış'}
                       </p>
                     </div>
                   </div>
@@ -353,61 +450,80 @@ const PageManager = () => {
             </div>
           </Card>
         ))}
+
+        {filteredPages.length === 0 && (
+          <div className="text-center py-12 border border-dashed border-dark-400 rounded-md">
+            <p className="text-white/60">
+              {searchTerm || filterTemplate ? 'Arama kriterlerine uygun sayfa bulunamadı.' : 'Henüz sayfa eklenmemiş.'}
+            </p>
+            {!searchTerm && !filterTemplate && (
+              <Button 
+                onClick={() => handleOpenDialog()} 
+                className="mt-4 bg-ignite hover:bg-ignite-700"
+              >
+                <Plus className="h-4 w-4 mr-2" /> İlk Sayfayı Ekle
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogContent className="bg-dark-500 border-dark-400 text-white max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{isEditing ? 'Sayfayı Düzenle' : 'Yeni Sayfa Ekle'}</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-white/60">
               Sayfa bilgilerini aşağıdaki formdan düzenleyebilirsiniz.
             </DialogDescription>
           </DialogHeader>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4">
-            <TabsList className="grid grid-cols-3 bg-dark-600">
-              <TabsTrigger value="general" className="data-[state=active]:bg-ignite data-[state=active]:text-white">
+            <TabsList className="grid grid-cols-4 bg-dark-600">
+              <TabsTrigger value="general" className="data-[state=active]:bg-ignite data-[state=active]:text-white text-white">
                 <Settings className="h-4 w-4 mr-2" /> Genel
               </TabsTrigger>
-              <TabsTrigger value="content" className="data-[state=active]:bg-ignite data-[state=active]:text-white">
+              <TabsTrigger value="content" className="data-[state=active]:bg-ignite data-[state=active]:text-white text-white">
                 <Layout className="h-4 w-4 mr-2" /> İçerik
               </TabsTrigger>
-              <TabsTrigger value="seo" className="data-[state=active]:bg-ignite data-[state=active]:text-white">
+              <TabsTrigger value="seo" className="data-[state=active]:bg-ignite data-[state=active]:text-white text-white">
                 <Link className="h-4 w-4 mr-2" /> SEO
+              </TabsTrigger>
+              <TabsTrigger value="advanced" className="data-[state=active]:bg-ignite data-[state=active]:text-white text-white">
+                <Settings className="h-4 w-4 mr-2" /> Gelişmiş
               </TabsTrigger>
             </TabsList>
             
             <TabsContent value="general" className="py-4 space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Sayfa Başlığı</label>
+                <label className="text-sm font-medium text-white">Sayfa Başlığı</label>
                 <Input 
                   value={currentPage.title} 
-                  onChange={(e) => setCurrentPage({...currentPage, title: e.target.value})}
-                  className="bg-dark-400 border-dark-300"
+                  onChange={(e) => handleTitleChange(e.target.value)}
+                  className="bg-dark-400 border-dark-300 text-white"
                   placeholder="Sayfa başlığı"
                 />
               </div>
               
               <div className="space-y-2">
-                <label className="text-sm font-medium">URL (Slug)</label>
+                <label className="text-sm font-medium text-white">URL (Slug)</label>
                 <div className="flex items-center">
                   <span className="bg-dark-600 border border-dark-300 border-r-0 rounded-l-md px-3 py-2 text-white/60">/</span>
                   <Input 
                     value={currentPage.slug} 
                     onChange={(e) => setCurrentPage({...currentPage, slug: e.target.value})}
-                    className="bg-dark-400 border-dark-300 rounded-l-none"
+                    className="bg-dark-400 border-dark-300 rounded-l-none text-white"
                     placeholder="sayfa-url"
                   />
                 </div>
               </div>
               
               <div className="space-y-2">
-                <label className="text-sm font-medium">Şablon</label>
+                <label className="text-sm font-medium text-white">Şablon</label>
                 <Select 
                   value={currentPage.template}
                   onValueChange={(value) => setCurrentPage({...currentPage, template: value})}
                 >
-                  <SelectTrigger className="bg-dark-400 border-dark-300">
+                  <SelectTrigger className="bg-dark-400 border-dark-300 text-white">
                     <SelectValue placeholder="Şablon seçin" />
                   </SelectTrigger>
                   <SelectContent className="bg-dark-500 border-dark-400">
@@ -421,7 +537,7 @@ const PageManager = () => {
               </div>
               
               <div className="space-y-2">
-                <label className="text-sm font-medium">Durum</label>
+                <label className="text-sm font-medium text-white">Durum</label>
                 <div className="flex items-center space-x-2">
                   <input 
                     type="checkbox"
@@ -429,18 +545,38 @@ const PageManager = () => {
                     onChange={(e) => setCurrentPage({...currentPage, published: e.target.checked})}
                     className="w-4 h-4 accent-ignite"
                   />
-                  <span className="text-sm text-white/70">Sayfayı yayınla</span>
+                  <span className="text-sm text-white">Sayfayı yayınla</span>
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-white">Header Görseli</label>
+                <Input 
+                  value={currentPage.headerImage} 
+                  onChange={(e) => setCurrentPage({...currentPage, headerImage: e.target.value})}
+                  className="bg-dark-400 border-dark-300 text-white"
+                  placeholder="/images/header.jpg"
+                />
+                {currentPage.headerImage && (
+                  <div className="mt-2 p-2 bg-dark-600 rounded-md">
+                    <img 
+                      src={currentPage.headerImage} 
+                      alt="Header Önizleme" 
+                      className="h-32 w-full object-cover rounded-md opacity-80"
+                      onError={(e) => (e.target as HTMLImageElement).src = '/placeholder.svg'}
+                    />
+                  </div>
+                )}
               </div>
             </TabsContent>
             
             <TabsContent value="content" className="py-4 space-y-6">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Ana İçerik</label>
+                <label className="text-sm font-medium text-white">Ana İçerik</label>
                 <Textarea 
                   value={currentPage.content} 
                   onChange={(e) => setCurrentPage({...currentPage, content: e.target.value})}
-                  className="bg-dark-400 border-dark-300 resize-none"
+                  className="bg-dark-400 border-dark-300 resize-none text-white"
                   placeholder="Sayfanın ana içeriği. HTML içerebilir."
                   rows={5}
                 />
@@ -448,10 +584,10 @@ const PageManager = () => {
               
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-md font-medium">Sayfa Bölümleri</h3>
+                  <h3 className="text-md font-medium text-white">Sayfa Bölümleri</h3>
                   <Button 
                     onClick={handleAddSection} 
-                    className="bg-dark-600 hover:bg-dark-400"
+                    className="bg-ignite hover:bg-ignite-700"
                     size="sm"
                   >
                     <Plus className="h-4 w-4 mr-2" /> Bölüm Ekle
@@ -462,7 +598,7 @@ const PageManager = () => {
                   <Card key={section.id} className="bg-dark-600 border-dark-400">
                     <CardHeader className="py-3 px-4">
                       <div className="flex justify-between items-center">
-                        <CardTitle className="text-sm font-medium">
+                        <CardTitle className="text-sm font-medium text-white">
                           {index + 1}. {section.title || 'Bölüm'}
                         </CardTitle>
                         <div className="flex items-center space-x-1">
@@ -502,22 +638,22 @@ const PageManager = () => {
                     <CardContent className="py-3 px-4 border-t border-dark-400">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <label className="text-sm font-medium">Bölüm Başlığı</label>
+                          <label className="text-sm font-medium text-white">Bölüm Başlığı</label>
                           <Input 
                             value={section.title} 
                             onChange={(e) => handleUpdateSection(section.id, { title: e.target.value })}
-                            className="bg-dark-400 border-dark-300"
+                            className="bg-dark-400 border-dark-300 text-white"
                             placeholder="Bölüm başlığı"
                           />
                         </div>
                         
                         <div className="space-y-2">
-                          <label className="text-sm font-medium">Bölüm Tipi</label>
+                          <label className="text-sm font-medium text-white">Bölüm Tipi</label>
                           <Select 
                             value={section.type}
                             onValueChange={(value) => handleUpdateSection(section.id, { type: value })}
                           >
-                            <SelectTrigger className="bg-dark-400 border-dark-300">
+                            <SelectTrigger className="bg-dark-400 border-dark-300 text-white">
                               <SelectValue placeholder="Tip seçin" />
                             </SelectTrigger>
                             <SelectContent className="bg-dark-500 border-dark-400">
@@ -531,15 +667,51 @@ const PageManager = () => {
                         </div>
                         
                         <div className="space-y-2 md:col-span-2">
-                          <label className="text-sm font-medium">Bölüm İçeriği</label>
+                          <label className="text-sm font-medium text-white">Bölüm İçeriği</label>
                           <Textarea 
                             value={section.content} 
                             onChange={(e) => handleUpdateSection(section.id, { content: e.target.value })}
-                            className="bg-dark-400 border-dark-300 resize-none"
+                            className="bg-dark-400 border-dark-300 resize-none text-white"
                             placeholder="Bölüm içeriği"
                             rows={3}
                           />
                         </div>
+
+                        {/* Ekstra alanlar bölüm tipine göre gösterilir */}
+                        {(section.type === 'hero' || section.type === 'gallery' || section.type === 'features') && (
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-white">Görsel URL</label>
+                            <Input 
+                              value={section.imageUrl || ''} 
+                              onChange={(e) => handleUpdateSection(section.id, { imageUrl: e.target.value })}
+                              className="bg-dark-400 border-dark-300 text-white"
+                              placeholder="/images/section.jpg"
+                            />
+                          </div>
+                        )}
+
+                        {(section.type === 'cta' || section.type === 'hero') && (
+                          <>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-white">Buton Metni</label>
+                              <Input 
+                                value={section.buttonText || ''} 
+                                onChange={(e) => handleUpdateSection(section.id, { buttonText: e.target.value })}
+                                className="bg-dark-400 border-dark-300 text-white"
+                                placeholder="Daha Fazla"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-white">Buton URL</label>
+                              <Input 
+                                value={section.buttonUrl || ''} 
+                                onChange={(e) => handleUpdateSection(section.id, { buttonUrl: e.target.value })}
+                                className="bg-dark-400 border-dark-300 text-white"
+                                placeholder="/iletisim"
+                              />
+                            </div>
+                          </>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -550,7 +722,7 @@ const PageManager = () => {
                     <p className="text-white/50">Henüz bölüm eklenmedi</p>
                     <Button 
                       onClick={handleAddSection} 
-                      className="mt-2 bg-dark-400 hover:bg-dark-300"
+                      className="mt-2 bg-ignite hover:bg-ignite-700"
                       size="sm"
                     >
                       <Plus className="h-4 w-4 mr-2" /> İlk Bölümü Ekle
@@ -562,40 +734,65 @@ const PageManager = () => {
             
             <TabsContent value="seo" className="py-4 space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Meta Başlık</label>
+                <label className="text-sm font-medium text-white">Meta Başlık</label>
                 <Input 
                   value={currentPage.metaTitle} 
                   onChange={(e) => setCurrentPage({...currentPage, metaTitle: e.target.value})}
-                  className="bg-dark-400 border-dark-300"
+                  className="bg-dark-400 border-dark-300 text-white"
                   placeholder="SEO için başlık"
                 />
                 <p className="text-xs text-white/50 mt-1">Boş bırakırsanız sayfa başlığı kullanılır.</p>
               </div>
               
               <div className="space-y-2">
-                <label className="text-sm font-medium">Meta Açıklama</label>
+                <label className="text-sm font-medium text-white">Meta Açıklama</label>
                 <Textarea 
                   value={currentPage.metaDescription} 
                   onChange={(e) => setCurrentPage({...currentPage, metaDescription: e.target.value})}
-                  className="bg-dark-400 border-dark-300 resize-none"
+                  className="bg-dark-400 border-dark-300 resize-none text-white"
                   placeholder="SEO için açıklama"
                   rows={3}
                 />
                 <p className="text-xs text-white/50 mt-1">En fazla 160 karakter önerilir.</p>
               </div>
-              
+
               <div className="space-y-2">
-                <label className="text-sm font-medium">Header Görseli</label>
+                <label className="text-sm font-medium text-white">Anahtar Kelimeler</label>
                 <Input 
-                  value={currentPage.headerImage} 
-                  onChange={(e) => setCurrentPage({...currentPage, headerImage: e.target.value})}
-                  className="bg-dark-400 border-dark-300"
-                  placeholder="/images/header.jpg"
+                  value={currentPage.keywords} 
+                  onChange={(e) => setCurrentPage({...currentPage, keywords: e.target.value})}
+                  className="bg-dark-400 border-dark-300 text-white"
+                  placeholder="anahtar,kelimeler,virgülle,ayırın"
                 />
+                <p className="text-xs text-white/50 mt-1">Virgülle ayrılmış anahtar kelimeler.</p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-white">Canonical URL</label>
+                <Input 
+                  value={currentPage.canonicalUrl} 
+                  onChange={(e) => setCurrentPage({...currentPage, canonicalUrl: e.target.value})}
+                  className="bg-dark-400 border-dark-300 text-white"
+                  placeholder="https://example.com/sayfa"
+                />
+                <p className="text-xs text-white/50 mt-1">Eğer bu sayfa başka bir sayfanın kopyasıysa, orijinal sayfanın URL'sini girin.</p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-white">Sitemap Ayarları</label>
+                <div className="flex items-center space-x-2">
+                  <input 
+                    type="checkbox"
+                    checked={currentPage.excludeFromSitemap}
+                    onChange={(e) => setCurrentPage({...currentPage, excludeFromSitemap: e.target.checked})}
+                    className="w-4 h-4 accent-ignite"
+                  />
+                  <span className="text-sm text-white">Sitemap'ten hariç tut</span>
+                </div>
               </div>
               
               <div className="mt-6 p-4 bg-dark-600 rounded-md border border-dark-400">
-                <h4 className="font-medium mb-3 flex items-center">
+                <h4 className="font-medium mb-3 flex items-center text-white">
                   <Eye className="h-4 w-4 mr-2 text-ignite" /> Google Önizleme
                 </h4>
                 <div className="space-y-1">
@@ -605,10 +802,45 @@ const PageManager = () => {
                 </div>
               </div>
             </TabsContent>
+
+            <TabsContent value="advanced" className="py-4 space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-white">Özel CSS</label>
+                <Textarea 
+                  value={currentPage.customCss || ''} 
+                  onChange={(e) => setCurrentPage({...currentPage, customCss: e.target.value})}
+                  className="bg-dark-400 border-dark-300 resize-none text-white font-mono"
+                  placeholder="/* Özel CSS kodları buraya */"
+                  rows={5}
+                />
+                <p className="text-xs text-white/50 mt-1">Bu sayfa için özel CSS kodları ekleyin.</p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-white">Özel JavaScript</label>
+                <Textarea 
+                  value={currentPage.customJs || ''} 
+                  onChange={(e) => setCurrentPage({...currentPage, customJs: e.target.value})}
+                  className="bg-dark-400 border-dark-300 resize-none text-white font-mono"
+                  placeholder="// Özel JavaScript kodları buraya"
+                  rows={5}
+                />
+                <p className="text-xs text-white/50 mt-1">Bu sayfa için özel JavaScript kodları ekleyin.</p>
+              </div>
+
+              <div className="space-y-2 border-t border-dark-400 pt-4 mt-4">
+                <h4 className="font-medium mb-2 text-white">Sayfa Oluşturuldu</h4>
+                {isEditing && (
+                  <p className="text-sm text-white/70">
+                    Son Düzenleme: {formatDate(currentPage.lastModified || new Date().toISOString())}
+                  </p>
+                )}
+              </div>
+            </TabsContent>
           </Tabs>
           
           <DialogFooter className="flex justify-between sm:justify-end gap-2 mt-4">
-            <Button variant="outline" onClick={handleCloseDialog} className="border-dark-300 hover:bg-dark-400">
+            <Button variant="outline" onClick={handleCloseDialog} className="border-dark-300 hover:bg-dark-400 text-white">
               <X className="h-4 w-4 mr-2" /> İptal
             </Button>
             <Button onClick={handleSavePage} className="bg-ignite hover:bg-ignite-700">

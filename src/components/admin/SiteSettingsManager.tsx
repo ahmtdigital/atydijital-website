@@ -3,15 +3,13 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import SiteSettings from '@/components/admin/SiteSettings';
-import DatabaseManager from '@/components/admin/DatabaseManager';
 import GeneralSettings from '@/components/admin/GeneralSettings';
-import { Database, Globe, Palette, Server, Boxes } from 'lucide-react';
+import { Globe, Palette, Server, Boxes } from 'lucide-react';
 import { useDataService } from '@/lib/db';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const SiteSettingsManager = () => {
-  const [activeTab, setActiveTab] = useState('appearance');
+  const [activeTab, setActiveTab] = useState('general');
   const { items: settings } = useDataService('siteSettings', []);
 
   const handleTabChange = (value: string) => {
@@ -35,17 +33,9 @@ const SiteSettingsManager = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <Tabs defaultValue="appearance" value={activeTab} onValueChange={handleTabChange} className="w-full">
+          <Tabs defaultValue="general" value={activeTab} onValueChange={handleTabChange} className="w-full">
             <div className="flex items-center p-6 overflow-x-auto">
               <TabsList className="bg-dark-600">
-                <TabsTrigger value="appearance" className="text-white">
-                  <Palette className="mr-2 h-4 w-4" />
-                  Görünüm ve İçerik
-                </TabsTrigger>
-                <TabsTrigger value="database" className="text-white">
-                  <Database className="mr-2 h-4 w-4" />
-                  Veritabanı
-                </TabsTrigger>
                 <TabsTrigger value="general" className="text-white">
                   <Globe className="mr-2 h-4 w-4" />
                   Genel Ayarlar
@@ -60,26 +50,6 @@ const SiteSettingsManager = () => {
                 </TabsTrigger>
               </TabsList>
             </div>
-            
-            <TabsContent value="appearance" className="p-6 pt-0">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                <SiteSettings />
-              </motion.div>
-            </TabsContent>
-            
-            <TabsContent value="database" className="p-6 pt-0">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                <DatabaseManager />
-              </motion.div>
-            </TabsContent>
             
             <TabsContent value="general" className="p-6 pt-0">
               <motion.div

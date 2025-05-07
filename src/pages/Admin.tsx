@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -23,9 +22,10 @@ import HeroSliderManager from '@/components/admin/HeroSliderManager';
 import SiteSettingsManager from '@/components/admin/SiteSettingsManager';
 import SeoManager from '@/components/admin/SeoManager';
 import PageContentManager from '@/components/admin/PageContentManager';
-import ServiceDetailManager from '@/components/admin/ServiceDetailManager';
+import ServiceDetailFixedManager from '@/components/admin/ServiceDetailFixedManager';
 import { useMySQLService } from '@/lib/mysql-service';
 import BreadcrumbManager from '@/components/admin/BreadcrumbManager';
+import MarketingToolsManager from '@/components/admin/MarketingToolsManager';
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -141,7 +141,7 @@ const Admin = () => {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         placeholder="Kullanıcı adınızı girin"
-                        className="bg-dark-400 border-dark-300 focus:border-ignite/50 focus:ring-1 focus:ring-ignite/30"
+                        className="bg-dark-400 border-dark-300 focus:border-ignite/50 focus:ring-1 focus:ring-ignite/30 text-white"
                         required
                       />
                     </div>
@@ -153,7 +153,7 @@ const Admin = () => {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           placeholder="Şifrenizi girin"
-                          className="bg-dark-400 border-dark-300 focus:border-ignite/50 focus:ring-1 focus:ring-ignite/30 pr-10"
+                          className="bg-dark-400 border-dark-300 focus:border-ignite/50 focus:ring-1 focus:ring-ignite/30 pr-10 text-white"
                           required
                         />
                         <button 
@@ -227,7 +227,7 @@ const Admin = () => {
                 variant="outline" 
                 onClick={handleLogout} 
                 title="Çıkış Yap"
-                className="border-dark-400 hover:bg-dark-500"
+                className="border-dark-400 hover:bg-dark-500 text-white"
               >
                 <X className="h-4 w-4 mr-2" />
                 Çıkış Yap
@@ -263,8 +263,10 @@ const Admin = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
+              className="space-y-8"
             >
               <MarketingDashboard />
+              <MarketingToolsManager />
             </motion.div>
           )}
           
@@ -277,7 +279,7 @@ const Admin = () => {
               className="space-y-8"
             >
               <ServiceManager />
-              <ServiceDetailManager />
+              <ServiceDetailFixedManager />
             </motion.div>
           )}
           
@@ -367,7 +369,6 @@ const Admin = () => {
               className="space-y-8"
             >
               <PageManager />
-              <PageContentManager />
               <div className="mt-8">
                 <BreadcrumbManager />
               </div>
