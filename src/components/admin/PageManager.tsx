@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FileText, Plus, Edit, Trash2, Save, X, Eye, Layout, Layers, Settings, Link, Search } from 'lucide-react';
@@ -774,4 +775,65 @@ const PageManager = () => {
                   className="bg-dark-400 border-dark-300 text-white"
                   placeholder="https://example.com/sayfa"
                 />
-                <p className="text-xs text-white/50 mt-1">Eğer bu sayfa başka bir sayfanın kopyasıysa, orijinal sayfan
+                <p className="text-xs text-white/50 mt-1">Eğer bu sayfa başka bir sayfanın kopyasıysa, orijinal sayfanın URL'sini belirtin.</p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-white">Sitemap Hariç</label>
+                <div className="flex items-center space-x-2">
+                  <input 
+                    type="checkbox"
+                    checked={currentPage.excludeFromSitemap}
+                    onChange={(e) => setCurrentPage({...currentPage, excludeFromSitemap: e.target.checked})}
+                    className="w-4 h-4 accent-ignite"
+                  />
+                  <span className="text-sm text-white">Site haritasından hariç tut</span>
+                </div>
+                <p className="text-xs text-white/50 mt-1">İşaretlenirse, bu sayfa site haritasına dahil edilmez.</p>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="advanced" className="py-4 space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-white">Özel CSS</label>
+                <Textarea 
+                  value={currentPage.customCss} 
+                  onChange={(e) => setCurrentPage({...currentPage, customCss: e.target.value})}
+                  className="bg-dark-400 border-dark-300 resize-none text-white font-mono text-xs"
+                  placeholder=".custom-page-style { color: red; }"
+                  rows={5}
+                />
+                <p className="text-xs text-white/50 mt-1">Bu sayfaya özel CSS stilleri.</p>
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-white">Özel JavaScript</label>
+                <Textarea 
+                  value={currentPage.customJs} 
+                  onChange={(e) => setCurrentPage({...currentPage, customJs: e.target.value})}
+                  className="bg-dark-400 border-dark-300 resize-none text-white font-mono text-xs"
+                  placeholder="document.addEventListener('DOMContentLoaded', function() { // ... });"
+                  rows={5}
+                />
+                <p className="text-xs text-white/50 mt-1">Bu sayfaya özel JavaScript kodları.</p>
+              </div>
+            </TabsContent>
+          </Tabs>
+          
+          <DialogFooter className="mt-6 pt-4 border-t border-dark-400">
+            <Button variant="outline" onClick={handleCloseDialog} className="border-dark-400 hover:bg-dark-400 text-white">
+              <X className="mr-2 h-4 w-4" />
+              İptal
+            </Button>
+            <Button onClick={handleSavePage} className="bg-ignite hover:bg-ignite-700">
+              <Save className="mr-2 h-4 w-4" />
+              {isEditing ? 'Güncelle' : 'Kaydet'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </motion.div>
+  );
+};
+
+export default PageManager;
