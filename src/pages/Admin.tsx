@@ -27,6 +27,7 @@ import { useMySQLService } from '@/lib/mysql-service';
 import BreadcrumbManager from '@/components/admin/BreadcrumbManager';
 import MarketingToolsManager from '@/components/admin/MarketingToolsManager';
 import ServiceDetailManager from '@/components/admin/ServiceDetailManager';
+import NewsletterManager from '@/components/admin/NewsletterManager';
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -55,7 +56,7 @@ const Admin = () => {
     }
     
     // Sayfa başlığını güncelle
-    document.title = 'Yönetim Paneli | Ignite Pazarlama';
+    document.title = 'Yönetim Paneli | ATY Dijital';
   }, []);
 
   const handleTabChange = (value: string) => {
@@ -124,7 +125,7 @@ const Admin = () => {
               <Card className="bg-dark-500 border-dark-400 overflow-hidden relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-ignite/5 via-transparent to-transparent" />
                 <CardHeader className="bg-dark-600 border-b border-dark-400 relative">
-                  <CardTitle className="text-2xl text-white">Yönetici Girişi</CardTitle>
+                  <CardTitle className="text-2xl text-white">ATY Dijital Yönetici Girişi</CardTitle>
                   <CardDescription className="text-white/60">
                     Web sitenizi yönetmek için giriş yapın
                   </CardDescription>
@@ -219,7 +220,7 @@ const Admin = () => {
             <div>
               <h1 className="text-3xl font-bold mb-2 text-white flex items-center">
                 <Database className="mr-3 h-6 w-6 text-ignite" />
-                Yönetim Paneli
+                ATY Dijital Yönetim Paneli
               </h1>
               <p className="text-white/60">Web sitenizi yönetin ve içerikleri güncelleyin</p>
             </div>
@@ -268,6 +269,7 @@ const Admin = () => {
             >
               <MarketingDashboard />
               <MarketingToolsManager />
+              <NewsletterManager />
             </motion.div>
           )}
           

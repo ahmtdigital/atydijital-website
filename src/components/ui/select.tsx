@@ -113,15 +113,12 @@ SelectLabel.displayName = SelectPrimitive.Label.displayName
 const SelectItem = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item> & {
-    value: string; // Explicitly require value prop and ensure it's not optional
+    value: string; // Açıkça değer özelliğini gerektir ve isteğe bağlı olmadığından emin ol
   }
->(({ className, children, ...props }, ref) => {
-  // Ensure value is never an empty string
-  if (props.value === "") {
-    console.warn("SelectItem received an empty value prop, which is not allowed");
-    props.value = "default-value";
-  }
-
+>(({ className, children, value, ...props }, ref) => {
+  // Değerin boş bir string olmadığından emin olalım
+  const safeValue = value === "" ? "default-value" : value;
+  
   return (
     <SelectPrimitive.Item
       ref={ref}
@@ -129,6 +126,7 @@ const SelectItem = React.forwardRef<
         "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         className
       )}
+      value={safeValue}
       {...props}
     >
       <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">

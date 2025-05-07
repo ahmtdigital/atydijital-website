@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FileText, Plus, Edit, Trash2, Save, X, Eye, Layout, Layers, Settings, Link, Search } from 'lucide-react';
@@ -387,7 +386,7 @@ const PageManager = () => {
             <SelectValue placeholder="Tüm Şablonlar" />
           </SelectTrigger>
           <SelectContent className="bg-dark-500 border-dark-400">
-            <SelectItem value="">Tüm Şablonlar</SelectItem>
+            <SelectItem value="all">Tüm Şablonlar</SelectItem>
             {templates.map(template => (
               <SelectItem key={template.value} value={template.value}>{template.label}</SelectItem>
             ))}
@@ -775,82 +774,4 @@ const PageManager = () => {
                   className="bg-dark-400 border-dark-300 text-white"
                   placeholder="https://example.com/sayfa"
                 />
-                <p className="text-xs text-white/50 mt-1">Eğer bu sayfa başka bir sayfanın kopyasıysa, orijinal sayfanın URL'sini girin.</p>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-white">Sitemap Ayarları</label>
-                <div className="flex items-center space-x-2">
-                  <input 
-                    type="checkbox"
-                    checked={currentPage.excludeFromSitemap}
-                    onChange={(e) => setCurrentPage({...currentPage, excludeFromSitemap: e.target.checked})}
-                    className="w-4 h-4 accent-ignite"
-                  />
-                  <span className="text-sm text-white">Sitemap'ten hariç tut</span>
-                </div>
-              </div>
-              
-              <div className="mt-6 p-4 bg-dark-600 rounded-md border border-dark-400">
-                <h4 className="font-medium mb-3 flex items-center text-white">
-                  <Eye className="h-4 w-4 mr-2 text-ignite" /> Google Önizleme
-                </h4>
-                <div className="space-y-1">
-                  <p className="text-blue-400 text-lg break-words">{currentPage.metaTitle || currentPage.title || 'Sayfa Başlığı'}</p>
-                  <p className="text-green-400 text-sm break-words">https://ignitepazarlama.com/{currentPage.slug || 'sayfa-url'}</p>
-                  <p className="text-white/70 text-sm break-words">{currentPage.metaDescription || 'Sayfa açıklaması buraya gelecek...'}</p>
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="advanced" className="py-4 space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-white">Özel CSS</label>
-                <Textarea 
-                  value={currentPage.customCss || ''} 
-                  onChange={(e) => setCurrentPage({...currentPage, customCss: e.target.value})}
-                  className="bg-dark-400 border-dark-300 resize-none text-white font-mono"
-                  placeholder="/* Özel CSS kodları buraya */"
-                  rows={5}
-                />
-                <p className="text-xs text-white/50 mt-1">Bu sayfa için özel CSS kodları ekleyin.</p>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-white">Özel JavaScript</label>
-                <Textarea 
-                  value={currentPage.customJs || ''} 
-                  onChange={(e) => setCurrentPage({...currentPage, customJs: e.target.value})}
-                  className="bg-dark-400 border-dark-300 resize-none text-white font-mono"
-                  placeholder="// Özel JavaScript kodları buraya"
-                  rows={5}
-                />
-                <p className="text-xs text-white/50 mt-1">Bu sayfa için özel JavaScript kodları ekleyin.</p>
-              </div>
-
-              <div className="space-y-2 border-t border-dark-400 pt-4 mt-4">
-                <h4 className="font-medium mb-2 text-white">Sayfa Oluşturuldu</h4>
-                {isEditing && (
-                  <p className="text-sm text-white/70">
-                    Son Düzenleme: {formatDate(currentPage.lastModified || new Date().toISOString())}
-                  </p>
-                )}
-              </div>
-            </TabsContent>
-          </Tabs>
-          
-          <DialogFooter className="flex justify-between sm:justify-end gap-2 mt-4">
-            <Button variant="outline" onClick={handleCloseDialog} className="border-dark-300 hover:bg-dark-400 text-white">
-              <X className="h-4 w-4 mr-2" /> İptal
-            </Button>
-            <Button onClick={handleSavePage} className="bg-ignite hover:bg-ignite-700">
-              <Save className="h-4 w-4 mr-2" /> Kaydet
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </motion.div>
-  );
-};
-
-export default PageManager;
+                <p className="text-xs text-white/50 mt-1">Eğer bu sayfa başka bir sayfanın kopyasıysa, orijinal sayfan
