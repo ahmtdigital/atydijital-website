@@ -68,7 +68,7 @@ export default {
           100: '#FFE7CC', 
           200: '#FFD099',
           300: '#FFB866',
-          400: '#FFA133',  // Added this explicitly
+          400: '#FFA133',
           500: '#FF8A00',
           600: '#FF6B00',
           700: '#CC5500',

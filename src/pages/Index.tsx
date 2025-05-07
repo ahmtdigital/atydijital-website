@@ -6,7 +6,6 @@ import HeroSection from '@/components/home/HeroSection';
 import ServicesSection from '@/components/home/ServicesSection';
 import PortfolioSection from '@/components/home/PortfolioSection';
 import StatsSection from '@/components/home/StatsSection';
-import TestimonialsSection from '@/components/home/TestimonialsSection';
 import ContactSection from '@/components/home/ContactSection';
 import MarketingToolsSlider from '@/components/home/MarketingToolsSlider';
 import CaseStudiesSlider from '@/components/home/CaseStudiesSlider';
@@ -140,7 +139,6 @@ const Index = () => {
           showCategories={settings.showProjectCategory}
           hoverEffect={settings.projectHoverEffect}
         />
-        <TestimonialsSection />
         <ContactSection />
       </Layout>
     </MotionConfig>

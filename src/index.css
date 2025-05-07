@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -121,6 +122,16 @@
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;
+  }
+
+  /* Ensure all headings in dark theme are white */
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-white;
+  }
+  
+  /* Success story section headings */
+  .case-study-title, .success-story-heading {
+    @apply text-white;
   }
 }
 
