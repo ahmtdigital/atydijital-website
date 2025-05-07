@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Plus, Edit, Trash2, Search, Download, Send, Users, RefreshCw, Archive } from 'lucide-react';
@@ -805,4 +806,13 @@ const NewsletterManager = () => {
               İptal
             </Button>
             <Button onClick={handleSaveSubscriber} className="bg-ignite hover:bg-ignite-700">
-              {isEditing ? 'Güncelle' : '
+              {isEditing ? "Güncelle" : "Ekle"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </motion.div>
+  );
+};
+
+export default NewsletterManager;
