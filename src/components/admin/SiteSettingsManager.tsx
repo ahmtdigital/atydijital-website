@@ -11,47 +11,77 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
+// Define the interface for site settings
+interface SocialLinks {
+  facebook: string;
+  twitter: string;
+  instagram: string;
+  linkedin: string;
+}
+
+interface ColorScheme {
+  primary: string;
+  secondary: string;
+  accent: string;
+}
+
+interface SiteSettingsData {
+  id: string;
+  siteName: string;
+  siteTagline: string;
+  siteDescription: string;
+  contactEmail: string;
+  contactPhone: string;
+  address: string;
+  googleAnalyticsId: string;
+  faviconUrl: string;
+  logoUrl: string;
+  socialLinks: SocialLinks;
+  colorScheme: ColorScheme;
+}
+
+// Create a default settings object
+const defaultSettings: SiteSettingsData = {
+  id: 'general',
+  siteName: 'Ignite Pazarlama',
+  siteTagline: 'Dijital Pazarlama Çözümleri',
+  siteDescription: 'Profesyonel dijital pazarlama hizmetleri sunuyoruz',
+  contactEmail: 'info@ignitepazarlama.com',
+  contactPhone: '0212 555 7890',
+  address: 'İstanbul, Türkiye',
+  googleAnalyticsId: 'UA-12345678-1',
+  faviconUrl: '/favicon.ico',
+  logoUrl: '/logo.png',
+  socialLinks: {
+    facebook: 'https://facebook.com/ignitepazarlama',
+    twitter: 'https://twitter.com/ignitepazarlama',
+    instagram: 'https://instagram.com/ignitepazarlama',
+    linkedin: 'https://linkedin.com/company/ignitepazarlama'
+  },
+  colorScheme: {
+    primary: '#f97316',
+    secondary: '#6b7280',
+    accent: '#8b5cf6'
+  }
+};
+
 const SiteSettingsManager = () => {
   const [activeTab, setActiveTab] = useState('general');
-  const { items: settings, update: updateSettings } = useDataService('siteSettings', [
-    {
-      id: 'general',
-      siteName: 'Ignite Pazarlama',
-      siteTagline: 'Dijital Pazarlama Çözümleri',
-      siteDescription: 'Profesyonel dijital pazarlama hizmetleri sunuyoruz',
-      contactEmail: 'info@ignitepazarlama.com',
-      contactPhone: '0212 555 7890',
-      socialLinks: {
-        facebook: 'https://facebook.com/ignitepazarlama',
-        twitter: 'https://twitter.com/ignitepazarlama',
-        instagram: 'https://instagram.com/ignitepazarlama',
-        linkedin: 'https://linkedin.com/company/ignitepazarlama'
-      },
-      address: 'İstanbul, Türkiye',
-      googleAnalyticsId: 'UA-12345678-1',
-      faviconUrl: '/favicon.ico',
-      logoUrl: '/logo.png',
-      colorScheme: {
-        primary: '#f97316',
-        secondary: '#6b7280',
-        accent: '#8b5cf6'
-      }
-    }
-  ]);
-  const [formData, setFormData] = useState(settings[0] || {});
+  const { items: settings, update: updateSettings } = useDataService<SiteSettingsData>('siteSettings', [defaultSettings]);
+  const [formData, setFormData] = useState<SiteSettingsData>(settings[0] || defaultSettings);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
   };
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: keyof SiteSettingsData, value: string) => {
     setFormData({
       ...formData,
       [field]: value
     });
   };
 
-  const handleSocialLinkChange = (platform: string, value: string) => {
+  const handleSocialLinkChange = (platform: keyof SocialLinks, value: string) => {
     setFormData({
       ...formData,
       socialLinks: {
@@ -61,7 +91,7 @@ const SiteSettingsManager = () => {
     });
   };
 
-  const handleColorChange = (type: string, value: string) => {
+  const handleColorChange = (type: keyof ColorScheme, value: string) => {
     setFormData({
       ...formData,
       colorScheme: {
