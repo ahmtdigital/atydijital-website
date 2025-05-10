@@ -1,12 +1,13 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { BarChart, Globe, TrendingUp, PenTool, Smartphone, Code, ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import { useDataService } from '@/lib/db';
 
-const services = [
+const defaultServices = [
   {
     title: 'Dijital Pazarlama',
     description: 'Stratejik kampanyalarla çoklu dijital kanallar üzerinden ölçülebilir sonuçlar elde edin.',
@@ -47,6 +48,60 @@ const services = [
 
 const ServicesSection = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [services, setServices] = useState(defaultServices);
+  
+  const { items: dbServices } = useDataService('services', []);
+  const { items: sectionContent } = useDataService('sectionContent', [{
+    servicesTitle: 'HİZMETLERİMİZ',
+    servicesSubtitle: 'Kapsamlı Dijital Çözümler',
+    servicesDescription: 'İşletmenizin dijital dünyada büyümesi ve gelişmesi için eksiksiz dijital pazarlama hizmetleri sunuyoruz.',
+  }]);
+  
+  useEffect(() => {
+    if (dbServices && dbServices.length > 0) {
+      // Filter featured services from database
+      const featuredServices = dbServices
+        .filter(service => service.featured)
+        .map(service => ({
+          title: service.title,
+          description: service.description,
+          icon: getIconComponent(service.icon),
+          link: `/services/${service.slug}`
+        }));
+      
+      if (featuredServices.length > 0) {
+        setServices(featuredServices);
+      }
+    }
+  }, [dbServices]);
+  
+  const content = sectionContent && sectionContent.length > 0 ? sectionContent[0] : {
+    servicesTitle: 'HİZMETLERİMİZ',
+    servicesSubtitle: 'Kapsamlı Dijital Çözümler',
+    servicesDescription: 'İşletmenizin dijital dünyada büyümesi ve gelişmesi için eksiksiz dijital pazarlama hizmetleri sunuyoruz.',
+  };
+  
+  // Function to dynamically render icon based on the icon name from database
+  const getIconComponent = (iconName: string) => {
+    switch (iconName) {
+      case 'BarChart':
+        return <BarChart className="h-10 w-10 text-ignite" />;
+      case 'Globe':
+        return <Globe className="h-10 w-10 text-ignite" />;
+      case 'TrendingUp':
+        return <TrendingUp className="h-10 w-10 text-ignite" />;
+      case 'PenTool':
+        return <PenTool className="h-10 w-10 text-ignite" />;
+      case 'Smartphone':
+        return <Smartphone className="h-10 w-10 text-ignite" />;
+      case 'Code':
+        return <Code className="h-10 w-10 text-ignite" />;
+      case 'LineChart':
+        return <BarChart className="h-10 w-10 text-ignite" />;
+      default:
+        return <BarChart className="h-10 w-10 text-ignite" />;
+    }
+  };
 
   const cardVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -103,25 +158,25 @@ const ServicesSection = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
             viewport={{ once: true }}
           >
-            HİZMETLERİMİZ
+            {content.servicesTitle}
           </motion.p>
           <motion.h2 
-            className="text-3xl md:text-4xl font-bold mb-6 reveal text-white" /* Text color updated to white */
+            className="text-3xl md:text-4xl font-bold mb-6 reveal text-white" 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            Kapsamlı Dijital Çözümler
+            {content.servicesSubtitle}
           </motion.h2>
           <motion.p 
-            className="text-gray-200 reveal" /* Text color updated to lighter gray for better visibility */
+            className="text-gray-200 reveal" 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
             viewport={{ once: true }}
           >
-            İşletmenizin dijital dünyada büyümesi ve gelişmesi için eksiksiz dijital pazarlama hizmetleri sunuyoruz.
+            {content.servicesDescription}
           </motion.p>
         </motion.div>
         
@@ -147,10 +202,10 @@ const ServicesSection = () => {
                   >
                     {service.icon}
                   </motion.div>
-                  <CardTitle className="text-xl font-bold text-white">{service.title}</CardTitle> {/* Text color updated to white */}
+                  <CardTitle className="text-xl font-bold text-white">{service.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-gray-200"> {/* Text color updated to lighter gray for better visibility */}
+                  <CardDescription className="text-gray-200">
                     {service.description}
                   </CardDescription>
                 </CardContent>
@@ -184,23 +239,26 @@ const ServicesSection = () => {
           <Button 
             size="lg" 
             className="bg-ignite hover:bg-ignite-700 text-white relative overflow-hidden group"
+            asChild
           >
-            <span className="relative z-10 flex items-center">
-              <span>Tüm Hizmetleri Görüntüle</span>
-              <motion.span
-                initial={{ x: 0 }}
-                whileHover={{ x: 5 }}
+            <Link to="/services">
+              <span className="relative z-10 flex items-center">
+                <span>Tüm Hizmetleri Görüntüle</span>
+                <motion.span
+                  initial={{ x: 0 }}
+                  whileHover={{ x: 5 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </motion.span>
+              </span>
+              <motion.span 
+                className="absolute inset-0 bg-ignite-700"
+                initial={{ x: "-100%" }}
+                whileHover={{ x: "0%" }}
                 transition={{ duration: 0.3 }}
-              >
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </motion.span>
-            </span>
-            <motion.span 
-              className="absolute inset-0 bg-ignite-700"
-              initial={{ x: "-100%" }}
-              whileHover={{ x: "0%" }}
-              transition={{ duration: 0.3 }}
-            />
+              />
+            </Link>
           </Button>
         </motion.div>
       </div>

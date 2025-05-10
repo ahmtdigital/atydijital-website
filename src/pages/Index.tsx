@@ -45,6 +45,10 @@ const Index = () => {
     caseStudiesInterval: 5000,
     siteTitle: 'Ignite Dijital Pazarlama',
     siteDescription: 'SEO ve Dijital Pazarlama Çözümleri',
+    primaryColor: '#FF6B00',
+    secondaryColor: '#FFA133',
+    accentColor: '#FF8A00',
+    textColor: '#FFFFFF',
   }]);
 
   const settings = siteSettings[0] || {
@@ -62,11 +66,21 @@ const Index = () => {
     caseStudiesInterval: 5000,
     siteTitle: 'Ignite Dijital Pazarlama',
     siteDescription: 'SEO ve Dijital Pazarlama Çözümleri',
+    primaryColor: '#FF6B00',
+    secondaryColor: '#FFA133',
+    accentColor: '#FF8A00',
+    textColor: '#FFFFFF',
   };
 
   useEffect(() => {
     // SEO için sayfa başlığını güncelle
     document.title = settings.siteTitle || 'Ignite Dijital Pazarlama | Web Geliştirme, SEO ve Dijital Pazarlama Ajansı';
+    
+    // Update CSS variables for dynamic colors
+    document.documentElement.style.setProperty('--gradient-color-1', settings.primaryColor || '#FF6B00');
+    document.documentElement.style.setProperty('--gradient-color-2', settings.secondaryColor || '#FFA133');
+    document.documentElement.style.setProperty('--ignite', settings.primaryColor || '#FF6B00');
+    document.documentElement.style.setProperty('--text-color', settings.textColor || '#FFFFFF');
     
     // Karşılama bildirimi
     setTimeout(() => {

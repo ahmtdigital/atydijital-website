@@ -28,6 +28,7 @@ import BreadcrumbManager from '@/components/admin/BreadcrumbManager';
 import MarketingToolsManager from '@/components/admin/MarketingToolsManager';
 import ServiceDetailManager from '@/components/admin/ServiceDetailManager';
 import NewsletterManager from '@/components/admin/NewsletterManager';
+import SiteColorsManager from '@/components/admin/SiteColorsManager';
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -80,15 +81,6 @@ const Admin = () => {
           description: "Hoş geldiniz, Admin!",
         });
         setLoginError('');
-        
-        // MySQL bağlantısını test et
-        mysqlService.testConnection().then(isConnected => {
-          if (isConnected) {
-            console.log('MySQL bağlantısı başarılı');
-          } else {
-            console.log('MySQL bağlantısı kurulamadı');
-          }
-        });
       } else {
         setLoginError('Kullanıcı adı veya şifre hatalı');
         toast({
@@ -169,7 +161,7 @@ const Admin = () => {
                     </div>
                     <Button 
                       type="submit" 
-                      className="w-full bg-ignite hover:bg-ignite-700 mt-6 relative overflow-hidden group" 
+                      className="w-full bg-ignite hover:bg-ignite-700 text-white relative overflow-hidden group" 
                       disabled={isLoading}
                     >
                       <motion.div
@@ -386,8 +378,10 @@ const Admin = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
+              className="space-y-8"
             >
               <SiteSettingsManager />
+              <SiteColorsManager />
             </motion.div>
           )}
         </div>
