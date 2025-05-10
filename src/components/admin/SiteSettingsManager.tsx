@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +6,7 @@ import GeneralSettings from '@/components/admin/GeneralSettings';
 import { Download, Settings } from 'lucide-react';
 import SiteColorsManager from './SiteColorsManager';
 import ContentSectionsManager from './ContentSectionsManager';
+import SectionContentManager from './SectionContentManager';
 
 const SiteSettingsManager = () => {
   const [activeTab, setActiveTab] = useState('general');

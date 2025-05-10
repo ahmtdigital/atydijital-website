@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -72,19 +71,10 @@ const SiteColorsManager = () => {
           glassmorphism: colors.glassmorphism,
         });
       } else {
+        // Fix: Remove projectsPerRow and other properties from the object
         addSettings({ 
           ...colors,
-          projectsPerRow: 2,
-          projectImageHeight: 400,
-          projectHoverEffect: 'scale',
-          showProjectTags: true,
-          showProjectCategory: true,
-          showCaseStudies: true,
-          caseStudiesAnimationType: 'fade',
-          caseStudiesAutoplay: true,
-          caseStudiesInterval: 5000,
-          siteTitle: 'Ignite Dijital Pazarlama',
-          siteDescription: 'SEO ve Dijital Pazarlama Çözümleri',
+          // These fields will be added by the backend with default values
         });
       }
       
