@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import GeneralSettings from '@/components/admin/GeneralSettings';
-import { Globe, Server, Boxes, Palette, Layout, Type } from 'lucide-react';
+import { Globe, Server, Boxes, Palette, Layout, Type, Download, Settings } from 'lucide-react';
 import { useDataService } from '@/lib/db';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
