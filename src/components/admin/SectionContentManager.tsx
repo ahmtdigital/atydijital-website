@@ -1,331 +1,269 @@
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Save, Check, FileText, Layout, LayoutGrid } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useDataService } from '@/lib/db';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Save } from 'lucide-react';
 
+// Define proper type for section content
 interface SectionContent {
-  id?: number;
+  id: number;
   servicesTitle: string;
   servicesSubtitle: string;
   servicesDescription: string;
-  portfolioTitle?: string;
-  portfolioSubtitle?: string;
-  portfolioDescription?: string;
-  heroTitle?: string;
-  heroSubtitle?: string;
-  heroDescription?: string;
-  contactTitle?: string;
-  contactSubtitle?: string;
-  contactDescription?: string;
+  portfolioTitle: string;
+  portfolioSubtitle: string;
+  portfolioDescription: string;
+  heroTitle: string;
+  heroSubtitle: string;
+  heroDescription: string;
+  contactTitle: string;
+  contactSubtitle: string;
+  contactDescription: string;
 }
 
 const SectionContentManager = () => {
   const { toast } = useToast();
-  const [isSaved, setIsSaved] = useState(false);
-  const [activeTab, setActiveTab] = useState('services');
-  
-  const { 
-    items: sectionContents, 
-    update: updateContent,
-    add: addContent,
-    isLoading 
-  } = useDataService('sectionContent', [{
-    id: 1,
-    servicesTitle: 'HİZMETLERİMİZ',
-    servicesSubtitle: 'Kapsamlı Dijital Çözümler',
-    servicesDescription: 'İşletmenizin dijital dünyada büyümesi ve gelişmesi için eksiksiz dijital pazarlama hizmetleri sunuyoruz.',
-    portfolioTitle: 'PORTFOLYO',
-    portfolioSubtitle: 'Son Çalışmalarımız',
-    portfolioDescription: 'Müşterilerimiz için gerçekleştirdiğimiz başarılı dijital projelerden bazı örnekler.',
-    heroTitle: 'DİJİTALDE BÜYÜME ZAMANI',
-    heroSubtitle: 'Dijital Pazarlama ve SEO Çözümleri',
-    heroDescription: 'İşletmenizi dijital dünyada üst sıralara taşıyacak stratejiler geliştiriyoruz.',
-    contactTitle: 'İLETİŞİM',
-    contactSubtitle: 'Bize Ulaşın',
-    contactDescription: 'Dijital pazarlama ihtiyaçlarınız için bizimle iletişime geçin.',
-  }]);
-
-  const [content, setContent] = useState<SectionContent>({
-    servicesTitle: 'HİZMETLERİMİZ',
-    servicesSubtitle: 'Kapsamlı Dijital Çözümler',
-    servicesDescription: 'İşletmenizin dijital dünyada büyümesi ve gelişmesi için eksiksiz dijital pazarlama hizmetleri sunuyoruz.',
-    portfolioTitle: 'PORTFOLYO',
-    portfolioSubtitle: 'Son Çalışmalarımız',
-    portfolioDescription: 'Müşterilerimiz için gerçekleştirdiğimiz başarılı dijital projelerden bazı örnekler.',
-    heroTitle: 'DİJİTALDE BÜYÜME ZAMANI',
-    heroSubtitle: 'Dijital Pazarlama ve SEO Çözümleri',
-    heroDescription: 'İşletmenizi dijital dünyada üst sıralara taşıyacak stratejiler geliştiriyoruz.',
-    contactTitle: 'İLETİŞİM',
-    contactSubtitle: 'Bize Ulaşın',
-    contactDescription: 'Dijital pazarlama ihtiyaçlarınız için bizimle iletişime geçin.',
-  });
-
-  useEffect(() => {
-    if (sectionContents && sectionContents.length > 0) {
-      setContent({
-        ...sectionContents[0],
-      });
+  const { items: sectionContentItems, update, create } = useDataService('sectionContent', [
+    {
+      id: 1,
+      servicesTitle: 'Hizmetlerimiz',
+      servicesSubtitle: 'İşinizi Büyütmenize Yardımcı Oluyoruz',
+      servicesDescription: 'Dijital pazarlama, web tasarım ve içerik stratejisi alanlarında uzmanlaşmış ekibimizle işletmenizin online varlığını güçlendiriyoruz.',
+      portfolioTitle: 'Portföyümüz',
+      portfolioSubtitle: 'Son Projelerimiz',
+      portfolioDescription: 'Farklı sektörlerden müşterilerimiz için gerçekleştirdiğimiz başarılı projelerimizi inceleyin.',
+      heroTitle: 'Dijital Dünyada İşinizi Büyütün',
+      heroSubtitle: 'Stratejik Dijital Pazarlama Çözümleri',
+      heroDescription: 'Markanızı dijital dünyada öne çıkaracak stratejik çözümler sunuyoruz.',
+      contactTitle: 'Bizimle İletişime Geçin',
+      contactSubtitle: 'Projeniz Hakkında Konuşalım',
+      contactDescription: 'Dijital başarı yolculuğunuza başlamak için bizimle iletişime geçin.'
     }
-  }, [sectionContents]);
+  ]);
 
-  const handleSave = () => {
+  const sectionContent = sectionContentItems.length > 0 ? sectionContentItems[0] : null;
+  
+  const [formData, setFormData] = useState<SectionContent>(sectionContent || {
+    id: 1,
+    servicesTitle: '',
+    servicesSubtitle: '',
+    servicesDescription: '',
+    portfolioTitle: '',
+    portfolioSubtitle: '',
+    portfolioDescription: '',
+    heroTitle: '',
+    heroSubtitle: '',
+    heroDescription: '',
+    contactTitle: '',
+    contactSubtitle: '',
+    contactDescription: ''
+  });
+  
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleInputChange = (field: keyof SectionContent, value: string) => {
+    setFormData({
+      ...formData,
+      [field]: value
+    });
+  };
+
+  const handleSaveContent = async () => {
+    setIsLoading(true);
     try {
-      if (sectionContents && sectionContents.length > 0) {
-        updateContent(sectionContents[0].id, { 
-          ...content
-        });
+      if (sectionContent) {
+        await update(formData.id, formData);
       } else {
-        addContent({ 
-          ...content
+        await create({
+          servicesTitle: formData.servicesTitle,
+          servicesSubtitle: formData.servicesSubtitle,
+          servicesDescription: formData.servicesDescription,
+          portfolioTitle: formData.portfolioTitle,
+          portfolioSubtitle: formData.portfolioSubtitle,
+          portfolioDescription: formData.portfolioDescription,
+          heroTitle: formData.heroTitle,
+          heroSubtitle: formData.heroSubtitle,
+          heroDescription: formData.heroDescription,
+          contactTitle: formData.contactTitle,
+          contactSubtitle: formData.contactSubtitle,
+          contactDescription: formData.contactDescription
         });
       }
       
-      setIsSaved(true);
-      setTimeout(() => setIsSaved(false), 2000);
-      
       toast({
         title: "Başarılı",
-        description: "Bölüm içerikleri kaydedildi.",
+        description: "Bölüm içerikleri başarıyla güncellendi.",
       });
     } catch (error) {
       toast({
         title: "Hata",
-        description: "İçerikler kaydedilirken bir hata oluştu.",
+        description: "Bölüm içerikleri güncellenirken bir hata oluştu.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleChange = (section: string, field: string, value: string) => {
-    setContent(prev => ({
-      ...prev,
-      [`${section}${field}`]: value
-    }));
-  };
-
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="space-y-6"
-    >
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold flex items-center text-white">
-            <FileText className="mr-2 h-6 w-6 text-ignite" />
-            Bölüm İçerikleri
-          </h2>
-          <p className="text-sm text-white/60 mt-1">
-            Web sitenizdeki bölümlerin metinlerini düzenleyin
-          </p>
-        </div>
-      </div>
-
-      <Card className="bg-dark-500 border-dark-400 overflow-hidden relative">
-        <div className="absolute inset-0 bg-gradient-to-br from-ignite/5 via-transparent to-transparent opacity-40 z-0" />
-        <CardHeader className="relative z-10">
-          <CardTitle className="text-white">Bölüm Metinleri</CardTitle>
-        </CardHeader>
-        <CardContent className="relative z-10 space-y-6">
-          <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="bg-dark-600 mb-4">
-              <TabsTrigger value="services" className="data-[state=active]:bg-ignite data-[state=active]:text-white">
-                Hizmetler
-              </TabsTrigger>
-              <TabsTrigger value="portfolio" className="data-[state=active]:bg-ignite data-[state=active]:text-white">
-                Portfolyo
-              </TabsTrigger>
-              <TabsTrigger value="hero" className="data-[state=active]:bg-ignite data-[state=active]:text-white">
-                Ana Bölüm
-              </TabsTrigger>
-              <TabsTrigger value="contact" className="data-[state=active]:bg-ignite data-[state=active]:text-white">
-                İletişim
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="services" className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-white/80">Başlık</label>
-                <Input 
-                  value={content.servicesTitle}
-                  onChange={(e) => handleChange('services', 'Title', e.target.value)}
-                  className="bg-dark-400 border-dark-300"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-white/80">Alt Başlık</label>
-                <Input 
-                  value={content.servicesSubtitle}
-                  onChange={(e) => handleChange('services', 'Subtitle', e.target.value)}
-                  className="bg-dark-400 border-dark-300"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-white/80">Açıklama</label>
-                <Textarea 
-                  value={content.servicesDescription}
-                  onChange={(e) => handleChange('services', 'Description', e.target.value)}
-                  className="bg-dark-400 border-dark-300 min-h-[100px]"
-                />
-              </div>
-            </TabsContent>
-
-            <TabsContent value="portfolio" className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-white/80">Başlık</label>
-                <Input 
-                  value={content.portfolioTitle}
-                  onChange={(e) => handleChange('portfolio', 'Title', e.target.value)}
-                  className="bg-dark-400 border-dark-300"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-white/80">Alt Başlık</label>
-                <Input 
-                  value={content.portfolioSubtitle}
-                  onChange={(e) => handleChange('portfolio', 'Subtitle', e.target.value)}
-                  className="bg-dark-400 border-dark-300"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-white/80">Açıklama</label>
-                <Textarea 
-                  value={content.portfolioDescription}
-                  onChange={(e) => handleChange('portfolio', 'Description', e.target.value)}
-                  className="bg-dark-400 border-dark-300 min-h-[100px]"
-                />
-              </div>
-            </TabsContent>
-
-            <TabsContent value="hero" className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-white/80">Başlık</label>
-                <Input 
-                  value={content.heroTitle}
-                  onChange={(e) => handleChange('hero', 'Title', e.target.value)}
-                  className="bg-dark-400 border-dark-300"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-white/80">Alt Başlık</label>
-                <Input 
-                  value={content.heroSubtitle}
-                  onChange={(e) => handleChange('hero', 'Subtitle', e.target.value)}
-                  className="bg-dark-400 border-dark-300"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-white/80">Açıklama</label>
-                <Textarea 
-                  value={content.heroDescription}
-                  onChange={(e) => handleChange('hero', 'Description', e.target.value)}
-                  className="bg-dark-400 border-dark-300 min-h-[100px]"
-                />
-              </div>
-            </TabsContent>
-
-            <TabsContent value="contact" className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-white/80">Başlık</label>
-                <Input 
-                  value={content.contactTitle}
-                  onChange={(e) => handleChange('contact', 'Title', e.target.value)}
-                  className="bg-dark-400 border-dark-300"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-white/80">Alt Başlık</label>
-                <Input 
-                  value={content.contactSubtitle}
-                  onChange={(e) => handleChange('contact', 'Subtitle', e.target.value)}
-                  className="bg-dark-400 border-dark-300"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-white/80">Açıklama</label>
-                <Textarea 
-                  value={content.contactDescription}
-                  onChange={(e) => handleChange('contact', 'Description', e.target.value)}
-                  className="bg-dark-400 border-dark-300 min-h-[100px]"
-                />
-              </div>
-            </TabsContent>
-          </Tabs>
-
-          <div className="pt-4 border-t border-dark-400 mt-4">
-            <h3 className="font-medium text-white mb-4">Önizleme</h3>
-            
-            <div className="bg-dark-600 p-6 rounded-lg border border-dark-400">
-              {activeTab === 'services' && (
-                <div className="text-center">
-                  <p className="text-sm text-ignite font-semibold">{content.servicesTitle}</p>
-                  <h3 className="text-xl font-bold text-white mt-2">{content.servicesSubtitle}</h3>
-                  <p className="text-white/70 mt-2">{content.servicesDescription}</p>
-                </div>
-              )}
-              
-              {activeTab === 'portfolio' && (
-                <div className="text-center">
-                  <p className="text-sm text-ignite font-semibold">{content.portfolioTitle}</p>
-                  <h3 className="text-xl font-bold text-white mt-2">{content.portfolioSubtitle}</h3>
-                  <p className="text-white/70 mt-2">{content.portfolioDescription}</p>
-                </div>
-              )}
-              
-              {activeTab === 'hero' && (
-                <div className="text-center">
-                  <p className="text-sm text-ignite font-semibold">{content.heroTitle}</p>
-                  <h3 className="text-xl font-bold text-white mt-2">{content.heroSubtitle}</h3>
-                  <p className="text-white/70 mt-2">{content.heroDescription}</p>
-                </div>
-              )}
-              
-              {activeTab === 'contact' && (
-                <div className="text-center">
-                  <p className="text-sm text-ignite font-semibold">{content.contactTitle}</p>
-                  <h3 className="text-xl font-bold text-white mt-2">{content.contactSubtitle}</h3>
-                  <p className="text-white/70 mt-2">{content.contactDescription}</p>
-                </div>
-              )}
+    <Card className="bg-dark-500 border-dark-400">
+      <CardHeader className="border-b border-dark-400">
+        <CardTitle className="text-white">Bölüm İçeriklerini Düzenle</CardTitle>
+      </CardHeader>
+      <CardContent className="pt-6 space-y-8">
+        {/* Hero Section Content */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium text-white">Ana Sayfa Hero Alanı</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-300">Başlık</label>
+              <Input
+                value={formData.heroTitle}
+                onChange={(e) => handleInputChange('heroTitle', e.target.value)}
+                className="bg-dark-400 border-dark-300 text-white"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-300">Alt Başlık</label>
+              <Input
+                value={formData.heroSubtitle}
+                onChange={(e) => handleInputChange('heroSubtitle', e.target.value)}
+                className="bg-dark-400 border-dark-300 text-white"
+              />
             </div>
           </div>
-
-          <div className="mt-8 flex justify-end">
-            <Button 
-              onClick={handleSave} 
-              className={`relative overflow-hidden ${isSaved ? 'bg-green-600 hover:bg-green-700' : 'bg-ignite hover:bg-ignite-700'}`}
-              disabled={isLoading}
-            >
-              {isSaved ? (
-                <>
-                  <Check className="h-4 w-4 mr-2" />
-                  Kaydedildi
-                </>
-              ) : (
-                <>
-                  <Save className="h-4 w-4 mr-2" />
-                  {isLoading ? 'Kaydediliyor...' : 'İçerikleri Kaydet'}
-                </>
-              )}
-              <motion.div
-                className="absolute inset-0 bg-white/10"
-                initial={{ x: '-100%' }}
-                animate={isSaved ? { x: '100%' } : { x: '-100%' }}
-                transition={{ duration: 0.5 }}
-              />
-            </Button>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-300">Açıklama</label>
+            <Textarea
+              value={formData.heroDescription}
+              onChange={(e) => handleInputChange('heroDescription', e.target.value)}
+              className="bg-dark-400 border-dark-300 text-white"
+              rows={3}
+            />
           </div>
-        </CardContent>
-      </Card>
-    </motion.div>
+        </div>
+
+        {/* Services Section Content */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium text-white">Hizmetler Bölümü</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-300">Başlık</label>
+              <Input
+                value={formData.servicesTitle}
+                onChange={(e) => handleInputChange('servicesTitle', e.target.value)}
+                className="bg-dark-400 border-dark-300 text-white"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-300">Alt Başlık</label>
+              <Input
+                value={formData.servicesSubtitle}
+                onChange={(e) => handleInputChange('servicesSubtitle', e.target.value)}
+                className="bg-dark-400 border-dark-300 text-white"
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-300">Açıklama</label>
+            <Textarea
+              value={formData.servicesDescription}
+              onChange={(e) => handleInputChange('servicesDescription', e.target.value)}
+              className="bg-dark-400 border-dark-300 text-white"
+              rows={3}
+            />
+          </div>
+        </div>
+
+        {/* Portfolio Section Content */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium text-white">Portföy Bölümü</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-300">Başlık</label>
+              <Input
+                value={formData.portfolioTitle}
+                onChange={(e) => handleInputChange('portfolioTitle', e.target.value)}
+                className="bg-dark-400 border-dark-300 text-white"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-300">Alt Başlık</label>
+              <Input
+                value={formData.portfolioSubtitle}
+                onChange={(e) => handleInputChange('portfolioSubtitle', e.target.value)}
+                className="bg-dark-400 border-dark-300 text-white"
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-300">Açıklama</label>
+            <Textarea
+              value={formData.portfolioDescription}
+              onChange={(e) => handleInputChange('portfolioDescription', e.target.value)}
+              className="bg-dark-400 border-dark-300 text-white"
+              rows={3}
+            />
+          </div>
+        </div>
+
+        {/* Contact Section Content */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium text-white">İletişim Bölümü</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-300">Başlık</label>
+              <Input
+                value={formData.contactTitle}
+                onChange={(e) => handleInputChange('contactTitle', e.target.value)}
+                className="bg-dark-400 border-dark-300 text-white"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-300">Alt Başlık</label>
+              <Input
+                value={formData.contactSubtitle}
+                onChange={(e) => handleInputChange('contactSubtitle', e.target.value)}
+                className="bg-dark-400 border-dark-300 text-white"
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-300">Açıklama</label>
+            <Textarea
+              value={formData.contactDescription}
+              onChange={(e) => handleInputChange('contactDescription', e.target.value)}
+              className="bg-dark-400 border-dark-300 text-white"
+              rows={3}
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end">
+          <Button 
+            onClick={handleSaveContent} 
+            disabled={isLoading}
+            className="bg-ignite hover:bg-ignite-700 text-white"
+          >
+            {isLoading ? (
+              <>
+                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                Kaydediliyor...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                İçerikleri Kaydet
+              </>
+            )}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

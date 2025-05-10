@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +8,7 @@ import { Download, Settings } from 'lucide-react';
 import SiteColorsManager from './SiteColorsManager';
 import ContentSectionsManager from './ContentSectionsManager';
 import SectionContentManager from './SectionContentManager';
+import SmtpSettings from './SmtpSettings';
 
 const SiteSettingsManager = () => {
   const [activeTab, setActiveTab] = useState('general');
@@ -59,6 +61,9 @@ const SiteSettingsManager = () => {
           <TabsTrigger value="content" className="data-[state=active]:bg-ignite data-[state=active]:text-white">
             Bölüm İçerikleri
           </TabsTrigger>
+          <TabsTrigger value="email" className="data-[state=active]:bg-ignite data-[state=active]:text-white">
+            E-posta Ayarları
+          </TabsTrigger>
         </TabsList>
         
         <TabsContent value="general" className="mt-6">
@@ -78,6 +83,13 @@ const SiteSettingsManager = () => {
         
         <TabsContent value="content" className="mt-6">
           <ContentSectionsManager />
+          <div className="mt-6">
+            <SectionContentManager />
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="email" className="mt-6">
+          <SmtpSettings />
         </TabsContent>
       </Tabs>
     </motion.div>

@@ -7,42 +7,80 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, Phone, MapPin, Clock, ArrowRight, Instagram, Twitter, Facebook, Linkedin } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useDataService } from '@/lib/db';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+
+// Form schema for validation
+const formSchema = z.object({
+  name: z.string().min(2, { message: 'Ad soyad en az 2 karakter olmalıdır' }),
+  email: z.string().email({ message: 'Geçerli bir e-posta adresi giriniz' }),
+  phone: z.string().optional(),
+  company: z.string().optional(),
+  service: z.string().min(1, { message: 'Lütfen bir hizmet seçiniz' }),
+  message: z.string().min(10, { message: 'Mesajınız en az 10 karakter olmalıdır' }),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 // SSS Verileri
-const faqs = [
-  {
-    question: 'Ignite Marketing hangi hizmetleri sunuyor?',
-    answer: 'SEO, sosyal medya yönetimi, içerik oluşturma, web geliştirme, PPC reklamcılık, e-posta pazarlama, analitik ve daha fazlasını içeren kapsamlı bir dijital pazarlama hizmetleri yelpazesi sunuyoruz.'
-  },
-  {
-    question: 'Hizmetlerinizin maliyeti nedir?',
-    answer: 'Fiyatlandırmamız, belirli ihtiyaçlarınıza ve hedeflerinize göre özelleştirilmiştir. Farklı paketler sunuyoruz ve bütçenize uygun özel bir çözüm yaratabiliriz. Ücretsiz danışmanlık ve fiyat teklifi için bizimle iletişime geçin.'
-  },
-  {
-    question: 'Sonuçları görmek ne kadar sürer?',
-    answer: "Sonuçlar, hizmete ve başlangıç noktanıza bağlı olarak değişir. SEO genellikle önemli sonuçlar göstermek için 3-6 ay sürer, PPC ve sosyal medya reklamcılığı anında trafik oluşturabilir. Danışmanlık sırasında, belirli hedefleriniz için gerçekçi zaman çizelgeleri sunacağız."
-  },
-  {
-    question: 'Uluslararası müşterilerle çalışıyor musunuz?',
-    answer: 'Evet, global olarak müşterilerle çalışıyoruz. Ekibimiz, çeşitli pazarlar için dijital pazarlama stratejileri oluşturma konusunda deneyimlidir ve yaklaşımımızı, konumundan bağımsız olarak hedef kitlenize uyacak şekilde uyarlayabiliriz.'
-  },
-  {
-    question: 'Belirli bir projeye yardımcı olabilir misiniz yoksa yalnızca devam eden hizmetler mi sunuyorsunuz?',
-    answer: 'Hem proje bazlı çalışma hem de devam eden hizmetler sunuyoruz. İster bir web sitesi yenileme, tek seferlik bir kampanya veya sürekli pazarlama desteği ihtiyacınız olsun, ihtiyaçlarınızı karşılayabiliriz.'
-  }
-];
-
 const Contact = () => {
   const { toast } = useToast();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    company: '',
-    service: '',
-    message: ''
-  });
   const [loading, setLoading] = useState(false);
+  const { items: services } = useDataService('services', []);
+  const { items: smtpSettings } = useDataService('smtpSettings', []);
+  const { items: siteSettings } = useDataService('siteSettings', []);
+  const { items: faqs } = useDataService('faqs', [
+    {
+      id: 1,
+      question: 'Ignite Marketing hangi hizmetleri sunuyor?',
+      answer: 'SEO, sosyal medya yönetimi, içerik oluşturma, web geliştirme, PPC reklamcılık, e-posta pazarlama, analitik ve daha fazlasını içeren kapsamlı bir dijital pazarlama hizmetleri yelpazesi sunuyoruz.'
+    },
+    {
+      id: 2,
+      question: 'Hizmetlerinizin maliyeti nedir?',
+      answer: 'Fiyatlandırmamız, belirli ihtiyaçlarınıza ve hedeflerinize göre özelleştirilmiştir. Farklı paketler sunuyoruz ve bütçenize uygun özel bir çözüm yaratabiliriz. Ücretsiz danışmanlık ve fiyat teklifi için bizimle iletişime geçin.'
+    },
+    {
+      id: 3,
+      question: 'Sonuçları görmek ne kadar sürer?',
+      answer: "Sonuçlar, hizmete ve başlangıç noktanıza bağlı olarak değişir. SEO genellikle önemli sonuçlar göstermek için 3-6 ay sürer, PPC ve sosyal medya reklamcılığı anında trafik oluşturabilir. Danışmanlık sırasında, belirli hedefleriniz için gerçekçi zaman çizelgeleri sunacağız."
+    },
+    {
+      id: 4,
+      question: 'Uluslararası müşterilerle çalışıyor musunuz?',
+      answer: 'Evet, global olarak müşterilerle çalışıyoruz. Ekibimiz, çeşitli pazarlar için dijital pazarlama stratejileri oluşturma konusunda deneyimlidir ve yaklaşımımızı, konumundan bağımsız olarak hedef kitlenize uyacak şekilde uyarlayabiliriz.'
+    },
+    {
+      id: 5,
+      question: 'Belirli bir projeye yardımcı olabilir misiniz yoksa yalnızca devam eden hizmetler mi sunuyorsunuz?',
+      answer: 'Hem proje bazlı çalışma hem de devam eden hizmetler sunuyoruz. İster bir web sitesi yenileme, tek seferlik bir kampanya veya sürekli pazarlama desteği ihtiyacınız olsun, ihtiyaçlarınızı karşılayabiliriz.'
+    }
+  ]);
+
+  // Get contact information from site settings
+  const contactInfo = siteSettings.length > 0 ? siteSettings[0] : null;
+  
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      company: '',
+      service: '',
+      message: ''
+    }
+  });
 
   useEffect(() => {
     // SEO için sayfa başlığı ve meta açıklamasını güncelle
@@ -55,31 +93,40 @@ const Contact = () => {
     }
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: FormValues) => {
     setLoading(true);
     
-    // Form gönderimi simülasyonu
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      // Simulated form submission with SMTP integration
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Check if we have SMTP settings configured
+      const hasSmtpConfig = smtpSettings.length > 0;
+      
+      if (hasSmtpConfig) {
+        console.log("Sending contact form via SMTP with settings:", smtpSettings[0]);
+        console.log("Form data:", data);
+        // In a real app, this would send the form data via an API that uses the SMTP configuration
+      } else {
+        console.log("No SMTP configuration found. Form data:", data);
+        // Form data would be saved to database only in this case
+      }
+      
       toast({
         title: "Mesaj Gönderildi!",
         description: "Bizimle iletişime geçtiğiniz için teşekkürler. 24 saat içinde sorunuza cevap vereceğiz.",
       });
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        company: '',
-        service: '',
-        message: ''
+      
+      form.reset();
+    } catch (error) {
+      toast({
+        title: "Hata",
+        description: "Formunuz gönderilirken bir hata oluştu. Lütfen tekrar deneyiniz.",
+        variant: "destructive",
       });
-    }, 1500);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -117,7 +164,9 @@ const Contact = () => {
                     </div>
                     <div>
                       <h4 className="font-semibold text-white">E-posta</h4>
-                      <p className="text-gray-400">info@ignitemarketing.com</p>
+                      <p className="text-gray-400">
+                        {contactInfo?.contactEmail || "info@ignitemarketing.com"}
+                      </p>
                     </div>
                   </div>
                   
@@ -127,7 +176,9 @@ const Contact = () => {
                     </div>
                     <div>
                       <h4 className="font-semibold text-white">Telefon</h4>
-                      <p className="text-gray-400">+90 (555) 123 4567</p>
+                      <p className="text-gray-400">
+                        {contactInfo?.contactPhone || "+90 (555) 123 4567"}
+                      </p>
                     </div>
                   </div>
                   
@@ -137,7 +188,9 @@ const Contact = () => {
                     </div>
                     <div>
                       <h4 className="font-semibold text-white">Ofis</h4>
-                      <p className="text-gray-400">Dijital Pazarlama Caddesi No:123, İstanbul, 34000</p>
+                      <p className="text-gray-400">
+                        {contactInfo?.contactAddress || "Dijital Pazarlama Caddesi No:123, İstanbul, 34000"}
+                      </p>
                     </div>
                   </div>
                   
@@ -155,16 +208,16 @@ const Contact = () => {
                 <div className="mt-8 pt-8 border-t border-dark-300">
                   <h4 className="font-semibold text-white mb-4">Bizi Takip Edin</h4>
                   <div className="flex space-x-4">
-                    <a href="#" className="bg-dark-400 p-2 rounded-full hover:bg-ignite/20 transition-colors">
+                    <a href={contactInfo?.socialLinks?.instagram || "#"} className="bg-dark-400 p-2 rounded-full hover:bg-ignite/20 transition-colors">
                       <Instagram className="h-5 w-5 text-white" />
                     </a>
-                    <a href="#" className="bg-dark-400 p-2 rounded-full hover:bg-ignite/20 transition-colors">
+                    <a href={contactInfo?.socialLinks?.twitter || "#"} className="bg-dark-400 p-2 rounded-full hover:bg-ignite/20 transition-colors">
                       <Twitter className="h-5 w-5 text-white" />
                     </a>
-                    <a href="#" className="bg-dark-400 p-2 rounded-full hover:bg-ignite/20 transition-colors">
+                    <a href={contactInfo?.socialLinks?.facebook || "#"} className="bg-dark-400 p-2 rounded-full hover:bg-ignite/20 transition-colors">
                       <Facebook className="h-5 w-5 text-white" />
                     </a>
-                    <a href="#" className="bg-dark-400 p-2 rounded-full hover:bg-ignite/20 transition-colors">
+                    <a href={contactInfo?.socialLinks?.linkedin || "#"} className="bg-dark-400 p-2 rounded-full hover:bg-ignite/20 transition-colors">
                       <Linkedin className="h-5 w-5 text-white" />
                     </a>
                   </div>
@@ -180,117 +233,153 @@ const Contact = () => {
                   Projeniz ve hedefleriniz hakkında bilgi verin. Size özel bir çözümle geri dönüş yapacağız.
                 </p>
                 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
-                        Ad Soyad *
-                      </label>
-                      <Input
-                        id="name"
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
                         name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="Adınız ve soyadınız"
-                        required
-                        className="bg-dark-400 border-dark-300 focus:border-ignite text-white"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-300">Ad Soyad *</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Adınız ve soyadınız"
+                                className="bg-dark-400 border-dark-300 focus:border-ignite text-white"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </div>
-                    
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
-                        E-posta Adresi *
-                      </label>
-                      <Input
-                        id="email"
+                      
+                      <FormField
+                        control={form.control}
                         name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="e-posta@adresiniz.com"
-                        required
-                        className="bg-dark-400 border-dark-300 focus:border-ignite text-white"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-1">
-                        Telefon Numarası
-                      </label>
-                      <Input
-                        id="phone"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        placeholder="Telefon numaranız"
-                        className="bg-dark-400 border-dark-300 focus:border-ignite text-white"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-300">E-posta Adresi *</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="email"
+                                placeholder="e-posta@adresiniz.com"
+                                className="bg-dark-400 border-dark-300 focus:border-ignite text-white"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
                     </div>
                     
-                    <div>
-                      <label htmlFor="company" className="block text-sm font-medium text-gray-300 mb-1">
-                        Firma Adı
-                      </label>
-                      <Input
-                        id="company"
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="phone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-300">Telefon Numarası</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Telefon numaranız"
+                                className="bg-dark-400 border-dark-300 focus:border-ignite text-white"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
                         name="company"
-                        value={formData.company}
-                        onChange={handleChange}
-                        placeholder="Firmanızın adı"
-                        className="bg-dark-400 border-dark-300 focus:border-ignite text-white"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-300">Firma Adı</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Firmanızın adı"
+                                className="bg-dark-400 border-dark-300 focus:border-ignite text-white"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
                     </div>
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="service" className="block text-sm font-medium text-gray-300 mb-1">
-                      İlgilendiğiniz Hizmet *
-                    </label>
-                    <select
-                      id="service"
+                    
+                    <FormField
+                      control={form.control}
                       name="service"
-                      value={formData.service}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-2 rounded-md bg-dark-400 border border-dark-300 focus:border-ignite text-white"
-                    >
-                      <option value="">Hizmet seçin</option>
-                      <option value="Dijital Pazarlama">Dijital Pazarlama</option>
-                      <option value="SEO">SEO Optimizasyonu</option>
-                      <option value="Sosyal Medya">Sosyal Medya Yönetimi</option>
-                      <option value="İçerik Üretimi">İçerik Üretimi</option>
-                      <option value="Web Geliştirme">Web Geliştirme</option>
-                      <option value="PPC">PPC Reklamcılık</option>
-                      <option value="Diğer">Diğer</option>
-                    </select>
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-1">
-                      Mesajınız *
-                    </label>
-                    <Textarea
-                      id="message"
-                      name="message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      placeholder="Projeniz ve hedefleriniz hakkında bilgi verin..."
-                      rows={4}
-                      required
-                      className="bg-dark-400 border-dark-300 focus:border-ignite text-white"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-gray-300">İlgilendiğiniz Hizmet *</FormLabel>
+                          <FormControl>
+                            <select
+                              className="w-full px-4 py-2 rounded-md bg-dark-400 border border-dark-300 focus:border-ignite text-white"
+                              {...field}
+                            >
+                              <option value="">Hizmet seçin</option>
+                              {services && services.length > 0 ? (
+                                services.map((service: any) => (
+                                  <option key={service.id} value={service.title || service.name}>
+                                    {service.title || service.name}
+                                  </option>
+                                ))
+                              ) : (
+                                <>
+                                  <option value="Dijital Pazarlama">Dijital Pazarlama</option>
+                                  <option value="SEO">SEO Optimizasyonu</option>
+                                  <option value="Sosyal Medya">Sosyal Medya Yönetimi</option>
+                                  <option value="İçerik Üretimi">İçerik Üretimi</option>
+                                  <option value="Web Geliştirme">Web Geliştirme</option>
+                                  <option value="Diğer">Diğer</option>
+                                </>
+                              )}
+                            </select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </div>
-                  
-                  <Button 
-                    type="submit" 
-                    className="w-full md:w-auto bg-ignite hover:bg-ignite-700 text-white"
-                    disabled={loading}
-                  >
-                    {loading ? 'Gönderiliyor...' : 'Mesaj Gönder'}
-                  </Button>
-                </form>
+                    
+                    <FormField
+                      control={form.control}
+                      name="message"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-gray-300">Mesajınız *</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Projeniz ve hedefleriniz hakkında bilgi verin..."
+                              rows={4}
+                              className="bg-dark-400 border-dark-300 focus:border-ignite text-white"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <Button 
+                      type="submit" 
+                      className="w-full md:w-auto bg-ignite hover:bg-ignite-700 text-white"
+                      disabled={loading}
+                    >
+                      {loading ? (
+                        <>
+                          <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                          Gönderiliyor...
+                        </>
+                      ) : 'Mesaj Gönder'}
+                    </Button>
+                  </form>
+                </Form>
               </div>
             </div>
           </div>
@@ -310,8 +399,8 @@ const Contact = () => {
           
           <div className="max-w-4xl mx-auto">
             <div className="space-y-6">
-              {faqs.map((faq, index) => (
-                <div key={index} className="bg-dark-500 rounded-xl p-6 border border-dark-400 reveal">
+              {faqs.map((faq: any) => (
+                <div key={faq.id} className="bg-dark-500 rounded-xl p-6 border border-dark-400 reveal">
                   <h3 className="text-xl font-bold mb-3">{faq.question}</h3>
                   <p className="text-gray-400">{faq.answer}</p>
                 </div>

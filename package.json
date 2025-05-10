@@ -4,14 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-  "dev": "vite",
-  "prebuild": "npx browserslist@latest --update-db",
-  "build": "tsc && vite build",
-  "build:dev": "vite build --mode development",
-  "clean": "rm -rf node_modules/.cache dist",
-  "rebuild": "npm run clean && npm install && npm run build",
-  "preview": "vite preview"
-},
+    "dev": "vite",
+    "prebuild": "npx browserslist@latest --update-db",
+    "build": "tsc && vite build",
+    "build:dev": "vite build --mode development",
+    "clean": "rm -rf node_modules/.cache dist",
+    "rebuild": "npm run clean && npm install && npm run build",
+    "preview": "vite preview"
+  },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-accordion": "^1.2.0",

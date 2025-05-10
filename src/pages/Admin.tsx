@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -27,8 +28,6 @@ import BreadcrumbManager from '@/components/admin/BreadcrumbManager';
 import MarketingToolsManager from '@/components/admin/MarketingToolsManager';
 import ServiceDetailManager from '@/components/admin/ServiceDetailManager';
 import NewsletterManager from '@/components/admin/NewsletterManager';
-import SiteColorsManager from '@/components/admin/SiteColorsManager';
-import SectionContentManager from '@/components/admin/SectionContentManager';
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -381,8 +380,6 @@ const Admin = () => {
               className="space-y-8"
             >
               <SiteSettingsManager />
-              <SectionContentManager />
-              <SiteColorsManager />
             </motion.div>
           )}
         </div>
