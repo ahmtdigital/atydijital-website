@@ -51,17 +51,17 @@ const SiteSettingsManager = () => {
       </div>
 
       <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="bg-dark-600 mb-4">
-          <TabsTrigger value="general" className="data-[state=active]:bg-ignite data-[state=active]:text-white">
+        <TabsList className="bg-dark-600 mb-4 w-full overflow-x-auto flex-wrap">
+          <TabsTrigger value="general" className="data-[state=active]:bg-ignite data-[state=active]:text-white text-white">
             Genel Ayarlar
           </TabsTrigger>
-          <TabsTrigger value="colors" className="data-[state=active]:bg-ignite data-[state=active]:text-white">
+          <TabsTrigger value="colors" className="data-[state=active]:bg-ignite data-[state=active]:text-white text-white">
             Renkler
           </TabsTrigger>
-          <TabsTrigger value="content" className="data-[state=active]:bg-ignite data-[state=active]:text-white">
+          <TabsTrigger value="content" className="data-[state=active]:bg-ignite data-[state=active]:text-white text-white">
             Bölüm İçerikleri
           </TabsTrigger>
-          <TabsTrigger value="email" className="data-[state=active]:bg-ignite data-[state=active]:text-white">
+          <TabsTrigger value="email" className="data-[state=active]:bg-ignite data-[state=active]:text-white text-white">
             E-posta Ayarları
           </TabsTrigger>
         </TabsList>

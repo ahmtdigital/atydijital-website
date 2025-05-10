@@ -27,7 +27,7 @@ interface SectionContent {
 
 const SectionContentManager = () => {
   const { toast } = useToast();
-  const { items: sectionContentItems, update, create } = useDataService('sectionContent', [
+  const { items: sectionContentItems, update } = useDataService('sectionContent', [
     {
       id: 1,
       servicesTitle: 'Hizmetlerimiz',
@@ -75,24 +75,7 @@ const SectionContentManager = () => {
   const handleSaveContent = async () => {
     setIsLoading(true);
     try {
-      if (sectionContent) {
-        await update(formData.id, formData);
-      } else {
-        await create({
-          servicesTitle: formData.servicesTitle,
-          servicesSubtitle: formData.servicesSubtitle,
-          servicesDescription: formData.servicesDescription,
-          portfolioTitle: formData.portfolioTitle,
-          portfolioSubtitle: formData.portfolioSubtitle,
-          portfolioDescription: formData.portfolioDescription,
-          heroTitle: formData.heroTitle,
-          heroSubtitle: formData.heroSubtitle,
-          heroDescription: formData.heroDescription,
-          contactTitle: formData.contactTitle,
-          contactSubtitle: formData.contactSubtitle,
-          contactDescription: formData.contactDescription
-        });
-      }
+      await update(formData.id, formData);
       
       toast({
         title: "Başarılı",
