@@ -5,9 +5,19 @@ import Footer from './Footer';
 
 interface LayoutProps {
   children: ReactNode;
+  socialMedia?: {
+    facebook?: string;
+    twitter?: string;
+    instagram?: string;
+    linkedin?: string;
+    youtube?: string;
+    github?: string;
+    showInHeader?: boolean;
+    showInFooter?: boolean;
+  } | null;
 }
 
-const Layout = ({ children }: LayoutProps) => {
+const Layout = ({ children, socialMedia }: LayoutProps) => {
   useEffect(() => {
     // Scroll to top on page load
     window.scrollTo(0, 0);
@@ -37,11 +47,11 @@ const Layout = ({ children }: LayoutProps) => {
   
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
+      <Navbar socialMedia={socialMedia} />
       <main className="flex-grow pt-24">
         {children}
       </main>
-      <Footer />
+      <Footer socialMedia={socialMedia} />
     </div>
   );
 };
