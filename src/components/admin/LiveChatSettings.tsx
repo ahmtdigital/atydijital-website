@@ -94,7 +94,7 @@ const LiveChatSettings = () => {
       setFormData({
         ...formData,
         [parent]: {
-          ...formData[parent as keyof LiveChatSettings],
+          ...(formData[parent as keyof LiveChatSettings] as Record<string, unknown>),
           [child]: value
         }
       });

@@ -1,167 +1,171 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, Phone, MapPin } from 'lucide-react';
 
-const ContactSection = () => {
+interface ContactSectionProps {
+  content?: any;
+}
+
+const ContactSection = ({ content }: ContactSectionProps) => {
   const { toast } = useToast();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    company: '',
-    message: ''
-  });
-  const [loading, setLoading] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    
-    // Simulate form submission
-    setTimeout(() => {
-      setLoading(false);
+    setIsSubmitting(true);
+
+    try {
+      // Simulate form submission
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       toast({
-        title: "Message Sent!",
-        description: "We'll get back to you as soon as possible.",
+        title: "Mesajınız Gönderildi!",
+        description: "En kısa sürede size dönüş yapacağız.",
       });
-      setFormData({
-        name: '',
-        email: '',
-        company: '',
-        message: ''
+
+      setName('');
+      setEmail('');
+      setMessage('');
+    } catch (error) {
+      toast({
+        title: "Bir Hata Oluştu",
+        description: "Mesajınız gönderilirken bir hata oluştu. Lütfen tekrar deneyin.",
+        variant: "destructive",
       });
-    }, 1500);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <section className="py-20 bg-dark relative">
-      {/* Decorative elements */}
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-ignite"></div>
-      
-      <div className="container mx-auto px-4">
-        <div className="max-w-5xl mx-auto bg-dark-500 rounded-2xl p-8 md:p-12 shadow-lg border border-dark-400 reveal">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div>
-              <p className="text-ignite font-semibold mb-3">GET IN TOUCH</p>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Ignite Your Digital Success?</h2>
-              <p className="text-gray-300 mb-8">
-                Tell us about your project and goals. We'll get back to you with a tailored solution that meets your business needs.
-              </p>
-              
-              <div className="space-y-6">
-                <div className="flex items-start">
-                  <div className="mr-4 bg-ignite/10 p-3 rounded-lg">
-                    <Mail className="h-6 w-6 text-ignite" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-white">Email</h4>
-                    <p className="text-gray-400">info@ignitemarketing.com</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="mr-4 bg-ignite/10 p-3 rounded-lg">
-                    <Phone className="h-6 w-6 text-ignite" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-white">Phone</h4>
-                    <p className="text-gray-400">+1 (555) 123-4567</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="mr-4 bg-ignite/10 p-3 rounded-lg">
-                    <MapPin className="h-6 w-6 text-ignite" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-white">Office</h4>
-                    <p className="text-gray-400">123 Marketing St, Digital City, 10001</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
-                    Name
-                  </label>
-                  <Input
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Your name"
-                    required
-                    className="bg-dark-400 border-dark-300 focus:border-ignite text-white"
-                  />
-                </div>
-                
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
-                    Email
-                  </label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="your.email@company.com"
-                    required
-                    className="bg-dark-400 border-dark-300 focus:border-ignite text-white"
-                  />
-                </div>
-                
-                <div>
-                  <label htmlFor="company" className="block text-sm font-medium text-gray-300 mb-1">
-                    Company
-                  </label>
-                  <Input
-                    id="company"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleChange}
-                    placeholder="Your company"
-                    className="bg-dark-400 border-dark-300 focus:border-ignite text-white"
-                  />
-                </div>
-                
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-1">
-                    Message
-                  </label>
-                  <Textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    placeholder="Tell us about your project..."
-                    rows={4}
-                    required
-                    className="bg-dark-400 border-dark-300 focus:border-ignite text-white"
-                  />
-                </div>
-                
-                <Button 
-                  type="submit" 
-                  className="w-full bg-ignite hover:bg-ignite-700 text-white"
-                  disabled={loading}
-                >
-                  {loading ? 'Sending...' : 'Send Message'}
-                </Button>
-              </form>
-            </div>
-          </div>
+    <section id="contact" className="py-24 bg-dark-700">
+      <div className="container mx-auto text-center">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-3xl font-bold text-white mb-4 reveal"
+        >
+          Bize Ulaşın
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="text-white/60 mb-8 reveal"
+        >
+          Sorularınız mı var? Projeleriniz hakkında konuşmak ister misiniz? Bizimle iletişime geçin!
+        </motion.p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="flex flex-col items-center justify-center bg-dark-600 rounded-lg p-6 text-white reveal"
+          >
+            <MapPin className="h-6 w-6 mb-2 text-ignite" />
+            <h3 className="font-semibold text-lg mb-1">Adres</h3>
+            <p className="text-white/60">Örnek Mah. Örnek Sok. No:42</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            className="flex flex-col items-center justify-center bg-dark-600 rounded-lg p-6 text-white reveal"
+          >
+            <Phone className="h-6 w-6 mb-2 text-ignite" />
+            <h3 className="font-semibold text-lg mb-1">Telefon</h3>
+            <p className="text-white/60">+90 555 555 55 55</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+            className="flex flex-col items-center justify-center bg-dark-600 rounded-lg p-6 text-white reveal"
+          >
+            <Mail className="h-6 w-6 mb-2 text-ignite" />
+            <h3 className="font-semibold text-lg mb-1">E-posta</h3>
+            <p className="text-white/60">info@example.com</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 1.0 }}
+            className="flex flex-col items-center justify-center bg-dark-600 rounded-lg p-6 text-white reveal"
+          >
+            <Clock className="h-6 w-6 mb-2 text-ignite" />
+            <h3 className="font-semibold text-lg mb-1">Çalışma Saatleri</h3>
+            <p className="text-white/60">Pzt-Cum: 09:00 - 18:00</p>
+          </motion.div>
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 1.2 }}
+          className="max-w-xl mx-auto mt-12 reveal"
+        >
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Input
+                type="text"
+                placeholder="Adınız Soyadınız"
+                className="w-full bg-dark-500 border-dark-400 text-white"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <Input
+                type="email"
+                placeholder="E-posta Adresiniz"
+                className="w-full bg-dark-500 border-dark-400 text-white"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <Textarea
+                placeholder="Mesajınız"
+                className="w-full bg-dark-500 border-dark-400 text-white min-h-[100px]"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <Button
+                className="w-full bg-ignite hover:bg-ignite-700 text-white"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                    Gönderiliyor...
+                  </>
+                ) : (
+                  <>
+                    <Send className="mr-2 h-4 w-4" />
+                    Mesaj Gönder
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </motion.div>
       </div>
     </section>
   );
