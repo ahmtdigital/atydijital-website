@@ -1,124 +1,93 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Save, MessageSquare, Clock, UserRound, AlertTriangle, Palette } from 'lucide-react';
-import { useDataService } from '@/lib/db';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useDataService } from '@/lib/db';
+import { MessageSquare, Save, Check } from 'lucide-react';
+import { ChromePicker } from 'react-color';
+import { Textarea } from '@/components/ui/textarea';
+import { motion } from 'framer-motion';
 
 interface LiveChatSettings {
-  id: number;
+  id?: number;
   enabled: boolean;
+  position: string;
+  primaryColor: string;
+  buttonText: string;
   welcomeMessage: string;
-  offlineMessage: string;
   agentName: string;
   agentTitle: string;
   agentAvatar: string;
-  position: string;
-  autoResponse: boolean;
-  primaryColor: string;
-  chatButtonText: string;
-  workingHours: {
-    monday: string;
-    tuesday: string;
-    wednesday: string;
-    thursday: string;
-    friday: string;
-    saturday: string;
-    sunday: string;
-  }
+  offlineMessage: string;
+  workingHours: string;
+  emailNotifications: boolean;
+  notificationEmail: string;
 }
+
+const defaultSettings: LiveChatSettings = {
+  enabled: false,
+  position: 'bottom-right',
+  primaryColor: '#FF6B00',
+  buttonText: 'Canlı Destek',
+  welcomeMessage: 'Merhaba! Size nasıl yardımcı olabilirim?',
+  agentName: 'Destek Ekibi',
+  agentTitle: 'Müşteri Temsilcisi',
+  agentAvatar: '',
+  offlineMessage: 'Şu anda çevrimdışıyız. Lütfen mesaj bırakın, size en kısa sürede dönüş yapacağız.',
+  workingHours: '09:00 - 18:00, Pazartesi - Cuma',
+  emailNotifications: false,
+  notificationEmail: ''
+};
 
 const LiveChatSettings = () => {
   const { toast } = useToast();
-  const { items: liveChatItems, update } = useDataService('liveChat', [
-    {
-      id: 1,
-      enabled: true,
-      welcomeMessage: 'Hoş geldiniz! Size nasıl yardımcı olabilirim?',
-      offlineMessage: 'Şu anda çevrimdışıyız. Lütfen mesaj bırakın, size en kısa sürede dönüş yapacağız.',
-      agentName: 'Ali Yılmaz',
-      agentTitle: 'Müşteri Temsilcisi',
-      agentAvatar: '/images/agent-avatar.jpg',
-      position: 'bottom-right',
-      autoResponse: true,
-      primaryColor: '#FF6B00',
-      chatButtonText: 'Canlı Destek',
-      workingHours: {
-        monday: '09:00-18:00',
-        tuesday: '09:00-18:00',
-        wednesday: '09:00-18:00',
-        thursday: '09:00-18:00',
-        friday: '09:00-18:00',
-        saturday: '10:00-14:00',
-        sunday: 'Kapalı'
-      }
-    }
-  ]);
-
-  const liveChat = liveChatItems.length > 0 ? liveChatItems[0] : null;
+  const { items: chatSettings, update, add } = useDataService<LiveChatSettings>('liveChat', [defaultSettings]);
   
-  const [formData, setFormData] = useState<LiveChatSettings>(liveChat || {
-    id: 1,
-    enabled: false,
-    welcomeMessage: '',
-    offlineMessage: '',
-    agentName: '',
-    agentTitle: '',
-    agentAvatar: '',
-    position: 'bottom-right',
-    autoResponse: false,
-    primaryColor: '#FF6B00',
-    chatButtonText: 'Canlı Destek',
-    workingHours: {
-      monday: '09:00-18:00',
-      tuesday: '09:00-18:00',
-      wednesday: '09:00-18:00',
-      thursday: '09:00-18:00',
-      friday: '09:00-18:00',
-      saturday: '10:00-14:00',
-      sunday: 'Kapalı'
-    }
-  });
-  
+  const [settings, setSettings] = useState<LiveChatSettings>(defaultSettings);
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleInputChange = (field: string, value: any) => {
-    if (field.includes('.')) {
-      const [parent, child] = field.split('.');
-      setFormData({
-        ...formData,
-        [parent]: {
-          ...formData[parent as keyof LiveChatSettings],
-          [child]: value
-        }
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [field]: value
-      });
+  useEffect(() => {
+    if (chatSettings && chatSettings.length > 0) {
+      setSettings(chatSettings[0]);
     }
+  }, [chatSettings]);
+
+  const handleInputChange = (key: keyof LiveChatSettings, value: string | boolean) => {
+    setSettings({...settings, [key]: value});
   };
 
-  const handleSaveLiveChat = async () => {
+  const handleColorChange = (color: { hex: string }) => {
+    setSettings({...settings, primaryColor: color.hex});
+  };
+
+  const handleSave = async () => {
     setIsLoading(true);
+    
     try {
-      await update(formData.id, formData);
+      if (chatSettings && chatSettings.length > 0 && chatSettings[0].id) {
+        await update(chatSettings[0].id, settings);
+      } else {
+        await add(settings);
+      }
+      
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 2000);
       
       toast({
         title: "Başarılı",
-        description: "Canlı destek ayarları başarıyla güncellendi.",
+        description: "Canlı destek ayarları kaydedildi.",
       });
     } catch (error) {
       toast({
         title: "Hata",
-        description: "Canlı destek ayarları güncellenirken bir hata oluştu.",
+        description: "Canlı destek ayarları kaydedilirken bir sorun oluştu.",
         variant: "destructive",
       });
     } finally {
@@ -127,261 +96,223 @@ const LiveChatSettings = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <Card className="bg-dark-500 border-dark-400">
-        <CardHeader className="border-b border-dark-400">
-          <CardTitle className="text-white flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-ignite" />
-            Canlı Destek Ayarları
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-6 space-y-6">
-          <div className="p-4 border border-amber-600/30 rounded-md bg-amber-600/10 flex gap-3 items-start">
-            <AlertTriangle className="h-5 w-5 text-amber-500 mt-0.5" />
-            <div className="text-sm text-amber-200">
-              <p><strong>Bu özellik beta sürümündedir.</strong></p>
-              <p>Canlı destek özelliğini kullanmak için destek panelini ayrıca açmanız gerekmektedir. Mesajları görüntülemek ve yanıtlamak için admin panelindeki Canlı Destek sekmesini kullanabilirsiniz.</p>
+    <Card className="bg-dark-500 border-dark-400">
+      <CardHeader className="border-b border-dark-400">
+        <CardTitle className="text-white flex items-center">
+          <MessageSquare className="mr-2 h-5 w-5 text-ignite" />
+          Canlı Destek Ayarları
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="pt-6">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <Label htmlFor="enableChat" className="text-white">
+                Canlı Destek Aktif
+              </Label>
+              <p className="text-sm text-gray-400">Sitenizde canlı destek özelliğini etkinleştirin.</p>
             </div>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Switch 
-              id="chatEnabled" 
-              checked={formData.enabled} 
+            <Switch
+              id="enableChat"
+              checked={settings.enabled}
               onCheckedChange={(checked) => handleInputChange('enabled', checked)}
-              className="data-[state=checked]:bg-ignite"
             />
-            <Label htmlFor="chatEnabled" className="text-white">Canlı Desteği Etkinleştir</Label>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <h3 className="text-lg font-medium text-white flex items-center gap-2">
-                <MessageSquare className="h-4 w-4 text-ignite" />
-                Mesaj Ayarları
-              </h3>
+              <div className="space-y-2">
+                <Label className="text-white">Pozisyon</Label>
+                <Select
+                  value={settings.position}
+                  onValueChange={(value) => handleInputChange('position', value)}
+                  disabled={!settings.enabled}
+                >
+                  <SelectTrigger className="bg-dark-400 border-dark-300 text-white">
+                    <SelectValue placeholder="Butonun konumunu seçin" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-dark-600 border-dark-300">
+                    <SelectItem value="bottom-right">Sağ Alt</SelectItem>
+                    <SelectItem value="bottom-left">Sol Alt</SelectItem>
+                    <SelectItem value="top-right">Sağ Üst</SelectItem>
+                    <SelectItem value="top-left">Sol Üst</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label className="text-white">Buton Metni</Label>
+                <Input
+                  value={settings.buttonText}
+                  onChange={(e) => handleInputChange('buttonText', e.target.value)}
+                  placeholder="Canlı Destek"
+                  className="bg-dark-400 border-dark-300 text-white"
+                  disabled={!settings.enabled}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label className="text-white">Renk</Label>
+                <div className="flex items-center space-x-2">
+                  <div
+                    className="w-10 h-10 rounded border border-dark-300 cursor-pointer"
+                    style={{ backgroundColor: settings.primaryColor }}
+                    onClick={() => setShowColorPicker(!showColorPicker)}
+                  ></div>
+                  <Input
+                    value={settings.primaryColor}
+                    onChange={(e) => handleInputChange('primaryColor', e.target.value)}
+                    className="bg-dark-400 border-dark-300 text-white"
+                    disabled={!settings.enabled}
+                  />
+                </div>
+                {showColorPicker && (
+                  <div className="absolute z-10 mt-2">
+                    <div
+                      className="fixed inset-0"
+                      onClick={() => setShowColorPicker(false)}
+                    ></div>
+                    <ChromePicker
+                      color={settings.primaryColor}
+                      onChange={handleColorChange}
+                    />
+                  </div>
+                )}
+              </div>
               
               <div className="space-y-2">
                 <Label className="text-white">Karşılama Mesajı</Label>
                 <Textarea
-                  value={formData.welcomeMessage}
+                  value={settings.welcomeMessage}
                   onChange={(e) => handleInputChange('welcomeMessage', e.target.value)}
-                  placeholder="Ziyaretçilere görüntülenecek karşılama mesajı"
-                  className="bg-dark-400 border-dark-300 text-white"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label className="text-white">Çevrimdışı Mesaj</Label>
-                <Textarea
-                  value={formData.offlineMessage}
-                  onChange={(e) => handleInputChange('offlineMessage', e.target.value)}
-                  placeholder="Çevrimdışı olduğunuzda görüntülenecek mesaj"
-                  className="bg-dark-400 border-dark-300 text-white"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-white">Chat Buton Metni</Label>
-                <Input
-                  value={formData.chatButtonText}
-                  onChange={(e) => handleInputChange('chatButtonText', e.target.value)}
-                  placeholder="Canlı Destek"
-                  className="bg-dark-400 border-dark-300 text-white"
+                  placeholder="Merhaba! Size nasıl yardımcı olabilirim?"
+                  className="bg-dark-400 border-dark-300 text-white resize-none"
+                  rows={2}
+                  disabled={!settings.enabled}
                 />
               </div>
             </div>
-
+            
             <div className="space-y-4">
-              <h3 className="text-lg font-medium text-white flex items-center gap-2">
-                <UserRound className="h-4 w-4 text-ignite" />
-                Temsilci Bilgileri
-              </h3>
-              
               <div className="space-y-2">
                 <Label className="text-white">Temsilci Adı</Label>
                 <Input
-                  value={formData.agentName}
+                  value={settings.agentName}
                   onChange={(e) => handleInputChange('agentName', e.target.value)}
-                  placeholder="Temsilci adı"
+                  placeholder="Destek Ekibi"
                   className="bg-dark-400 border-dark-300 text-white"
+                  disabled={!settings.enabled}
                 />
               </div>
               
               <div className="space-y-2">
                 <Label className="text-white">Temsilci Ünvanı</Label>
                 <Input
-                  value={formData.agentTitle}
+                  value={settings.agentTitle}
                   onChange={(e) => handleInputChange('agentTitle', e.target.value)}
-                  placeholder="Ünvan (örn: Müşteri Temsilcisi)"
+                  placeholder="Müşteri Temsilcisi"
                   className="bg-dark-400 border-dark-300 text-white"
+                  disabled={!settings.enabled}
                 />
               </div>
-
+              
               <div className="space-y-2">
-                <Label className="text-white">Temsilci Avatarı</Label>
+                <Label className="text-white">Temsilci Avatar URL'si</Label>
                 <Input
-                  value={formData.agentAvatar}
+                  value={settings.agentAvatar}
                   onChange={(e) => handleInputChange('agentAvatar', e.target.value)}
-                  placeholder="/images/avatar.jpg"
+                  placeholder="/img/avatar.jpg"
                   className="bg-dark-400 border-dark-300 text-white"
+                  disabled={!settings.enabled}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label className="text-white">Çalışma Saatleri</Label>
+                <Input
+                  value={settings.workingHours}
+                  onChange={(e) => handleInputChange('workingHours', e.target.value)}
+                  placeholder="09:00 - 18:00, Pazartesi - Cuma"
+                  className="bg-dark-400 border-dark-300 text-white"
+                  disabled={!settings.enabled}
                 />
               </div>
             </div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium text-white flex items-center gap-2">
-                <Palette className="h-4 w-4 text-ignite" />
-                Görünüm Ayarları
-              </h3>
-              
-              <div className="space-y-2">
-                <Label className="text-white">Ana Renk</Label>
-                <div className="flex gap-3">
-                  <div className="w-10 h-10 rounded" style={{ backgroundColor: formData.primaryColor }}></div>
-                  <Input
-                    type="text"
-                    value={formData.primaryColor}
-                    onChange={(e) => handleInputChange('primaryColor', e.target.value)}
-                    placeholder="#FF6B00"
-                    className="bg-dark-400 border-dark-300 text-white"
-                  />
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label className="text-white">Chat Pozisyonu</Label>
-                <Select 
-                  value={formData.position} 
-                  onValueChange={(value) => handleInputChange('position', value)}
-                >
-                  <SelectTrigger className="bg-dark-400 border-dark-300 text-white">
-                    <SelectValue placeholder="Pozisyon seçin" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-dark-400 border-dark-300">
-                    <SelectItem value="bottom-right" className="text-white hover:bg-dark-500">Sağ Alt</SelectItem>
-                    <SelectItem value="bottom-left" className="text-white hover:bg-dark-500">Sol Alt</SelectItem>
-                    <SelectItem value="top-right" className="text-white hover:bg-dark-500">Sağ Üst</SelectItem>
-                    <SelectItem value="top-left" className="text-white hover:bg-dark-500">Sol Üst</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Switch 
-                  id="autoResponse" 
-                  checked={formData.autoResponse} 
-                  onCheckedChange={(checked) => handleInputChange('autoResponse', checked)}
-                  className="data-[state=checked]:bg-ignite"
-                />
-                <Label htmlFor="autoResponse" className="text-white">Otomatik Yanıt Etkinleştir</Label>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium text-white flex items-center gap-2">
-                <Clock className="h-4 w-4 text-ignite" />
-                Çalışma Saatleri
-              </h3>
-              
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <Label className="text-white text-sm">Pazartesi</Label>
-                  <Input
-                    value={formData.workingHours.monday}
-                    onChange={(e) => handleInputChange('workingHours.monday', e.target.value)}
-                    placeholder="09:00-18:00"
-                    className="bg-dark-400 border-dark-300 text-white"
-                  />
-                </div>
-                
-                <div className="space-y-1">
-                  <Label className="text-white text-sm">Salı</Label>
-                  <Input
-                    value={formData.workingHours.tuesday}
-                    onChange={(e) => handleInputChange('workingHours.tuesday', e.target.value)}
-                    placeholder="09:00-18:00"
-                    className="bg-dark-400 border-dark-300 text-white"
-                  />
-                </div>
-                
-                <div className="space-y-1">
-                  <Label className="text-white text-sm">Çarşamba</Label>
-                  <Input
-                    value={formData.workingHours.wednesday}
-                    onChange={(e) => handleInputChange('workingHours.wednesday', e.target.value)}
-                    placeholder="09:00-18:00"
-                    className="bg-dark-400 border-dark-300 text-white"
-                  />
-                </div>
-                
-                <div className="space-y-1">
-                  <Label className="text-white text-sm">Perşembe</Label>
-                  <Input
-                    value={formData.workingHours.thursday}
-                    onChange={(e) => handleInputChange('workingHours.thursday', e.target.value)}
-                    placeholder="09:00-18:00"
-                    className="bg-dark-400 border-dark-300 text-white"
-                  />
-                </div>
-                
-                <div className="space-y-1">
-                  <Label className="text-white text-sm">Cuma</Label>
-                  <Input
-                    value={formData.workingHours.friday}
-                    onChange={(e) => handleInputChange('workingHours.friday', e.target.value)}
-                    placeholder="09:00-18:00"
-                    className="bg-dark-400 border-dark-300 text-white"
-                  />
-                </div>
-                
-                <div className="space-y-1">
-                  <Label className="text-white text-sm">Cumartesi</Label>
-                  <Input
-                    value={formData.workingHours.saturday}
-                    onChange={(e) => handleInputChange('workingHours.saturday', e.target.value)}
-                    placeholder="10:00-14:00"
-                    className="bg-dark-400 border-dark-300 text-white"
-                  />
-                </div>
-                
-                <div className="space-y-1 col-span-2">
-                  <Label className="text-white text-sm">Pazar</Label>
-                  <Input
-                    value={formData.workingHours.sunday}
-                    onChange={(e) => handleInputChange('workingHours.sunday', e.target.value)}
-                    placeholder="Kapalı"
-                    className="bg-dark-400 border-dark-300 text-white"
-                  />
-                </div>
-              </div>
+          
+          <div className="pt-4 border-t border-dark-400">
+            <div className="space-y-2">
+              <Label className="text-white">Çevrimdışı Mesajı</Label>
+              <Textarea
+                value={settings.offlineMessage}
+                onChange={(e) => handleInputChange('offlineMessage', e.target.value)}
+                placeholder="Şu anda çevrimdışıyız. Lütfen mesaj bırakın, size en kısa sürede dönüş yapacağız."
+                className="bg-dark-400 border-dark-300 text-white resize-none"
+                rows={2}
+                disabled={!settings.enabled}
+              />
             </div>
           </div>
-        </CardContent>
-      </Card>
-
-      <div className="flex justify-end">
-        <Button 
-          onClick={handleSaveLiveChat} 
-          disabled={isLoading}
-          className="bg-ignite hover:bg-ignite-700 text-white"
-        >
-          {isLoading ? (
-            <>
-              <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
-              Kaydediliyor...
-            </>
-          ) : (
-            <>
-              <Save className="mr-2 h-4 w-4" />
-              Canlı Destek Ayarlarını Kaydet
-            </>
-          )}
-        </Button>
-      </div>
-    </div>
+          
+          <div className="pt-4 border-t border-dark-400">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <Label htmlFor="emailNotifications" className="text-white">
+                  E-posta Bildirimleri
+                </Label>
+                <p className="text-sm text-gray-400">Yeni mesaj geldiğinde e-posta bildirimi alın.</p>
+              </div>
+              <Switch
+                id="emailNotifications"
+                checked={settings.emailNotifications}
+                onCheckedChange={(checked) => handleInputChange('emailNotifications', checked)}
+                disabled={!settings.enabled}
+              />
+            </div>
+            
+            {settings.emailNotifications && (
+              <div className="space-y-2">
+                <Label className="text-white">Bildirim E-postası</Label>
+                <Input
+                  value={settings.notificationEmail}
+                  onChange={(e) => handleInputChange('notificationEmail', e.target.value)}
+                  type="email"
+                  placeholder="bildirim@atydigital.com.tr"
+                  className="bg-dark-400 border-dark-300 text-white"
+                  disabled={!settings.enabled}
+                />
+              </div>
+            )}
+          </div>
+          
+          <div className="pt-4 flex justify-end">
+            <Button 
+              onClick={handleSave} 
+              disabled={isLoading || !settings.enabled}
+              className={`relative overflow-hidden ${isSaved ? 'bg-green-600 hover:bg-green-700' : 'bg-ignite hover:bg-ignite-700'} text-white`}
+            >
+              {isSaved ? (
+                <>
+                  <Check className="mr-2 h-4 w-4" />
+                  Kaydedildi
+                </>
+              ) : (
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  {isLoading ? 'Kaydediliyor...' : 'Ayarları Kaydet'}
+                </>
+              )}
+              <motion.div
+                className="absolute inset-0 bg-white/10"
+                initial={{ x: '-100%' }}
+                animate={isSaved ? { x: '100%' } : { x: '-100%' }}
+                transition={{ duration: 0.5 }}
+              />
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

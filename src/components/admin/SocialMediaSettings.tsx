@@ -2,77 +2,72 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Save, Facebook, Twitter, Instagram, Linkedin, Youtube, Github } from 'lucide-react';
+import { Facebook, Instagram, Linkedin, Twitter, Github, Youtube, Save, Check } from 'lucide-react';
 import { useDataService } from '@/lib/db';
+import { motion } from 'framer-motion';
 
 interface SocialMediaData {
-  id: number;
-  facebook: string;
-  twitter: string;
-  instagram: string;
-  linkedin: string;
-  youtube: string;
-  github: string;
-  showInHeader: boolean;
-  showInFooter: boolean;
+  id?: number;
+  facebook?: string;
+  twitter?: string;
+  instagram?: string;
+  linkedin?: string;
+  youtube?: string;
+  github?: string;
+  showInHeader?: boolean;
+  showInFooter?: boolean;
 }
+
+const defaultData: SocialMediaData = {
+  facebook: 'https://facebook.com/atydigital',
+  twitter: 'https://twitter.com/atydigital',
+  instagram: 'https://instagram.com/atydigital',
+  linkedin: 'https://linkedin.com/company/atydigital',
+  youtube: '',
+  github: '',
+  showInHeader: true,
+  showInFooter: true
+};
 
 const SocialMediaSettings = () => {
   const { toast } = useToast();
-  const { items: socialMediaItems, update } = useDataService('socialMedia', [
-    {
-      id: 1,
-      facebook: 'https://facebook.com/ignitepazarlama',
-      twitter: 'https://twitter.com/ignitepazarlama',
-      instagram: 'https://instagram.com/ignitepazarlama',
-      linkedin: 'https://linkedin.com/company/ignitepazarlama',
-      youtube: 'https://youtube.com/channel/ignitepazarlama',
-      github: 'https://github.com/ignitepazarlama',
-      showInHeader: true,
-      showInFooter: true
-    }
-  ]);
-
-  const socialMedia = socialMediaItems.length > 0 ? socialMediaItems[0] : null;
+  const { items: socialMediaItems, update, add } = useDataService<SocialMediaData>('socialMedia', [defaultData]);
   
-  const [formData, setFormData] = useState<SocialMediaData>(socialMedia || {
-    id: 1,
-    facebook: '',
-    twitter: '',
-    instagram: '',
-    linkedin: '',
-    youtube: '',
-    github: '',
-    showInHeader: true,
-    showInFooter: true
-  });
-  
+  const [formData, setFormData] = useState<SocialMediaData>(
+    socialMediaItems.length > 0 ? socialMediaItems[0] : defaultData
+  );
+  const [isSaved, setIsSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleInputChange = (field: keyof SocialMediaData, value: any) => {
-    setFormData({
-      ...formData,
-      [field]: value
-    });
+  const handleInputChange = (key: keyof SocialMediaData, value: string | boolean) => {
+    setFormData(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleSaveSocialMedia = async () => {
+  const handleSave = async () => {
     setIsLoading(true);
+    
     try {
-      await update(formData.id, formData);
+      if (socialMediaItems.length > 0 && socialMediaItems[0].id) {
+        await update(socialMediaItems[0].id, formData);
+      } else {
+        await add(formData);
+      }
+      
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 2000);
       
       toast({
         title: "Başarılı",
-        description: "Sosyal medya bağlantıları başarıyla güncellendi.",
+        description: "Sosyal medya ayarları kaydedildi.",
       });
     } catch (error) {
       toast({
         title: "Hata",
-        description: "Sosyal medya bağlantıları güncellenirken bir hata oluştu.",
+        description: "Ayarlar kaydedilirken bir sorun oluştu.",
         variant: "destructive",
       });
     } finally {
@@ -83,137 +78,148 @@ const SocialMediaSettings = () => {
   return (
     <Card className="bg-dark-500 border-dark-400">
       <CardHeader className="border-b border-dark-400">
-        <CardTitle className="text-white">Sosyal Medya Bağlantıları</CardTitle>
+        <CardTitle className="text-white flex items-center">
+          <Facebook className="mr-2 h-5 w-5 text-ignite" />
+          Sosyal Medya Ayarları
+        </CardTitle>
       </CardHeader>
-      <CardContent className="pt-6 space-y-6">
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label className="text-white flex items-center gap-2">
-                <Facebook className="h-4 w-4 text-blue-500" />
-                Facebook URL
-              </Label>
-              <Input
-                value={formData.facebook}
-                onChange={(e) => handleInputChange('facebook', e.target.value)}
-                placeholder="https://facebook.com/sayfaniz"
-                className="bg-dark-400 border-dark-300 text-white"
-              />
+      <CardContent className="pt-6">
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label className="text-white flex items-center">
+                  <Facebook className="mr-2 h-4 w-4 text-blue-500" />
+                  Facebook URL
+                </Label>
+                <Input
+                  value={formData.facebook}
+                  onChange={(e) => handleInputChange('facebook', e.target.value)}
+                  placeholder="https://facebook.com/sirketiniz"
+                  className="bg-dark-400 border-dark-300 text-white"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label className="text-white flex items-center">
+                  <Twitter className="mr-2 h-4 w-4 text-blue-400" />
+                  Twitter URL
+                </Label>
+                <Input
+                  value={formData.twitter}
+                  onChange={(e) => handleInputChange('twitter', e.target.value)}
+                  placeholder="https://twitter.com/sirketiniz"
+                  className="bg-dark-400 border-dark-300 text-white"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label className="text-white flex items-center">
+                  <Instagram className="mr-2 h-4 w-4 text-pink-500" />
+                  Instagram URL
+                </Label>
+                <Input
+                  value={formData.instagram}
+                  onChange={(e) => handleInputChange('instagram', e.target.value)}
+                  placeholder="https://instagram.com/sirketiniz"
+                  className="bg-dark-400 border-dark-300 text-white"
+                />
+              </div>
             </div>
             
-            <div className="space-y-2">
-              <Label className="text-white flex items-center gap-2">
-                <Twitter className="h-4 w-4 text-blue-400" />
-                Twitter URL
-              </Label>
-              <Input
-                value={formData.twitter}
-                onChange={(e) => handleInputChange('twitter', e.target.value)}
-                placeholder="https://twitter.com/kullaniciadiniz"
-                className="bg-dark-400 border-dark-300 text-white"
-              />
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label className="text-white flex items-center">
+                  <Linkedin className="mr-2 h-4 w-4 text-blue-600" />
+                  LinkedIn URL
+                </Label>
+                <Input
+                  value={formData.linkedin}
+                  onChange={(e) => handleInputChange('linkedin', e.target.value)}
+                  placeholder="https://linkedin.com/company/sirketiniz"
+                  className="bg-dark-400 border-dark-300 text-white"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label className="text-white flex items-center">
+                  <Youtube className="mr-2 h-4 w-4 text-red-500" />
+                  YouTube URL
+                </Label>
+                <Input
+                  value={formData.youtube}
+                  onChange={(e) => handleInputChange('youtube', e.target.value)}
+                  placeholder="https://youtube.com/c/sirketiniz"
+                  className="bg-dark-400 border-dark-300 text-white"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label className="text-white flex items-center">
+                  <Github className="mr-2 h-4 w-4 text-gray-300" />
+                  GitHub URL
+                </Label>
+                <Input
+                  value={formData.github}
+                  onChange={(e) => handleInputChange('github', e.target.value)}
+                  placeholder="https://github.com/sirketiniz"
+                  className="bg-dark-400 border-dark-300 text-white"
+                />
+              </div>
             </div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label className="text-white flex items-center gap-2">
-                <Instagram className="h-4 w-4 text-pink-500" />
-                Instagram URL
-              </Label>
-              <Input
-                value={formData.instagram}
-                onChange={(e) => handleInputChange('instagram', e.target.value)}
-                placeholder="https://instagram.com/kullaniciadiniz"
-                className="bg-dark-400 border-dark-300 text-white"
-              />
-            </div>
+          
+          <div className="space-y-4 pt-4 border-t border-dark-400">
+            <h3 className="text-white font-medium">Görünürlük Ayarları</h3>
             
-            <div className="space-y-2">
-              <Label className="text-white flex items-center gap-2">
-                <Linkedin className="h-4 w-4 text-blue-600" />
-                LinkedIn URL
+            <div className="flex items-center justify-between">
+              <Label htmlFor="showInHeader" className="text-white">
+                Header'da Sosyal Medya İkonlarını Göster
               </Label>
-              <Input
-                value={formData.linkedin}
-                onChange={(e) => handleInputChange('linkedin', e.target.value)}
-                placeholder="https://linkedin.com/company/sirketadiniz"
-                className="bg-dark-400 border-dark-300 text-white"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label className="text-white flex items-center gap-2">
-                <Youtube className="h-4 w-4 text-red-600" />
-                Youtube URL
-              </Label>
-              <Input
-                value={formData.youtube}
-                onChange={(e) => handleInputChange('youtube', e.target.value)}
-                placeholder="https://youtube.com/channel/kanaliniz"
-                className="bg-dark-400 border-dark-300 text-white"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label className="text-white flex items-center gap-2">
-                <Github className="h-4 w-4 text-gray-300" />
-                Github URL
-              </Label>
-              <Input
-                value={formData.github}
-                onChange={(e) => handleInputChange('github', e.target.value)}
-                placeholder="https://github.com/kullaniciadiniz"
-                className="bg-dark-400 border-dark-300 text-white"
-              />
-            </div>
-          </div>
-
-          <div className="pt-4 space-y-4">
-            <h3 className="text-lg font-medium text-white">Görünürlük Ayarları</h3>
-            
-            <div className="flex items-center space-x-2">
-              <Switch 
-                id="showInHeader" 
+              <Switch
+                id="showInHeader"
                 checked={formData.showInHeader}
                 onCheckedChange={(checked) => handleInputChange('showInHeader', checked)}
-                className="data-[state=checked]:bg-ignite"
               />
-              <Label htmlFor="showInHeader" className="text-white">Header'da göster</Label>
             </div>
             
-            <div className="flex items-center space-x-2">
-              <Switch 
+            <div className="flex items-center justify-between">
+              <Label htmlFor="showInFooter" className="text-white">
+                Footer'da Sosyal Medya İkonlarını Göster
+              </Label>
+              <Switch
                 id="showInFooter" 
                 checked={formData.showInFooter}
-                onCheckedChange={(checked) => handleInputChange('showInFooter', checked)} 
-                className="data-[state=checked]:bg-ignite"
+                onCheckedChange={(checked) => handleInputChange('showInFooter', checked)}
               />
-              <Label htmlFor="showInFooter" className="text-white">Footer'da göster</Label>
             </div>
           </div>
-        </div>
-
-        <div className="flex justify-end">
-          <Button 
-            onClick={handleSaveSocialMedia} 
-            disabled={isLoading}
-            className="bg-ignite hover:bg-ignite-700 text-white"
-          >
-            {isLoading ? (
-              <>
-                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
-                Kaydediliyor...
-              </>
-            ) : (
-              <>
-                <Save className="mr-2 h-4 w-4" />
-                Sosyal Medyayı Kaydet
-              </>
-            )}
-          </Button>
+          
+          <div className="pt-4 flex justify-end">
+            <Button 
+              onClick={handleSave} 
+              disabled={isLoading}
+              className={`relative overflow-hidden ${isSaved ? 'bg-green-600 hover:bg-green-700' : 'bg-ignite hover:bg-ignite-700'} text-white`}
+            >
+              {isSaved ? (
+                <>
+                  <Check className="mr-2 h-4 w-4" />
+                  Kaydedildi
+                </>
+              ) : (
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  {isLoading ? 'Kaydediliyor...' : 'Kaydet'}
+                </>
+              )}
+              <motion.div
+                className="absolute inset-0 bg-white/10"
+                initial={{ x: '-100%' }}
+                animate={isSaved ? { x: '100%' } : { x: '-100%' }}
+                transition={{ duration: 0.5 }}
+              />
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

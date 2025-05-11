@@ -3,18 +3,20 @@ import { ReactNode, useEffect } from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
+interface SocialMedia {
+  facebook?: string;
+  twitter?: string;
+  instagram?: string;
+  linkedin?: string;
+  youtube?: string;
+  github?: string;
+  showInHeader?: boolean;
+  showInFooter?: boolean;
+}
+
 interface LayoutProps {
   children: ReactNode;
-  socialMedia?: {
-    facebook?: string;
-    twitter?: string;
-    instagram?: string;
-    linkedin?: string;
-    youtube?: string;
-    github?: string;
-    showInHeader?: boolean;
-    showInFooter?: boolean;
-  } | null;
+  socialMedia?: SocialMedia | null;
 }
 
 const Layout = ({ children, socialMedia }: LayoutProps) => {

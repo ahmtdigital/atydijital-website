@@ -9,6 +9,9 @@ import SiteColorsManager from './SiteColorsManager';
 import ContentSectionsManager from './ContentSectionsManager';
 import SectionContentManager from './SectionContentManager';
 import SmtpSettings from './SmtpSettings';
+import SocialMediaSettings from './SocialMediaSettings';
+import SeoSettingsPanel from './SeoSettingsPanel';
+import LiveChatSettings from './LiveChatSettings';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 
