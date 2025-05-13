@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Layout from '@/components/layout/Layout';
@@ -13,6 +12,43 @@ import Preloader from '@/components/ui/preloader';
 import { useToast } from '@/hooks/use-toast';
 import { MotionConfig } from 'framer-motion';
 import { useDataService } from '@/lib/db';
+
+// Define missing interfaces for home components
+interface SectionContent {
+  // Hero section
+  heroTitle?: string;
+  heroSubtitle?: string;
+  heroDescription?: string;
+  heroButtonText?: string;
+  heroButtonLink?: string;
+  
+  // Services section
+  servicesTitle?: string;
+  servicesSubtitle?: string;
+  servicesDescription?: string;
+  
+  // Portfolio section
+  portfolioTitle?: string;
+  portfolioSubtitle?: string;
+  portfolioDescription?: string;
+  
+  // Contact section
+  contactTitle?: string;
+  contactSubtitle?: string;
+  contactDescription?: string;
+  
+  // Any other fields that might be in the content object
+  [key: string]: any;
+}
+
+interface PortfolioSectionProps {
+  content?: SectionContent | null;
+  projectsPerRow?: number;
+  imageHeight?: number;
+  showTags?: boolean;
+  showCategories?: boolean;
+  hoverEffect?: string;
+}
 
 const animations = {
   fadeIn: {
