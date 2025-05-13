@@ -9,63 +9,63 @@ import { ArrowRight } from 'lucide-react';
 const portfolioItems = [
   {
     id: 1,
-    title: 'E-commerce Rebranding Campaign',
-    category: 'Branding',
+    title: 'E-Ticaret Yeniden Markalama Kampanyası',
+    category: 'Marka',
     image: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=600&q=80',
     link: '/portfolio/ecommerce-rebranding'
   },
   {
     id: 2,
-    title: 'Tech Startup SEO Strategy',
+    title: 'Teknoloji Girişimi SEO Stratejisi',
     category: 'SEO',
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=600&q=80',
     link: '/portfolio/tech-startup-seo'
   },
   {
     id: 3,
-    title: 'Restaurant Social Media Campaign',
-    category: 'Social Media',
+    title: 'Restoran Sosyal Medya Kampanyası',
+    category: 'Sosyal Medya',
     image: 'https://images.unsplash.com/photo-1498083882188-ba262fbe1e61?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=600&q=80',
     link: '/portfolio/restaurant-social'
   },
   {
     id: 4,
-    title: 'Fitness App Marketing',
-    category: 'Mobile',
+    title: 'Fitness Uygulaması Pazarlaması',
+    category: 'Mobil',
     image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=600&q=80',
     link: '/portfolio/fitness-app'
   },
   {
     id: 5,
-    title: 'Luxury Brand Website Redesign',
-    category: 'Web Development',
+    title: 'Lüks Marka Web Sitesi Yenileme',
+    category: 'Web Geliştirme',
     image: 'https://images.unsplash.com/photo-1560707303-4e980ce876ad?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=600&q=80',
     link: '/portfolio/luxury-brand-website'
   },
   {
     id: 6,
-    title: 'Healthcare Content Marketing',
-    category: 'Content',
+    title: 'Sağlık İçerik Pazarlaması',
+    category: 'İçerik',
     image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=600&q=80',
     link: '/portfolio/healthcare-content'
   },
   {
     id: 7,
-    title: 'Real Estate Video Campaign',
+    title: 'Emlak Video Kampanyası',
     category: 'Video',
     image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=600&q=80',
     link: '/portfolio/real-estate-video'
   },
   {
     id: 8,
-    title: 'SaaS Lead Generation Strategy',
+    title: 'SaaS Müşteri Edinme Stratejisi',
     category: 'PPC',
     image: 'https://images.unsplash.com/photo-1520333789090-1afc82db536a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=600&q=80',
     link: '/portfolio/saas-lead-generation'
   },
   {
     id: 9,
-    title: 'Fashion Brand Influencer Campaign',
+    title: 'Moda Markası Influencer Kampanyası',
     category: 'Influencer',
     image: 'https://images.unsplash.com/photo-1583744946564-b52d01c96e70?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=600&q=80',
     link: '/portfolio/fashion-influencer'
@@ -74,34 +74,34 @@ const portfolioItems = [
 
 // Categories for filtering
 const categories = [
-  'All',
-  'Branding',
+  'Tümü',
+  'Marka',
   'SEO',
-  'Social Media',
-  'Mobile',
-  'Web Development',
-  'Content',
+  'Sosyal Medya',
+  'Mobil',
+  'Web Geliştirme',
+  'İçerik',
   'Video',
   'PPC',
   'Influencer'
 ];
 
 const Portfolio = () => {
-  const [activeCategory, setActiveCategory] = useState('All');
+  const [activeCategory, setActiveCategory] = useState('Tümü');
   const [filteredItems, setFilteredItems] = useState(portfolioItems);
 
   useEffect(() => {
     // Update page title and meta description for SEO
-    document.title = 'Our Portfolio | Ignite Marketing';
+    document.title = 'Portfolyo | ATY Digital';
     
     // Add meta description
     let metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Explore our portfolio of successful digital marketing projects including SEO, social media campaigns, web development, and content creation.');
+      metaDescription.setAttribute('content', 'SEO, sosyal medya kampanyaları, web geliştirme ve içerik oluşturma dahil başarılı dijital pazarlama projelerimiz portfolyomuzu keşfedin.');
     }
     
     // Filter items when category changes
-    if (activeCategory === 'All') {
+    if (activeCategory === 'Tümü') {
       setFilteredItems(portfolioItems);
     } else {
       setFilteredItems(portfolioItems.filter(item => item.category === activeCategory));
@@ -114,12 +114,12 @@ const Portfolio = () => {
       <section className="py-24 bg-dark-600 relative">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-ignite to-ignite-500"></div>
         <div className="container mx-auto px-4 text-center max-w-3xl">
-          <p className="text-ignite font-semibold mb-4 animate-fade-in">OUR WORK</p>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in" style={{animationDelay: '0.2s'}}>
-            Featured Projects
+          <p className="text-ignite font-semibold mb-4 animate-fade-in">ÇALIŞMALARIMIZ</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in text-white" style={{animationDelay: '0.2s'}}>
+            Öne Çıkan Projelerimiz
           </h1>
           <p className="text-xl text-gray-300 mb-8 animate-fade-in" style={{animationDelay: '0.4s'}}>
-            Browse through our portfolio of successful campaigns and projects that have helped our clients achieve their business goals.
+            Müşterilerimizin iş hedeflerine ulaşmalarına yardımcı olan başarılı kampanyalarımızı ve projelerimizi inceleyin.
           </p>
         </div>
       </section>
@@ -165,7 +165,7 @@ const Portfolio = () => {
                   <span className="text-ignite text-sm font-medium mb-2 block">{item.category}</span>
                   <h3 className="text-xl md:text-2xl font-bold text-white mb-2">{item.title}</h3>
                   <span className="text-white/0 group-hover:text-white/100 transition-all duration-300 flex items-center gap-2">
-                    View Project <ArrowRight className="h-4 w-4" />
+                    Projeyi Görüntüle <ArrowRight className="h-4 w-4" />
                   </span>
                 </div>
               </Link>
@@ -174,7 +174,7 @@ const Portfolio = () => {
           
           {filteredItems.length === 0 && (
             <div className="text-center py-20">
-              <p className="text-xl text-gray-400">No projects found in this category.</p>
+              <p className="text-xl text-gray-400">Bu kategoride proje bulunamadı.</p>
             </div>
           )}
         </div>
@@ -185,12 +185,12 @@ const Portfolio = () => {
         <div className="container mx-auto px-4 max-w-5xl">
           <div className="bg-gradient-to-r from-dark-500 to-dark-400 rounded-2xl p-8 md:p-12 shadow-lg border border-dark-300 reveal">
             <div className="text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">Let's Create Your Success Story</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">Başarı Hikayenizi Birlikte Yazalım</h2>
               <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-                Ready to join our portfolio of successful projects? Contact us today to discuss how we can help your business grow.
+                Başarılı projelerimiz arasında yer almaya hazır mısınız? İşletmenizin büyümesine nasıl yardımcı olabileceğimizi konuşmak için bugün bizimle iletişime geçin.
               </p>
               <Button size="lg" className="bg-ignite hover:bg-ignite-700 text-white">
-                <Link to="/contact">Start Your Project</Link>
+                <Link to="/contact">Projenizi Başlatın</Link>
               </Button>
             </div>
           </div>

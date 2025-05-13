@@ -7,13 +7,18 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// Define the props interface with site settings parameters
+// Define the props interface with site settings parameters and content
 interface PortfolioSectionProps {
   projectsPerRow?: number;
   imageHeight?: number;
   showTags?: boolean;
   showCategories?: boolean;
   hoverEffect?: string;
+  content?: {
+    portfolioTitle?: string;
+    portfolioSubtitle?: string;
+    portfolioDescription?: string;
+  } | null;
 }
 
 // Default portfolio project data
@@ -61,7 +66,8 @@ const PortfolioSection: React.FC<PortfolioSectionProps> = ({
   imageHeight = 400,
   showTags = true,
   showCategories = true,
-  hoverEffect = 'scale'
+  hoverEffect = 'scale',
+  content = null
 }) => {
   // Calculate grid columns based on projectsPerRow
   const gridCols = () => {
@@ -93,9 +99,11 @@ const PortfolioSection: React.FC<PortfolioSectionProps> = ({
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Başarı Hikayelerimiz</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            {content?.portfolioTitle || 'Başarı Hikayelerimiz'}
+          </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            İşletmelerin dijital dünyada büyümesine nasıl yardımcı olduğumuzu gösteren çalışmalarımızdan bazıları.
+            {content?.portfolioDescription || 'İşletmelerin dijital dünyada büyümesine nasıl yardımcı olduğumuzu gösteren çalışmalarımızdan bazıları.'}
           </p>
         </motion.div>
 

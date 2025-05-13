@@ -8,10 +8,10 @@ import { ArrowRight, BarChart, Globe, TrendingUp, PenTool, Smartphone, Code, Lin
 
 const services = [
   {
-    title: 'Dijital Pazarlama',
+    title: 'Performans Pazarlama',
     description: 'Birden çok dijital kanal aracılığıyla ölçülebilir sonuçlar veren stratejik kampanyalar. Hedef kitlenizle bağlantı kuran ve dönüşümleri artıran özelleştirilmiş pazarlama planları oluşturuyoruz.',
     icon: <BarChart className="h-12 w-12 text-ignite" />,
-    link: '/services/digital-marketing'
+    link: '/services/performans-pazarlama'
   },
   {
     title: 'SEO Optimizasyonu',
@@ -23,73 +23,73 @@ const services = [
     title: 'Sosyal Medya Yönetimi',
     description: 'Topluluklar oluşturan ve marka varlığınızı güçlendiren ilgi çekici sosyal stratejiler. Sosyal profillerinizi yönetiyor, içerik oluşturuyor ve kitlenizle etkileşim kuruyoruz.',
     icon: <TrendingUp className="h-12 w-12 text-ignite" />,
-    link: '/services/social-media'
+    link: '/services/sosyal-medya'
   },
   {
     title: 'İçerik Oluşturma',
     description: 'Marka hikayenizi anlatan ve hedef kitlenizle bağlantı kuran ilgi çekici içerikler. Blog yazılarından videolara, rezonans uyandıran ve dönüşüm sağlayan içerikler oluşturuyoruz.',
     icon: <PenTool className="h-12 w-12 text-ignite" />,
-    link: '/services/content'
+    link: '/services/icerik'
   },
   {
     title: 'Mobil Pazarlama',
     description: 'Hedefli mobil pazarlama ve uygulama tanıtım stratejileriyle müşterilere her yerde ulaşın. Mobil öncelikli yaklaşımımız, markanızın kullanıcılarla her nerede olurlarsa olsunlar bağlantı kurmasını sağlar.',
     icon: <Smartphone className="h-12 w-12 text-ignite" />,
-    link: '/services/mobile-marketing'
+    link: '/services/mobil-pazarlama'
   },
   {
     title: 'Web Geliştirme',
     description: 'Ziyaretçileri müşterilere dönüştürmek için özel, duyarlı web siteleri ve uygulamalar. Markanız ve işletme hedeflerinizle uyumlu dijital deneyimler yaratıyoruz.',
     icon: <Code className="h-12 w-12 text-ignite" />,
-    link: '/services/web-development'
+    link: '/services/web-gelistirme'
   },
   {
     title: 'Analitik ve Raporlama',
     description: 'Performansı takip etmek ve dijital pazarlama stratejilerinizi maksimum ROI için optimize etmek amacıyla kapsamlı veri analizi ve düzenli raporlama.',
     icon: <LineChart className="h-12 w-12 text-ignite" />,
-    link: '/services/analytics'
+    link: '/services/analitik-raporlama'
   },
   {
     title: 'Influencer Pazarlama',
     description: 'Erişiminizi genişletmek ve yeni kitlelerle otantik ortaklıklar yoluyla güvenilirlik oluşturmak için ilgili etkileyicilerle bağlantı kurun.',
     icon: <Users className="h-12 w-12 text-ignite" />,
-    link: '/services/influencer-marketing'
+    link: '/services/influencer-pazarlama'
   },
   {
-    title: 'PPC Reklamcılığı',
+    title: 'Google Ads & PPC',
     description: 'Ölçülebilir sonuçlarla anında trafik ve dönüşüm sağlamak için arama motorları ve sosyal platformlarda hedefli tıklama başına ödeme kampanyaları.',
     icon: <Target className="h-12 w-12 text-ignite" />,
-    link: '/services/ppc'
+    link: '/services/google-ads-ppc'
   },
   {
     title: 'Yerel SEO',
     description: 'Yerel arama sonuçlarında görünürlüğünüzü artırmak ve yakındaki müşterileri işletmenize çekmek için özel optimizasyon stratejileri.',
     icon: <Search className="h-12 w-12 text-ignite" />,
-    link: '/services/local-seo'
+    link: '/services/yerel-seo'
   },
   {
     title: 'UI/UX Tasarım',
     description: 'Kullanıcı deneyimini ve dönüşüm oranlarını artırmak için web siteleri ve uygulamalar için sezgisel, ilgi çekici arayüzler oluşturan kullanıcı merkezli tasarım hizmetleri.',
     icon: <Monitor className="h-12 w-12 text-ignite" />,
-    link: '/services/ui-ux-design'
+    link: '/services/ui-ux-tasarim'
   },
   {
     title: 'Marka Stratejisi',
     description: 'Tutarlı ve akılda kalıcı bir marka oluşturmak için konumlandırma, mesajlaşma, görsel kimlik ve yönergeler dahil olmak üzere kapsamlı marka geliştirme hizmetleri.',
     icon: <Briefcase className="h-12 w-12 text-ignite" />,
-    link: '/services/brand-strategy'
+    link: '/services/marka-stratejisi'
   }
 ];
 
 const Services = () => {
   useEffect(() => {
     // SEO için sayfa başlığı ve meta açıklamasını güncelle
-    document.title = 'Hizmetlerimiz | Ignite Pazarlama';
+    document.title = 'Hizmetlerimiz | ATY Digital';
     
     // Meta açıklama ekle
     let metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'SEO, sosyal medya yönetimi, içerik oluşturma, web geliştirme ve daha fazlası dahil olmak üzere kapsamlı dijital pazarlama hizmetlerimizi keşfedin.');
+      metaDescription.setAttribute('content', 'SEO, sosyal medya yönetimi, içerik oluşturma, web geliştirme ve daha fazlası dahil olmak üzere kapsamlı performans pazarlama hizmetlerimizi keşfedin.');
     }
   }, []);
 
@@ -101,7 +101,7 @@ const Services = () => {
         <div className="container mx-auto px-4 text-center max-w-3xl">
           <p className="text-ignite font-semibold mb-4 animate-fade-in">UZMANLIĞIMIZ</p>
           <h1 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in text-white" style={{animationDelay: '0.2s'}}>
-            Kapsamlı Dijital Pazarlama Hizmetleri
+            Kapsamlı Performans Pazarlama Hizmetleri
           </h1>
           <p className="text-xl text-gray-300 mb-8 animate-fade-in" style={{animationDelay: '0.4s'}}>
             SEO'dan sosyal medyaya, içerik oluşturmadan web geliştirmeye kadar markanızı çevrimiçi büyütmek için uçtan uca çözümler sunuyoruz.

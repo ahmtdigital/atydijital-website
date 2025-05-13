@@ -1,18 +1,18 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDataService } from '@/lib/db';
-import { Globe, Tags, Link2, Search, BarChart, Save, Check, AlertCircle } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Save, Globe, Search, FileText, Settings } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface SeoSettings {
-  id?: number;
+  id: number;
   siteTitle: string;
   metaDescription: string;
   keywords: string;
@@ -20,72 +20,74 @@ interface SeoSettings {
   enableIndexing: boolean;
   analyticsActive: boolean;
   googleAnalyticsId: string;
-  openGraphTitle: string;
-  openGraphDescription: string;
-  openGraphImage: string;
-  twitterCardType: string;
-  twitterUsername: string;
+  facebookPixelId: string;
   structuredData: string;
-  customHeadTags: string;
+  robotsTxt: string;
+  customHeaderCode: string;
+  customFooterCode: string;
 }
-
-const defaultSettings: SeoSettings = {
-  siteTitle: 'ATY Digital | Performans Pazarlama ve SEO Ajansı',
-  metaDescription: 'ATY Digital, markanızı büyütmek için performans pazarlama, SEO ve dijital pazarlama hizmetleri sunar. Projeleriniz için profesyonel çözümler.',
-  keywords: 'performans pazarlama, seo, dijital pazarlama, sosyal medya yönetimi, ppc, google ads',
-  canonicalUrl: 'https://www.atydigital.com.tr',
-  enableIndexing: true,
-  analyticsActive: false,
-  googleAnalyticsId: '',
-  openGraphTitle: 'ATY Digital | Performans Pazarlama ve SEO Ajansı',
-  openGraphDescription: 'Dijital başarı için ATY Digital ile çalışın. Performans odaklı pazarlama ve SEO stratejileri.',
-  openGraphImage: '/img/og-image.jpg',
-  twitterCardType: 'summary_large_image',
-  twitterUsername: '@atydigital',
-  structuredData: '{\n  "@context": "https://schema.org",\n  "@type": "Organization",\n  "name": "ATY Digital",\n  "url": "https://www.atydigital.com.tr",\n  "logo": "https://www.atydigital.com.tr/img/logo.png"\n}',
-  customHeadTags: '<!-- Özel head etiketleri buraya -->'
-};
 
 const SeoSettingsPanel = () => {
   const { toast } = useToast();
-  const { items: seoItems, update, add } = useDataService<SeoSettings>('seoSettings', [defaultSettings]);
-  
-  const [settings, setSettings] = useState<SeoSettings>(defaultSettings);
-  const [activeTab, setActiveTab] = useState('general');
-  const [isSaved, setIsSaved] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    if (seoItems && seoItems.length > 0) {
-      setSettings(seoItems[0]);
+  const { items: seoItems, update } = useDataService('seoSettings', [
+    {
+      id: 1,
+      siteTitle: 'ATY Digital | Performans Pazarlama Ajansı',
+      metaDescription: 'ATY Digital, SEO, sosyal medya ve performans pazarlama hizmetleri sunan lider dijital pazarlama ajansıdır.',
+      keywords: 'dijital pazarlama, performans pazarlama, SEO, sosyal medya, içerik pazarlama',
+      canonicalUrl: 'https://atydigital.com.tr',
+      enableIndexing: true,
+      analyticsActive: true,
+      googleAnalyticsId: 'G-XXXXXXXXXX',
+      facebookPixelId: '',
+      structuredData: '{\n  "@context": "https://schema.org",\n  "@type": "Organization",\n  "name": "ATY Digital",\n  "url": "https://atydigital.com.tr",\n  "logo": "https://atydigital.com.tr/logo.png"\n}',
+      robotsTxt: 'User-agent: *\nAllow: /\nDisallow: /admin/\nSitemap: https://atydigital.com.tr/sitemap.xml',
+      customHeaderCode: '',
+      customFooterCode: ''
     }
-  }, [seoItems]);
+  ]);
 
-  const handleInputChange = (key: keyof SeoSettings, value: string | boolean) => {
-    setSettings(prev => ({ ...prev, [key]: value }));
+  const seoSettings = seoItems.length > 0 ? seoItems[0] : null;
+  
+  const [formData, setFormData] = useState<SeoSettings>(seoSettings || {
+    id: 1,
+    siteTitle: '',
+    metaDescription: '',
+    keywords: '',
+    canonicalUrl: '',
+    enableIndexing: true,
+    analyticsActive: false,
+    googleAnalyticsId: '',
+    facebookPixelId: '',
+    structuredData: '',
+    robotsTxt: '',
+    customHeaderCode: '',
+    customFooterCode: ''
+  });
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('basic');
+
+  const handleInputChange = (field: keyof SeoSettings, value: string | boolean) => {
+    setFormData({
+      ...formData,
+      [field]: value
+    });
   };
 
   const handleSave = async () => {
     setIsLoading(true);
-    
     try {
-      if (seoItems && seoItems.length > 0 && seoItems[0].id) {
-        await update(seoItems[0].id, settings);
-      } else {
-        await add(settings);
-      }
-      
-      setIsSaved(true);
-      setTimeout(() => setIsSaved(false), 2000);
+      await update(formData.id, formData);
       
       toast({
         title: "Başarılı",
-        description: "SEO ayarları kaydedildi.",
+        description: "SEO ayarları başarıyla güncellendi.",
       });
     } catch (error) {
       toast({
         title: "Hata",
-        description: "SEO ayarları kaydedilirken bir sorun oluştu.",
+        description: "SEO ayarları güncellenirken bir hata oluştu.",
         variant: "destructive",
       });
     } finally {
@@ -96,227 +98,192 @@ const SeoSettingsPanel = () => {
   return (
     <Card className="bg-dark-500 border-dark-400">
       <CardHeader className="border-b border-dark-400">
-        <CardTitle className="text-white flex items-center">
-          <Search className="mr-2 h-5 w-5 text-ignite" />
+        <CardTitle className="text-white flex items-center gap-2">
+          <Search className="h-5 w-5 text-ignite" />
           SEO Ayarları
         </CardTitle>
       </CardHeader>
-      <CardContent className="pt-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="bg-dark-600 mb-4 flex-wrap">
-            <TabsTrigger value="general" className="data-[state=active]:bg-ignite data-[state=active]:text-white text-white flex items-center">
-              <Globe className="mr-2 h-4 w-4" />
-              Genel SEO
+      <CardContent className="pt-6 space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <TabsList className="bg-dark-600 mb-4">
+            <TabsTrigger value="basic" className="data-[state=active]:bg-ignite data-[state=active]:text-white text-white">
+              Temel Ayarlar
             </TabsTrigger>
-            <TabsTrigger value="opengraph" className="data-[state=active]:bg-ignite data-[state=active]:text-white text-white flex items-center">
-              <Link2 className="mr-2 h-4 w-4" />
-              Open Graph
+            <TabsTrigger value="analytics" className="data-[state=active]:bg-ignite data-[state=active]:text-white text-white">
+              Analitik Kodları
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="data-[state=active]:bg-ignite data-[state=active]:text-white text-white flex items-center">
-              <BarChart className="mr-2 h-4 w-4" />
-              Analytics
+            <TabsTrigger value="advanced" className="data-[state=active]:bg-ignite data-[state=active]:text-white text-white">
+              Gelişmiş Ayarlar
             </TabsTrigger>
-            <TabsTrigger value="advanced" className="data-[state=active]:bg-ignite data-[state=active]:text-white text-white flex items-center">
-              <AlertCircle className="mr-2 h-4 w-4" />
-              Gelişmiş
+            <TabsTrigger value="custom" className="data-[state=active]:bg-ignite data-[state=active]:text-white text-white">
+              Özel Kodlar
             </TabsTrigger>
           </TabsList>
-          
-          <TabsContent value="general">
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <Label className="text-white">Site Başlığı</Label>
+        
+          <TabsContent value="basic" className="space-y-4">
+            <div className="space-y-4">
+              <div>
+                <Label className="text-white mb-1 block">Site Başlığı</Label>
                 <Input
-                  value={settings.siteTitle}
+                  value={formData.siteTitle}
                   onChange={(e) => handleInputChange('siteTitle', e.target.value)}
-                  placeholder="Site başlığı"
+                  placeholder="Site Başlığı"
                   className="bg-dark-400 border-dark-300 text-white"
                 />
-                <p className="text-sm text-gray-400">Bu başlık tarayıcı sekmesinde ve arama sonuçlarında görünecektir.</p>
               </div>
               
-              <div className="space-y-2">
-                <Label className="text-white">Meta Açıklaması</Label>
+              <div>
+                <Label className="text-white mb-1 block">Meta Açıklaması</Label>
                 <Textarea
-                  value={settings.metaDescription}
+                  value={formData.metaDescription}
                   onChange={(e) => handleInputChange('metaDescription', e.target.value)}
-                  placeholder="Sitenizin kısa açıklaması"
-                  className="bg-dark-400 border-dark-300 text-white resize-none"
+                  placeholder="Meta Açıklaması (150-160 karakter)"
+                  className="bg-dark-400 border-dark-300 text-white"
                   rows={3}
                 />
-                <p className="text-sm text-gray-400">Bu açıklama, arama sonuçlarında başlığın altında görünecektir.</p>
               </div>
               
-              <div className="space-y-2">
-                <Label className="text-white flex items-center">
-                  <Tags className="mr-2 h-4 w-4" />
-                  Anahtar Kelimeler
-                </Label>
-                <Textarea
-                  value={settings.keywords}
+              <div>
+                <Label className="text-white mb-1 block">Anahtar Kelimeler</Label>
+                <Input
+                  value={formData.keywords}
                   onChange={(e) => handleInputChange('keywords', e.target.value)}
-                  placeholder="anahtar1, anahtar2, anahtar3"
-                  className="bg-dark-400 border-dark-300 text-white resize-none"
-                  rows={2}
+                  placeholder="Anahtar Kelimeler (virgülle ayırın)"
+                  className="bg-dark-400 border-dark-300 text-white"
                 />
-                <p className="text-sm text-gray-400">Virgülle ayırarak anahtar kelimeleri girin.</p>
               </div>
               
-              <div className="space-y-2">
-                <Label className="text-white">Canonical URL</Label>
+              <div>
+                <Label className="text-white mb-1 block">Canonical URL</Label>
                 <Input
-                  value={settings.canonicalUrl}
+                  value={formData.canonicalUrl}
                   onChange={(e) => handleInputChange('canonicalUrl', e.target.value)}
-                  placeholder="https://www.siteniz.com"
+                  placeholder="https://siteadresi.com"
                   className="bg-dark-400 border-dark-300 text-white"
                 />
-                <p className="text-sm text-gray-400">Ana domain adresinizi belirtin.</p>
               </div>
               
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="enableIndexing" className="text-white">
-                    Arama Motorları İndekslemesi
-                  </Label>
-                  <p className="text-sm text-gray-400">Arama motorlarının sitenizi indekslemesine izin verin.</p>
-                </div>
+              <div className="flex items-center space-x-2">
                 <Switch
-                  id="enableIndexing"
-                  checked={settings.enableIndexing}
+                  checked={formData.enableIndexing}
                   onCheckedChange={(checked) => handleInputChange('enableIndexing', checked)}
+                  id="enableIndexing"
                 />
+                <Label htmlFor="enableIndexing" className="text-white">
+                  Site İndekslemeyi Etkinleştir (robots.txt)
+                </Label>
               </div>
             </div>
           </TabsContent>
-          
-          <TabsContent value="opengraph">
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <Label className="text-white">Open Graph Başlığı</Label>
-                <Input
-                  value={settings.openGraphTitle}
-                  onChange={(e) => handleInputChange('openGraphTitle', e.target.value)}
-                  placeholder="Open Graph başlığı"
-                  className="bg-dark-400 border-dark-300 text-white"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label className="text-white">Open Graph Açıklaması</Label>
-                <Textarea
-                  value={settings.openGraphDescription}
-                  onChange={(e) => handleInputChange('openGraphDescription', e.target.value)}
-                  placeholder="Sosyal medya paylaşım açıklaması"
-                  className="bg-dark-400 border-dark-300 text-white resize-none"
-                  rows={3}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label className="text-white">Open Graph Görsel URL</Label>
-                <Input
-                  value={settings.openGraphImage}
-                  onChange={(e) => handleInputChange('openGraphImage', e.target.value)}
-                  placeholder="/img/og-image.jpg"
-                  className="bg-dark-400 border-dark-300 text-white"
-                />
-                <p className="text-sm text-gray-400">Sosyal medya paylaşımlarında görünecek görselin URL'si.</p>
-              </div>
-              
-              <div className="space-y-2">
-                <Label className="text-white">Twitter Kart Tipi</Label>
-                <Input
-                  value={settings.twitterCardType}
-                  onChange={(e) => handleInputChange('twitterCardType', e.target.value)}
-                  placeholder="summary_large_image"
-                  className="bg-dark-400 border-dark-300 text-white"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label className="text-white">Twitter Kullanıcı Adı</Label>
-                <Input
-                  value={settings.twitterUsername}
-                  onChange={(e) => handleInputChange('twitterUsername', e.target.value)}
-                  placeholder="@kullaniciadi"
-                  className="bg-dark-400 border-dark-300 text-white"
-                />
-              </div>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="analytics">
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="analyticsActive" className="text-white">
-                    Google Analytics Aktif
-                  </Label>
-                  <p className="text-sm text-gray-400">Google Analytics izlemesini etkinleştirin.</p>
-                </div>
+        
+          <TabsContent value="analytics" className="space-y-4">
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2 mb-4">
                 <Switch
-                  id="analyticsActive"
-                  checked={settings.analyticsActive}
+                  checked={formData.analyticsActive}
                   onCheckedChange={(checked) => handleInputChange('analyticsActive', checked)}
+                  id="analyticsActive"
+                />
+                <Label htmlFor="analyticsActive" className="text-white">
+                  Analytics Kodlarını Etkinleştir
+                </Label>
+              </div>
+              
+              <div>
+                <Label className="text-white mb-1 block">Google Analytics ID</Label>
+                <Input
+                  value={formData.googleAnalyticsId}
+                  onChange={(e) => handleInputChange('googleAnalyticsId', e.target.value)}
+                  placeholder="G-XXXXXXXXXX"
+                  className="bg-dark-400 border-dark-300 text-white"
+                  disabled={!formData.analyticsActive}
                 />
               </div>
               
-              <div className="space-y-2">
-                <Label className="text-white">Google Analytics ID</Label>
+              <div>
+                <Label className="text-white mb-1 block">Facebook Pixel ID</Label>
                 <Input
-                  value={settings.googleAnalyticsId}
-                  onChange={(e) => handleInputChange('googleAnalyticsId', e.target.value)}
-                  placeholder="G-XXXXXXXXXX veya UA-XXXXXXXX-X"
+                  value={formData.facebookPixelId}
+                  onChange={(e) => handleInputChange('facebookPixelId', e.target.value)}
+                  placeholder="XXXXXXXXXXXXXXXXXX"
                   className="bg-dark-400 border-dark-300 text-white"
-                  disabled={!settings.analyticsActive}
+                  disabled={!formData.analyticsActive}
                 />
-                <p className="text-sm text-gray-400">Google Analytics'ten aldığınız takip ID'sini girin.</p>
               </div>
             </div>
           </TabsContent>
           
-          <TabsContent value="advanced">
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <Label className="text-white">Structured Data (JSON-LD)</Label>
+          <TabsContent value="advanced" className="space-y-4">
+            <div className="space-y-4">
+              <div>
+                <Label className="text-white mb-1 block">JSON-LD Yapılandırılmış Veri</Label>
                 <Textarea
-                  value={settings.structuredData}
+                  value={formData.structuredData}
                   onChange={(e) => handleInputChange('structuredData', e.target.value)}
-                  className="bg-dark-400 border-dark-300 text-white font-mono resize-none"
-                  rows={8}
-                />
-                <p className="text-sm text-gray-400">Zengin sonuçlar için yapılandırılmış veri.</p>
-              </div>
-              
-              <div className="space-y-2">
-                <Label className="text-white">Özel Head Etiketleri</Label>
-                <Textarea
-                  value={settings.customHeadTags}
-                  onChange={(e) => handleInputChange('customHeadTags', e.target.value)}
-                  className="bg-dark-400 border-dark-300 text-white font-mono resize-none"
+                  placeholder='{"@context": "https://schema.org", "@type": "Organization", ...}'
+                  className="bg-dark-400 border-dark-300 text-white font-mono text-sm"
                   rows={6}
                 />
-                <p className="text-sm text-gray-400">Meta etiketleri, script veya diğer özel head etiketleri.</p>
+              </div>
+              
+              <div>
+                <Label className="text-white mb-1 block">Robots.txt İçeriği</Label>
+                <Textarea
+                  value={formData.robotsTxt}
+                  onChange={(e) => handleInputChange('robotsTxt', e.target.value)}
+                  placeholder="User-agent: *
+Disallow: /admin/
+Allow: /
+Sitemap: https://siteadresi.com/sitemap.xml"
+                  className="bg-dark-400 border-dark-300 text-white font-mono text-sm"
+                  rows={6}
+                />
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="custom" className="space-y-4">
+            <div className="space-y-4">
+              <div>
+                <Label className="text-white mb-1 block">Header Özel Kodu (head etiketinin içine)</Label>
+                <Textarea
+                  value={formData.customHeaderCode}
+                  onChange={(e) => handleInputChange('customHeaderCode', e.target.value)}
+                  placeholder="<!-- Özel header kodlarını buraya ekleyin -->"
+                  className="bg-dark-400 border-dark-300 text-white font-mono text-sm"
+                  rows={6}
+                />
+              </div>
+              
+              <div>
+                <Label className="text-white mb-1 block">Footer Özel Kodu (body etiketinin sonuna)</Label>
+                <Textarea
+                  value={formData.customFooterCode}
+                  onChange={(e) => handleInputChange('customFooterCode', e.target.value)}
+                  placeholder="<!-- Özel footer kodlarını buraya ekleyin -->"
+                  className="bg-dark-400 border-dark-300 text-white font-mono text-sm"
+                  rows={6}
+                />
               </div>
             </div>
           </TabsContent>
         </Tabs>
         
-        <div className="pt-6 flex justify-end">
+        <div className="flex justify-end pt-4 border-t border-dark-400">
           <Button 
             onClick={handleSave} 
             disabled={isLoading}
-            className={`relative overflow-hidden ${isSaved ? 'bg-green-600 hover:bg-green-700' : 'bg-ignite hover:bg-ignite-700'} text-white`}
+            className="bg-ignite hover:bg-ignite-700 text-white"
           >
-            {isSaved ? (
+            {isLoading ? (
               <>
-                <Check className="mr-2 h-4 w-4" />
-                Kaydedildi
+                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                Kaydediliyor...
               </>
             ) : (
               <>
                 <Save className="mr-2 h-4 w-4" />
-                {isLoading ? 'Kaydediliyor...' : 'Ayarları Kaydet'}
+                SEO Ayarlarını Kaydet
               </>
             )}
           </Button>
