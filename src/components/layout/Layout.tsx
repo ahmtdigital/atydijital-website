@@ -3,7 +3,7 @@ import { ReactNode, useEffect } from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
-interface SocialMedia {
+export interface SocialMedia {
   facebook?: string;
   twitter?: string;
   instagram?: string;

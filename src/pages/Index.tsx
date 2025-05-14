@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Layout from '@/components/layout/Layout';
@@ -9,12 +10,12 @@ import ContactSection from '@/components/home/ContactSection';
 import MarketingToolsSlider from '@/components/home/MarketingToolsSlider';
 import CaseStudiesSlider from '@/components/home/CaseStudiesSlider';
 import Preloader from '@/components/ui/preloader';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { MotionConfig } from 'framer-motion';
 import { useDataService } from '@/lib/db';
 
 // Define missing interfaces for home components
-interface SectionContent {
+export interface SectionContent {
   // Hero section
   heroTitle?: string;
   heroSubtitle?: string;
@@ -41,7 +42,7 @@ interface SectionContent {
   [key: string]: any;
 }
 
-interface PortfolioSectionProps {
+export interface PortfolioSectionProps {
   content?: SectionContent | null;
   projectsPerRow?: number;
   imageHeight?: number;

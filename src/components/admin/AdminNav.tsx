@@ -24,6 +24,16 @@ interface AdminNavProps {
 }
 
 const AdminNav = ({ activeTab, setActiveTab }: AdminNavProps) => {
+  // Handler to ensure tab changes are processed correctly
+  const handleTabChange = (value: string) => {
+    // Update the parent state with the new tab value
+    setActiveTab(value);
+    
+    // Update URL to reflect tab change
+    const newUrl = `${window.location.pathname}?tab=${value}`;
+    window.history.pushState({ path: newUrl }, '', newUrl);
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: -10 }}
@@ -32,7 +42,7 @@ const AdminNav = ({ activeTab, setActiveTab }: AdminNavProps) => {
       className="bg-dark-700 border-b border-dark-400 sticky top-24 z-30"
     >
       <div className="container mx-auto px-4 overflow-x-auto hide-scrollbar">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="py-1">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="py-1">
           <TabsList className="grid grid-cols-4 md:grid-cols-7 lg:grid-cols-14 h-auto bg-dark-600 p-1 gap-1">
             <TabsTrigger value="dashboard" className="data-[state=active]:bg-ignite data-[state=active]:text-white py-3 flex items-center justify-center text-center transition-all hover:bg-dark-500">
               <LayoutDashboard className="mr-2 h-5 w-5" />
