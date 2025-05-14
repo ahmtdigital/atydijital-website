@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Layout from '@/components/layout/Layout';
@@ -13,44 +12,9 @@ import Preloader from '@/components/ui/preloader';
 import { useToast } from '@/components/ui/use-toast';
 import { MotionConfig } from 'framer-motion';
 import { useDataService } from '@/lib/db';
+import { SectionContent, PortfolioSectionProps } from '@/types/HeroSlideTypes';
 
-// Define missing interfaces for home components
-export interface SectionContent {
-  // Hero section
-  heroTitle?: string;
-  heroSubtitle?: string;
-  heroDescription?: string;
-  heroButtonText?: string;
-  heroButtonLink?: string;
-  
-  // Services section
-  servicesTitle?: string;
-  servicesSubtitle?: string;
-  servicesDescription?: string;
-  
-  // Portfolio section
-  portfolioTitle?: string;
-  portfolioSubtitle?: string;
-  portfolioDescription?: string;
-  
-  // Contact section
-  contactTitle?: string;
-  contactSubtitle?: string;
-  contactDescription?: string;
-  
-  // Any other fields that might be in the content object
-  [key: string]: any;
-}
-
-export interface PortfolioSectionProps {
-  content?: SectionContent | null;
-  projectsPerRow?: number;
-  imageHeight?: number;
-  showTags?: boolean;
-  showCategories?: boolean;
-  hoverEffect?: string;
-}
-
+// Animations definition
 const animations = {
   fadeIn: {
     hidden: { opacity: 0, y: 20 },
@@ -290,7 +254,6 @@ const Index = () => {
         <StatsSection />
         <ContactSection content={content} />
         
-        {/* Live Chat Widget */}
         {isChatVisible && chatSettings?.enabled && (
           <div className="fixed bottom-20 right-5 z-50 bg-dark-500 border border-dark-400 rounded-lg shadow-lg w-80 overflow-hidden">
             <div className="p-3 flex justify-between items-center" style={{ backgroundColor: chatSettings.primaryColor }}>
