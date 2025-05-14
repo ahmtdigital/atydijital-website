@@ -19,6 +19,21 @@ interface LayoutProps {
   socialMedia?: SocialMedia | null;
 }
 
+// Add interfaces for Navbar and Footer components
+declare module './Navbar' {
+  interface NavbarProps {
+    socialMedia?: SocialMedia | null;
+  }
+  export default function Navbar(props: NavbarProps): JSX.Element;
+}
+
+declare module './Footer' {
+  interface FooterProps {
+    socialMedia?: SocialMedia | null;
+  }
+  export default function Footer(props: FooterProps): JSX.Element;
+}
+
 const Layout = ({ children, socialMedia }: LayoutProps) => {
   useEffect(() => {
     // Scroll to top on page load
