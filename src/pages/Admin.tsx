@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,6 +31,7 @@ import NewsletterManager from '@/components/admin/NewsletterManager';
 
 const Admin = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isLoading, setIsLoading] = useState(false);
@@ -43,8 +44,7 @@ const Admin = () => {
 
   useEffect(() => {
     // URL parametrelerinden aktif sekmeyi kontrol et
-    const params = new URLSearchParams(window.location.search);
-    const tabParam = params.get('tab');
+    const tabParam = searchParams.get('tab');
     if (tabParam) {
       setActiveTab(tabParam);
     }
@@ -57,13 +57,12 @@ const Admin = () => {
     
     // Sayfa başlığını güncelle
     document.title = 'Yönetim Paneli | ATY Dijital';
-  }, []);
+  }, [searchParams]);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    // URL'yi sekme parametresiyle güncelle
-    const newUrl = `${window.location.pathname}?tab=${value}`;
-    window.history.pushState({ path: newUrl }, '', newUrl);
+    // URL'yi güncelle, ancak tam sayfa yenileme yapmadan
+    setSearchParams({ tab: value });
   };
 
   const handleLogin = (e: React.FormEvent) => {
@@ -380,6 +379,52 @@ const Admin = () => {
               className="space-y-8"
             >
               <SiteSettingsManager />
+            </motion.div>
+          )}
+          
+          {/* Database */}
+          {activeTab === 'database' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="space-y-8">
+                <Card className="bg-dark-500 border-dark-400">
+                  <CardHeader>
+                    <CardTitle className="text-white flex items-center gap-2">
+                      <Database className="text-ignite h-5 w-5" />
+                      Veritabanı Yönetimi
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-white/70">Bu modül yapım aşamasındadır.</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </motion.div>
+          )}
+          
+          {/* Appearance */}
+          {activeTab === 'appearance' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="space-y-8">
+                <Card className="bg-dark-500 border-dark-400">
+                  <CardHeader>
+                    <CardTitle className="text-white flex items-center gap-2">
+                      <Palette className="text-ignite h-5 w-5" />
+                      Görünüm Ayarları
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-white/70">Bu modül yapım aşamasındadır.</p>
+                  </CardContent>
+                </Card>
+              </div>
             </motion.div>
           )}
         </div>

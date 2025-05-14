@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -18,6 +18,10 @@ import { useToast } from '@/hooks/use-toast';
 const SiteSettingsManager = () => {
   const [activeTab, setActiveTab] = useState('general');
   const { toast } = useToast();
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+  };
 
   const handleBackupSettings = () => {
     // Generate settings data as JSON
@@ -81,7 +85,7 @@ const SiteSettingsManager = () => {
         </motion.div>
       </div>
 
-      <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
         <TabsList className="bg-dark-600 mb-4 w-full overflow-x-auto flex-wrap">
           <TabsTrigger value="general" className="data-[state=active]:bg-ignite data-[state=active]:text-white text-white flex items-center gap-1.5">
             <Settings className="h-4 w-4" />

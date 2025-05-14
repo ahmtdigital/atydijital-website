@@ -29,9 +29,10 @@ const AdminNav = ({ activeTab, setActiveTab }: AdminNavProps) => {
     // Update the parent state with the new tab value
     setActiveTab(value);
     
-    // Update URL to reflect tab change
-    const newUrl = `${window.location.pathname}?tab=${value}`;
-    window.history.pushState({ path: newUrl }, '', newUrl);
+    // Update URL to reflect tab change without navigating away from the page
+    const url = new URL(window.location.href);
+    url.searchParams.set('tab', value);
+    window.history.pushState({}, '', url.toString());
   };
 
   return (
