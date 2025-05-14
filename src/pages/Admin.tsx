@@ -1,6 +1,6 @@
 
-import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,7 +11,7 @@ import { motion } from 'framer-motion';
 import { LogIn, Eye, EyeOff, X, Database, Palette } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
-// Diğer bileşen importları
+// Component imports
 import ServiceManager from '@/components/admin/ServiceManager';
 import ProjectManagerNew from '@/components/admin/ProjectManagerNew';
 import BlogManagerEnhanced from '@/components/admin/BlogManagerEnhanced';
@@ -33,12 +33,17 @@ import NewsletterManager from '@/components/admin/NewsletterManager';
 
 const Admin = () => {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState(() => {
-    // URL parametresinden sekmeyi al veya varsayılan olarak 'dashboard' kullan
-    return searchParams.get('tab') || 'dashboard';
+    // Get tab from URL query parameters or hash - without triggering re-renders
+    const params = new URLSearchParams(location.search);
+    const tabFromParams = params.get('tab');
+    const tabFromHash = location.hash.replace('#', '');
+    
+    return tabFromParams || tabFromHash || 'dashboard';
   });
+  
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
@@ -47,42 +52,60 @@ const Admin = () => {
   const [loginError, setLoginError] = useState('');
   const mysqlService = useMySQLService();
 
-  // URL parametrelerini güvenli bir şekilde güncelleme fonksiyonu
-  const updateUrlParams = (param: string, value: string) => {
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set(param, value);
-    // replace: true kullanarak sayfa geçmişini değiştirmeden URL'i güncelle
-    setSearchParams(newSearchParams, { replace: true });
-  };
+  // Update URL without causing a page refresh - use a more stable approach with history.replaceState
+  const updateUrlParams = useCallback((tab: string) => {
+    if (tab) {
+      // Use hash to prevent reload
+      window.history.replaceState(
+        {}, 
+        '', 
+        `${window.location.pathname}#${tab}`
+      );
+    }
+  }, []);
 
+  // Effect to check login status only once on mount
   useEffect(() => {
-    // Kullanıcının daha önce giriş yapıp yapmadığını kontrol et
     const adminLoggedIn = localStorage.getItem('adminLoggedIn');
     if (adminLoggedIn === 'true') {
       setIsLoggedIn(true);
     }
     
-    // Sayfa başlığını güncelle
+    // Update page title
     document.title = 'Yönetim Paneli | ATY Dijital';
   }, []);
 
-  // Sekme durumunu URL parametreleriyle eşleştir
+  // Handle URL hash changes
   useEffect(() => {
-    if (isLoggedIn) {
-      const tabParam = searchParams.get('tab');
-      if (tabParam && tabParam !== activeTab) {
-        setActiveTab(tabParam);
-      } else if (activeTab && !tabParam) {
-        updateUrlParams('tab', activeTab);
+    const handleHashChange = () => {
+      if (location.hash) {
+        const newTab = location.hash.replace('#', '');
+        if (newTab && newTab !== activeTab) {
+          setActiveTab(newTab);
+        }
       }
+    };
+
+    // Add event listener for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    
+    // Initialize URL hash if needed
+    if (activeTab && !location.hash) {
+      updateUrlParams(activeTab);
     }
-  }, [searchParams, activeTab, isLoggedIn]);
+    
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, [location.hash, activeTab, updateUrlParams]);
 
   const handleTabChange = (value: string) => {
+    if (value === activeTab) return; // Prevent unnecessary state updates
+    
     setActiveTab(value);
-    updateUrlParams('tab', value);
+    updateUrlParams(value);
 
-    // Sekme değişikliği sırasında kaydırma pozisyonunu sıfırla
+    // Reset scroll position when changing tabs
     window.scrollTo(0, 0);
   };
 
@@ -90,7 +113,7 @@ const Admin = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Demo giriş (gerçek bir uygulamada, bu bir backend çağrısı olurdu)
+    // Demo login 
     setTimeout(() => {
       if (username === 'admin' && password === 'admin123') {
         setIsLoggedIn(true);
@@ -109,7 +132,7 @@ const Admin = () => {
         });
       }
       setIsLoading(false);
-    }, 500); // Yükleme süresini kısaltalım
+    }, 500);
   };
 
   const handleLogout = () => {
@@ -122,7 +145,7 @@ const Admin = () => {
     navigate('/admin', { replace: true });
   };
 
-  // Giriş yapılmadıysa, giriş formunu göster
+  // Show login form if not logged in
   if (!isLoggedIn) {
     
     return (
@@ -422,7 +445,15 @@ const Admin = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-white/70">Bu modül yapım aşamasındadır.</p>
+                    <p className="text-white/70">Veritabanı ayarlarınızı görüntülemek ve yönetmek için Site Ayarları bölümünde Veritabanı sekmesine geçiş yapabilirsiniz.</p>
+                    <div className="mt-4">
+                      <Button 
+                        className="bg-ignite hover:bg-ignite-700 text-white" 
+                        onClick={() => handleTabChange('settings')}
+                      >
+                        Site Ayarlarına Git
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
@@ -445,7 +476,15 @@ const Admin = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-white/70">Bu modül yapım aşamasındadır.</p>
+                    <p className="text-white/70">Site renklerini ve görünüm ayarlarını değiştirmek için Site Ayarları bölümünde Renkler sekmesine geçiş yapabilirsiniz.</p>
+                    <div className="mt-4">
+                      <Button 
+                        className="bg-ignite hover:bg-ignite-700 text-white" 
+                        onClick={() => handleTabChange('settings')}
+                      >
+                        Site Ayarlarına Git
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               </div>

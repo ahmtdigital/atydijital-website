@@ -24,20 +24,10 @@ interface AdminNavProps {
 }
 
 const AdminNav = ({ activeTab, setActiveTab }: AdminNavProps) => {
-  // Tab değişikliklerini yönetmek için işleyici
+  // Handle tab change without causing page reload
   const handleTabChange = (value: string) => {
-    // Ana bileşendeki aktif sekmeyi güncelle
+    if (value === activeTab) return; // Prevent unnecessary updates
     setActiveTab(value);
-    
-    // URL'i güncelle, ancak tam sayfa yeniden yükleme yapmadan
-    try {
-      const url = new URL(window.location.href);
-      url.searchParams.set('tab', value);
-      // Bu metod sayfayı yeniden yüklemeden URL'yi güncelleyecektir
-      window.history.pushState({}, '', url.toString());
-    } catch (error) {
-      console.error("URL parametrelerini güncellerken hata oluştu:", error);
-    }
   };
 
   return (
