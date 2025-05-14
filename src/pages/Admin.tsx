@@ -8,7 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import AdminNav from '@/components/admin/AdminNav';
 import { motion } from 'framer-motion';
-import { LogIn, Eye, EyeOff, X, Database } from 'lucide-react';
+import { LogIn, Eye, EyeOff, X, Database, Palette } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import ServiceManager from '@/components/admin/ServiceManager';
 import ProjectManagerNew from '@/components/admin/ProjectManagerNew';
@@ -33,7 +33,10 @@ const Admin = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(() => {
+    // Initialize from URL parameter or default to 'dashboard'
+    return searchParams.get('tab') || 'dashboard';
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
@@ -42,34 +45,50 @@ const Admin = () => {
   const [loginError, setLoginError] = useState('');
   const mysqlService = useMySQLService();
 
-  useEffect(() => {
-    // URL parametrelerinden aktif sekmeyi kontrol et
-    const tabParam = searchParams.get('tab');
-    if (tabParam) {
-      setActiveTab(tabParam);
+  // Function to safely update URL parameters
+  const updateUrlParams = (param: string, value: string) => {
+    try {
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set(param, value);
+      setSearchParams(newSearchParams, { replace: true });
+    } catch (error) {
+      console.error("Error updating URL parameters:", error);
     }
-    
-    // Kullanıcı zaten giriş yapmış mı kontrol et (localStorage'dan)
+  };
+
+  useEffect(() => {
+    // Check if the user is already logged in (from localStorage)
     const adminLoggedIn = localStorage.getItem('adminLoggedIn');
     if (adminLoggedIn === 'true') {
       setIsLoggedIn(true);
     }
     
-    // Sayfa başlığını güncelle
+    // Update page title
     document.title = 'Yönetim Paneli | ATY Dijital';
-  }, [searchParams]);
+  }, []);
+
+  // Effect to sync tab state with URL parameters
+  useEffect(() => {
+    if (isLoggedIn) {
+      const tabParam = searchParams.get('tab');
+      if (tabParam && tabParam !== activeTab) {
+        setActiveTab(tabParam);
+      } else if (activeTab && !tabParam) {
+        updateUrlParams('tab', activeTab);
+      }
+    }
+  }, [searchParams, activeTab, isLoggedIn]);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    // URL'yi güncelle, ancak tam sayfa yenileme yapmadan
-    setSearchParams({ tab: value });
+    updateUrlParams('tab', value);
   };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Demo giriş (gerçek bir uygulamada bu bir backend çağrısı olacaktır)
+    // Demo login (in a real app, this would be a backend call)
     setTimeout(() => {
       if (username === 'admin' && password === 'admin123') {
         setIsLoggedIn(true);
@@ -98,6 +117,7 @@ const Admin = () => {
       title: "Çıkış Yapıldı",
       description: "Başarıyla çıkış yaptınız.",
     });
+    navigate('/admin', { replace: true });
   };
 
   if (!isLoggedIn) {

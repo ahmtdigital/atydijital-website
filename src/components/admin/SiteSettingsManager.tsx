@@ -21,7 +21,26 @@ const SiteSettingsManager = () => {
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
+
+    // Update URL with hash to remember section on page reload
+    try {
+      const url = new URL(window.location.href);
+      url.hash = value;
+      window.history.pushState({}, '', url.toString());
+    } catch (error) {
+      console.error("Error updating URL hash:", error);
+    }
   };
+
+  // Check URL hash on load
+  useEffect(() => {
+    if (window.location.hash) {
+      const hashValue = window.location.hash.replace('#', '');
+      if (['general', 'colors', 'content', 'email', 'social', 'seo', 'chat'].includes(hashValue)) {
+        setActiveTab(hashValue);
+      }
+    }
+  }, []);
 
   const handleBackupSettings = () => {
     // Generate settings data as JSON

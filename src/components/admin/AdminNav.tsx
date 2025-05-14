@@ -17,6 +17,7 @@ import {
   FileText
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 interface AdminNavProps {
   activeTab: string;
@@ -24,15 +25,23 @@ interface AdminNavProps {
 }
 
 const AdminNav = ({ activeTab, setActiveTab }: AdminNavProps) => {
+  const navigate = useNavigate();
+
   // Handler to ensure tab changes are processed correctly
   const handleTabChange = (value: string) => {
     // Update the parent state with the new tab value
     setActiveTab(value);
     
     // Update URL to reflect tab change without navigating away from the page
-    const url = new URL(window.location.href);
-    url.searchParams.set('tab', value);
-    window.history.pushState({}, '', url.toString());
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', value);
+      window.history.pushState({}, '', url.toString());
+    } catch (error) {
+      console.error("Error updating URL parameters:", error);
+      // Fallback: just navigate to /admin with the tab parameter
+      navigate(`/admin?tab=${value}`, { replace: true });
+    }
   };
 
   return (
