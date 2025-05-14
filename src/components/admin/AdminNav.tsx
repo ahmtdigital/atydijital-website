@@ -17,7 +17,6 @@ import {
   FileText
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 
 interface AdminNavProps {
   activeTab: string;
@@ -25,22 +24,19 @@ interface AdminNavProps {
 }
 
 const AdminNav = ({ activeTab, setActiveTab }: AdminNavProps) => {
-  const navigate = useNavigate();
-
-  // Handler to ensure tab changes are processed correctly
+  // Tab değişikliklerini yönetmek için işleyici
   const handleTabChange = (value: string) => {
-    // Update the parent state with the new tab value
+    // Ana bileşendeki aktif sekmeyi güncelle
     setActiveTab(value);
     
-    // Update URL to reflect tab change without navigating away from the page
+    // URL'i güncelle, ancak tam sayfa yeniden yükleme yapmadan
     try {
       const url = new URL(window.location.href);
       url.searchParams.set('tab', value);
+      // Bu metod sayfayı yeniden yüklemeden URL'yi güncelleyecektir
       window.history.pushState({}, '', url.toString());
     } catch (error) {
-      console.error("Error updating URL parameters:", error);
-      // Fallback: just navigate to /admin with the tab parameter
-      navigate(`/admin?tab=${value}`, { replace: true });
+      console.error("URL parametrelerini güncellerken hata oluştu:", error);
     }
   };
 
@@ -52,7 +48,11 @@ const AdminNav = ({ activeTab, setActiveTab }: AdminNavProps) => {
       className="bg-dark-700 border-b border-dark-400 sticky top-24 z-30"
     >
       <div className="container mx-auto px-4 overflow-x-auto hide-scrollbar">
-        <Tabs value={activeTab} onValueChange={handleTabChange} className="py-1">
+        <Tabs 
+          value={activeTab} 
+          onValueChange={handleTabChange} 
+          className="py-1"
+        >
           <TabsList className="grid grid-cols-4 md:grid-cols-7 lg:grid-cols-14 h-auto bg-dark-600 p-1 gap-1">
             <TabsTrigger value="dashboard" className="data-[state=active]:bg-ignite data-[state=active]:text-white py-3 flex items-center justify-center text-center transition-all hover:bg-dark-500">
               <LayoutDashboard className="mr-2 h-5 w-5" />

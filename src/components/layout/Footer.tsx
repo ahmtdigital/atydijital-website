@@ -1,18 +1,9 @@
-
 import { Link } from 'react-router-dom';
 import { Instagram, Twitter, Facebook, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
+import { SocialMedia } from './Layout';
 
 interface FooterProps {
-  socialMedia?: {
-    facebook?: string;
-    twitter?: string;
-    instagram?: string;
-    linkedin?: string;
-    youtube?: string;
-    github?: string;
-    showInHeader?: boolean;
-    showInFooter?: boolean;
-  } | null;
+  socialMedia?: SocialMedia | null;
 }
 
 const Footer = ({ socialMedia }: FooterProps) => {

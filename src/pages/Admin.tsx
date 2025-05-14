@@ -10,6 +10,8 @@ import AdminNav from '@/components/admin/AdminNav';
 import { motion } from 'framer-motion';
 import { LogIn, Eye, EyeOff, X, Database, Palette } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+
+// Diğer bileşen importları
 import ServiceManager from '@/components/admin/ServiceManager';
 import ProjectManagerNew from '@/components/admin/ProjectManagerNew';
 import BlogManagerEnhanced from '@/components/admin/BlogManagerEnhanced';
@@ -34,7 +36,7 @@ const Admin = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState(() => {
-    // Initialize from URL parameter or default to 'dashboard'
+    // URL parametresinden sekmeyi al veya varsayılan olarak 'dashboard' kullan
     return searchParams.get('tab') || 'dashboard';
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -45,29 +47,26 @@ const Admin = () => {
   const [loginError, setLoginError] = useState('');
   const mysqlService = useMySQLService();
 
-  // Function to safely update URL parameters
+  // URL parametrelerini güvenli bir şekilde güncelleme fonksiyonu
   const updateUrlParams = (param: string, value: string) => {
-    try {
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.set(param, value);
-      setSearchParams(newSearchParams, { replace: true });
-    } catch (error) {
-      console.error("Error updating URL parameters:", error);
-    }
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set(param, value);
+    // replace: true kullanarak sayfa geçmişini değiştirmeden URL'i güncelle
+    setSearchParams(newSearchParams, { replace: true });
   };
 
   useEffect(() => {
-    // Check if the user is already logged in (from localStorage)
+    // Kullanıcının daha önce giriş yapıp yapmadığını kontrol et
     const adminLoggedIn = localStorage.getItem('adminLoggedIn');
     if (adminLoggedIn === 'true') {
       setIsLoggedIn(true);
     }
     
-    // Update page title
+    // Sayfa başlığını güncelle
     document.title = 'Yönetim Paneli | ATY Dijital';
   }, []);
 
-  // Effect to sync tab state with URL parameters
+  // Sekme durumunu URL parametreleriyle eşleştir
   useEffect(() => {
     if (isLoggedIn) {
       const tabParam = searchParams.get('tab');
@@ -82,13 +81,16 @@ const Admin = () => {
   const handleTabChange = (value: string) => {
     setActiveTab(value);
     updateUrlParams('tab', value);
+
+    // Sekme değişikliği sırasında kaydırma pozisyonunu sıfırla
+    window.scrollTo(0, 0);
   };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Demo login (in a real app, this would be a backend call)
+    // Demo giriş (gerçek bir uygulamada, bu bir backend çağrısı olurdu)
     setTimeout(() => {
       if (username === 'admin' && password === 'admin123') {
         setIsLoggedIn(true);
@@ -107,7 +109,7 @@ const Admin = () => {
         });
       }
       setIsLoading(false);
-    }, 1000);
+    }, 500); // Yükleme süresini kısaltalım
   };
 
   const handleLogout = () => {
@@ -120,6 +122,7 @@ const Admin = () => {
     navigate('/admin', { replace: true });
   };
 
+  // Giriş yapılmadıysa, giriş formunu göster
   if (!isLoggedIn) {
     
     return (
@@ -258,6 +261,7 @@ const Admin = () => {
           {/* Dashboard */}
           {activeTab === 'dashboard' && (
             <motion.div
+              key="dashboard"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}

@@ -19,20 +19,8 @@ interface LayoutProps {
   socialMedia?: SocialMedia | null;
 }
 
-// Add interfaces for Navbar and Footer components
-declare module './Navbar' {
-  interface NavbarProps {
-    socialMedia?: SocialMedia | null;
-  }
-  export default function Navbar(props: NavbarProps): JSX.Element;
-}
-
-declare module './Footer' {
-  interface FooterProps {
-    socialMedia?: SocialMedia | null;
-  }
-  export default function Footer(props: FooterProps): JSX.Element;
-}
+// Navbar ve Footer bileşenleri için tiplerini tanımlama
+// Bu yöntem yerine direkt olarak bileşenleri tip tanımlaması ile oluşturup export edelim
 
 const Layout = ({ children, socialMedia }: LayoutProps) => {
   useEffect(() => {

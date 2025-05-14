@@ -15,8 +15,14 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
+import { SocialMedia } from './Layout';
 
-const Navbar = () => {
+// Navbar bileşeni için props tipini tanımlayalım
+interface NavbarProps {
+  socialMedia?: SocialMedia | null;
+}
+
+const Navbar = ({ socialMedia }: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [quotePopupOpen, setQuotePopupOpen] = useState(false);
