@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -36,7 +37,7 @@ const Admin = () => {
   const location = useLocation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState(() => {
-    // Get tab from URL query parameters or hash
+    // Get tab from URL hash
     const hash = location.hash.replace('#', '');
     return hash || 'dashboard';
   });
@@ -49,21 +50,14 @@ const Admin = () => {
   const [loginError, setLoginError] = useState('');
   const mysqlService = useMySQLService();
 
-  // Update URL without causing page refresh - use hash routing only
-  const updateUrlParams = useCallback((tab: string) => {
-    if (tab) {
-      // Use hash to prevent reload
-      if (location.hash !== `#${tab}`) {
-        window.history.replaceState(
-          {}, 
-          '', 
-          `${window.location.pathname}#${tab}`
-        );
-      }
+  // Update URL hash without causing page refresh
+  const updateUrlHash = useCallback((tab: string) => {
+    if (tab && location.hash !== `#${tab}`) {
+      window.history.replaceState({}, '', `${window.location.pathname}#${tab}`);
     }
   }, [location.hash]);
 
-  // Effect to check login status only once on mount
+  // Check login status on mount
   useEffect(() => {
     const adminLoggedIn = localStorage.getItem('adminLoggedIn');
     if (adminLoggedIn === 'true') {
@@ -90,19 +84,19 @@ const Admin = () => {
     
     // Initialize URL hash if needed
     if (activeTab && !location.hash) {
-      updateUrlParams(activeTab);
+      updateUrlHash(activeTab);
     }
     
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
     };
-  }, [location.hash, activeTab, updateUrlParams]);
+  }, [location.hash, activeTab, updateUrlHash]);
 
   const handleTabChange = (value: string) => {
     if (value === activeTab) return; // Prevent unnecessary state updates
     
     setActiveTab(value);
-    updateUrlParams(value);
+    updateUrlHash(value);
 
     // Reset scroll position when changing tabs
     window.scrollTo(0, 0);
@@ -122,6 +116,11 @@ const Admin = () => {
           description: "Hoş geldiniz, Admin!",
         });
         setLoginError('');
+        
+        // Set the default hash if none exists
+        if (!location.hash) {
+          updateUrlHash('dashboard');
+        }
       } else {
         setLoginError('Kullanıcı adı veya şifre hatalı');
         toast({
@@ -241,6 +240,226 @@ const Admin = () => {
     );
   }
 
+  // Define a function to render the appropriate content based on activeTab
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'dashboard':
+        return (
+          <motion.div
+            key="dashboard"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-8"
+          >
+            <div className="grid grid-cols-1 gap-6">
+              <MarketingDashboard />
+            </div>
+          </motion.div>
+        );
+      case 'marketing':
+        return (
+          <motion.div
+            key="marketing"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-8"
+          >
+            <MarketingDashboard />
+            <MarketingToolsManager />
+            <NewsletterManager />
+          </motion.div>
+        );
+      case 'services':
+        return (
+          <motion.div
+            key="services"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-8"
+          >
+            <ServiceManager />
+            <ServiceDetailManager />
+            <ServiceDetailFixedManager />
+          </motion.div>
+        );
+      case 'projects':
+        return (
+          <motion.div
+            key="projects"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <ProjectManagerNew />
+          </motion.div>
+        );
+      case 'blog':
+        return (
+          <motion.div
+            key="blog"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <BlogManagerEnhanced />
+          </motion.div>
+        );
+      case 'slider':
+        return (
+          <motion.div
+            key="slider"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <HeroSliderManager />
+          </motion.div>
+        );
+      case 'media':
+        return (
+          <motion.div
+            key="media"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <MediaManager />
+          </motion.div>
+        );
+      case 'team':
+        return (
+          <motion.div
+            key="team"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <TeamManager />
+          </motion.div>
+        );
+      case 'analytics':
+        return (
+          <motion.div
+            key="analytics"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <AnalyticsSettings />
+          </motion.div>
+        );
+      case 'seo':
+        return (
+          <motion.div
+            key="seo"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <SeoManager />
+          </motion.div>
+        );
+      case 'pages':
+        return (
+          <motion.div
+            key="pages"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-8"
+          >
+            <PageManager />
+            <PageContentManager />
+            <div className="mt-8">
+              <BreadcrumbManager />
+            </div>
+          </motion.div>
+        );
+      case 'settings':
+        return (
+          <motion.div
+            key="settings"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-8"
+          >
+            <SiteSettingsManager />
+          </motion.div>
+        );
+      case 'database':
+        return (
+          <motion.div
+            key="database"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <DatabaseManager />
+          </motion.div>
+        );
+      case 'appearance':
+        return (
+          <motion.div
+            key="appearance"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="space-y-8">
+              <Card className="bg-dark-500 border-dark-400">
+                <CardHeader>
+                  <CardTitle className="text-white">Görünüm Ayarları</CardTitle>
+                  <CardDescription className="text-white/60">
+                    Site renklerini ve görsel temalarını buradan düzenleyin
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-white/70">Görünüm ayarlarını düzenlemek için Site Ayarları bölümünde "Renkler" sekmesine geçiş yapabilirsiniz.</p>
+                  <div className="mt-4">
+                    <Button 
+                      className="bg-ignite hover:bg-ignite-700 text-white" 
+                      onClick={() => handleTabChange('settings')}
+                    >
+                      Site Ayarlarına Git
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </motion.div>
+        );
+      default:
+        return (
+          <motion.div
+            key="default"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-8"
+          >
+            <Card className="bg-dark-500 border-dark-400">
+              <CardHeader>
+                <CardTitle className="text-white">Sekme Bulunamadı</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-white/70">İstenen sekme bulunamadı. Lütfen başka bir sekme seçin.</p>
+                <Button 
+                  className="mt-4 bg-ignite hover:bg-ignite-700 text-white" 
+                  onClick={() => handleTabChange('dashboard')}
+                >
+                  Gösterge Paneline Git
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+        );
+    }
+  };
+
   return (
     <Layout>
       {/* Admin Header */}
@@ -280,195 +499,8 @@ const Admin = () => {
       {/* Admin Content */}
       <section className="py-10 bg-dark min-h-screen text-white">
         <div className="container mx-auto px-4">
-          {/* Dashboard */}
-          {activeTab === 'dashboard' && (
-            <motion.div
-              key="dashboard"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="space-y-8"
-            >
-              <div className="grid grid-cols-1 gap-6">
-                <MarketingDashboard />
-              </div>
-            </motion.div>
-          )}
-          
-          {/* Marketing */}
-          {activeTab === 'marketing' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="space-y-8"
-            >
-              <MarketingDashboard />
-              <MarketingToolsManager />
-              <NewsletterManager />
-            </motion.div>
-          )}
-          
-          {/* Services */}
-          {activeTab === 'services' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="space-y-8"
-            >
-              <ServiceManager />
-              <ServiceDetailManager />
-              <ServiceDetailFixedManager />
-            </motion.div>
-          )}
-          
-          {/* Projects */}
-          {activeTab === 'projects' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <ProjectManagerNew />
-            </motion.div>
-          )}
-          
-          {/* Blog */}
-          {activeTab === 'blog' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <BlogManagerEnhanced />
-            </motion.div>
-          )}
-          
-          {/* Hero Slider */}
-          {activeTab === 'slider' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <HeroSliderManager />
-            </motion.div>
-          )}
-          
-          {/* Media */}
-          {activeTab === 'media' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <MediaManager />
-            </motion.div>
-          )}
-          
-          {/* Team */}
-          {activeTab === 'team' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <TeamManager />
-            </motion.div>
-          )}
-          
-          {/* Analytics */}
-          {activeTab === 'analytics' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <AnalyticsSettings />
-            </motion.div>
-          )}
-          
-          {/* SEO */}
-          {activeTab === 'seo' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <SeoManager />
-            </motion.div>
-          )}
-          
-          {/* Pages */}
-          {activeTab === 'pages' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="space-y-8"
-            >
-              <PageManager />
-              <PageContentManager />
-              <div className="mt-8">
-                <BreadcrumbManager />
-              </div>
-            </motion.div>
-          )}
-          
-          {/* Settings */}
-          {activeTab === 'settings' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="space-y-8"
-            >
-              <SiteSettingsManager />
-            </motion.div>
-          )}
-          
-          {/* Database */}
-          {activeTab === 'database' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <DatabaseManager />
-            </motion.div>
-          )}
-          
-          {/* Appearance */}
-          {activeTab === 'appearance' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="space-y-8">
-                <Card className="bg-dark-500 border-dark-400">
-                  <CardHeader>
-                    <CardTitle className="text-white">Görünüm Ayarları</CardTitle>
-                    <CardDescription className="text-white/60">
-                      Site renklerini ve görsel temalarını buradan düzenleyin
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-white/70">Görünüm ayarlarını düzenlemek için Site Ayarları bölümünde "Renkler" sekmesine geçiş yapabilirsiniz.</p>
-                    <div className="mt-4">
-                      <Button 
-                        className="bg-ignite hover:bg-ignite-700 text-white" 
-                        onClick={() => handleTabChange('settings')}
-                      >
-                        Site Ayarlarına Git
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </motion.div>
-          )}
+          {/* Render the active tab's content */}
+          {renderTabContent()}
         </div>
       </section>
     </Layout>

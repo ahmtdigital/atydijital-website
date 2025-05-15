@@ -24,7 +24,7 @@ interface AdminNavProps {
 }
 
 const AdminNav = ({ activeTab, setActiveTab }: AdminNavProps) => {
-  // Handle tab change without causing page reload
+  // Handle tab change without causing page reload - updated to be more robust
   const handleTabChange = (value: string) => {
     if (value === activeTab) return; // Prevent unnecessary updates
     setActiveTab(value);

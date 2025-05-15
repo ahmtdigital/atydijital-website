@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,31 +30,40 @@ const SiteSettingsManager = () => {
     // Update URL with hash to remember section on page reload
     // Using hash to avoid triggering page refresh
     try {
+      // Add a parent hash to maintain admin section, then our sub-hash
+      // Format: #settings#value
+      const mainHash = window.location.hash.split('#')[1] || '';
       window.history.replaceState(
         {}, 
         '', 
-        `${window.location.pathname}${window.location.search}#${value}`
+        `${window.location.pathname}#${mainHash}#${value}`
       );
     } catch (error) {
       console.error("Error updating URL hash:", error);
     }
   };
 
-  // Check URL hash on load - using a more stable approach
+  // Check URL hash on load
   useEffect(() => {
-    const handleHashChange = () => {
-      if (window.location.hash) {
-        const hashValue = window.location.hash.replace('#', '');
-        if (['general', 'colors', 'content', 'email', 'social', 'seo', 'chat', 'database', 'api'].includes(hashValue)) {
-          setActiveTab(hashValue);
+    const checkHashForSettings = () => {
+      // Check if there's a sub-hash for settings
+      const hashParts = window.location.hash.split('#');
+      if (hashParts.length >= 3) {
+        const settingsTab = hashParts[2];
+        if (['general', 'colors', 'content', 'email', 'social', 'seo', 'chat', 'database', 'api'].includes(settingsTab)) {
+          setActiveTab(settingsTab);
         }
       }
     };
 
     // Initial check
-    handleHashChange();
+    checkHashForSettings();
 
-    // Listen for hash changes
+    // Monitor hash changes
+    const handleHashChange = () => {
+      checkHashForSettings();
+    };
+    
     window.addEventListener('hashchange', handleHashChange);
     
     return () => {

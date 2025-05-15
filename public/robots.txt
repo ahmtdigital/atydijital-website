@@ -13,26 +13,37 @@ Disallow: /private/*
 # Social Media Bots
 User-agent: Twitterbot
 Allow: /
+Disallow: /admin
+Disallow: /admin/*
 
 User-agent: facebookexternalhit
 Allow: /
+Disallow: /admin
+Disallow: /admin/*
 
 User-agent: LinkedInBot
 Allow: /
+Disallow: /admin
+Disallow: /admin/*
 
 # Search Engine Bots
 User-agent: Googlebot
 Allow: /
+Disallow: /admin
+Disallow: /admin/*
 
 User-agent: Bingbot
 Allow: /
+Disallow: /admin
+Disallow: /admin/*
 
 User-agent: Baiduspider
 Disallow: /
 
 User-agent: Yandex
 Allow: /
+Disallow: /admin
+Disallow: /admin/*
 
 # Sitemap Location
 Sitemap: https://atydijital.com/sitemap.xml
-
