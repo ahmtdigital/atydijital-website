@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -8,8 +7,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import AdminNav from '@/components/admin/AdminNav';
 import { motion } from 'framer-motion';
-import { LogIn, Eye, EyeOff, X, Database, Palette } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { LogIn, Eye, EyeOff, X, Database } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 // Component imports
 import ServiceManager from '@/components/admin/ServiceManager';
@@ -30,18 +29,16 @@ import BreadcrumbManager from '@/components/admin/BreadcrumbManager';
 import MarketingToolsManager from '@/components/admin/MarketingToolsManager';
 import ServiceDetailManager from '@/components/admin/ServiceDetailManager';
 import NewsletterManager from '@/components/admin/NewsletterManager';
+import DatabaseManager from '@/components/admin/DatabaseManager';
 
 const Admin = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState(() => {
-    // Get tab from URL query parameters or hash - without triggering re-renders
-    const params = new URLSearchParams(location.search);
-    const tabFromParams = params.get('tab');
-    const tabFromHash = location.hash.replace('#', '');
-    
-    return tabFromParams || tabFromHash || 'dashboard';
+    // Get tab from URL query parameters or hash
+    const hash = location.hash.replace('#', '');
+    return hash || 'dashboard';
   });
   
   const [isLoading, setIsLoading] = useState(false);
@@ -52,17 +49,19 @@ const Admin = () => {
   const [loginError, setLoginError] = useState('');
   const mysqlService = useMySQLService();
 
-  // Update URL without causing a page refresh - use a more stable approach with history.replaceState
+  // Update URL without causing page refresh - use hash routing only
   const updateUrlParams = useCallback((tab: string) => {
     if (tab) {
       // Use hash to prevent reload
-      window.history.replaceState(
-        {}, 
-        '', 
-        `${window.location.pathname}#${tab}`
-      );
+      if (location.hash !== `#${tab}`) {
+        window.history.replaceState(
+          {}, 
+          '', 
+          `${window.location.pathname}#${tab}`
+        );
+      }
     }
-  }, []);
+  }, [location.hash]);
 
   // Effect to check login status only once on mount
   useEffect(() => {
@@ -436,27 +435,7 @@ const Admin = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="space-y-8">
-                <Card className="bg-dark-500 border-dark-400">
-                  <CardHeader>
-                    <CardTitle className="text-white flex items-center gap-2">
-                      <Database className="text-ignite h-5 w-5" />
-                      Veritabanı Yönetimi
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-white/70">Veritabanı ayarlarınızı görüntülemek ve yönetmek için Site Ayarları bölümünde Veritabanı sekmesine geçiş yapabilirsiniz.</p>
-                    <div className="mt-4">
-                      <Button 
-                        className="bg-ignite hover:bg-ignite-700 text-white" 
-                        onClick={() => handleTabChange('settings')}
-                      >
-                        Site Ayarlarına Git
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+              <DatabaseManager />
             </motion.div>
           )}
           
@@ -470,13 +449,13 @@ const Admin = () => {
               <div className="space-y-8">
                 <Card className="bg-dark-500 border-dark-400">
                   <CardHeader>
-                    <CardTitle className="text-white flex items-center gap-2">
-                      <Palette className="text-ignite h-5 w-5" />
-                      Görünüm Ayarları
-                    </CardTitle>
+                    <CardTitle className="text-white">Görünüm Ayarları</CardTitle>
+                    <CardDescription className="text-white/60">
+                      Site renklerini ve görsel temalarını buradan düzenleyin
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-white/70">Site renklerini ve görünüm ayarlarını değiştirmek için Site Ayarları bölümünde Renkler sekmesine geçiş yapabilirsiniz.</p>
+                    <p className="text-white/70">Görünüm ayarlarını düzenlemek için Site Ayarları bölümünde "Renkler" sekmesine geçiş yapabilirsiniz.</p>
                     <div className="mt-4">
                       <Button 
                         className="bg-ignite hover:bg-ignite-700 text-white" 

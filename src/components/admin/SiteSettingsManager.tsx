@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import GeneralSettings from '@/components/admin/GeneralSettings';
-import { Download, Settings, PaintBucket, FileText, Mail, Globe, Share2, MessageSquare, Database, Server } from 'lucide-react';
+import { Download, Settings, PaintBucket, FileText, Mail, Globe, Share2, MessageSquare, Database, Server, BarChart4 } from 'lucide-react';
 import SiteColorsManager from './SiteColorsManager';
 import ContentSectionsManager from './ContentSectionsManager';
 import SectionContentManager from './SectionContentManager';
