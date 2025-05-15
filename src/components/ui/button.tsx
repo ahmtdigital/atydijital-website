@@ -24,12 +24,18 @@ const buttonVariants = cva(
         dark: "bg-dark-600 text-white hover:bg-dark-500",
         outlineDark: "border border-dark-400 text-white hover:bg-dark-600/50",
         outlineLight: "border border-gray-300 text-gray-800 hover:bg-gray-100",
+        // New improved variants with better contrast
+        modern: "bg-gradient-to-r from-ignite to-ignite-600 text-white hover:shadow-lg hover:from-ignite-600 hover:to-ignite transition-all duration-300",
+        midnight: "bg-dark-700 text-white hover:bg-dark-600 border border-dark-500 hover:border-ignite/50 transition-all duration-300",
+        glass: "bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all duration-300",
+        professional: "bg-dark-500 text-white hover:bg-dark-400 border-l-4 border-ignite transition-all duration-300",
       },
       size: {
         default: "h-10 px-4 py-2",
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
+        xl: "h-12 rounded-md px-10 text-base",
       },
     },
     defaultVariants: {

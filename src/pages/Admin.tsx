@@ -101,12 +101,18 @@ const Admin = () => {
     }
   }, [location.hash, isLoggedIn, updateUrlHash]);
 
+  // Update hash when tab changes without causing a full reload
+  useEffect(() => {
+    if (isLoggedIn && activeTab) {
+      updateUrlHash(activeTab);
+    }
+  }, [activeTab, isLoggedIn, updateUrlHash]);
+
   const handleTabChange = (value: string) => {
     if (value === activeTab) return; // Prevent unnecessary state updates
     
     setActiveTab(value);
-    updateUrlHash(value);
-
+    
     // Reset scroll position when changing tabs
     window.scrollTo(0, 0);
   };
@@ -163,8 +169,8 @@ const Admin = () => {
               transition={{ duration: 0.5 }}
               className="max-w-md mx-auto"
             >
-              <Card className="bg-dark-500 border-dark-400 overflow-hidden relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-ignite/5 via-transparent to-transparent" />
+              <Card className="bg-dark-500 border-dark-400 overflow-hidden relative animated-border shine">
+                <div className="absolute inset-0 bg-gradient-to-br from-ignite/10 via-transparent to-transparent" />
                 <CardHeader className="bg-dark-600 border-b border-dark-400 relative">
                   <CardTitle className="text-2xl text-white">ATY Dijital Yönetici Girişi</CardTitle>
                   <CardDescription className="text-white/60">
@@ -210,7 +216,8 @@ const Admin = () => {
                     </div>
                     <Button 
                       type="submit" 
-                      className="w-full bg-ignite hover:bg-ignite-700 text-white relative overflow-hidden group" 
+                      variant="modern"
+                      className="w-full relative overflow-hidden group shadow-lg" 
                       disabled={isLoading}
                     >
                       <motion.div
@@ -501,7 +508,7 @@ const Admin = () => {
             </div>
             <div className="flex items-center gap-2">
               <Button 
-                variant="outlineDark" 
+                variant="professional" 
                 onClick={handleLogout} 
                 title="Çıkış Yap"
               >

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown, Bell, Image } from 'lucide-react';
@@ -118,12 +117,12 @@ const Navbar = ({ socialMedia }: NavbarProps) => {
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center gap-2 hover:bg-dark-600">
+                <Button variant="glass" className="flex items-center gap-2">
                   <Avatar className="h-8 w-8">
                     <AvatarFallback className="bg-ignite text-white">AD</AvatarFallback>
                   </Avatar>
                   <span>Admin</span>
-                  <ChevronDown className="h-4 w-4 text-gray-400" />
+                  <ChevronDown className="h-4 w-4 text-white" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-dark-600 border-dark-500 mt-2">
@@ -202,8 +201,8 @@ const Navbar = ({ socialMedia }: NavbarProps) => {
               </Link>
             ))}
             <Button 
-              variant="default" 
-              className="bg-ignite hover:bg-ignite-700 text-white"
+              variant="modern" 
+              className="text-white shadow-lg"
               onClick={() => setQuotePopupOpen(true)}
             >
               Teklif Al
@@ -227,7 +226,7 @@ const Navbar = ({ socialMedia }: NavbarProps) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
-                className="fixed inset-0 bg-dark/95 z-40 flex flex-col items-center pt-20"
+                className="fixed inset-0 bg-dark/95 backdrop-blur-md z-40 flex flex-col items-center pt-20"
                 style={{ top: 0, height: '100vh', paddingTop: '120px', overflow: 'auto' }}
               >
                 <div className="flex flex-col items-center space-y-6 py-10 w-full px-6">
@@ -255,8 +254,8 @@ const Navbar = ({ socialMedia }: NavbarProps) => {
                     className="mt-6 w-full"
                   >
                     <Button 
-                      variant="default" 
-                      className="bg-ignite hover:bg-ignite-700 text-white w-full py-6 text-lg"
+                      variant="modern" 
+                      className="w-full py-6 text-lg shadow-lg"
                       onClick={() => {
                         setIsOpen(false);
                         setQuotePopupOpen(true);
