@@ -265,6 +265,7 @@ const Admin = () => {
           </motion.div>
         );
       case 'marketing':
+        
         return (
           <motion.div
             key="marketing"
@@ -279,6 +280,7 @@ const Admin = () => {
           </motion.div>
         );
       case 'services':
+        
         return (
           <motion.div
             key="services"
@@ -293,6 +295,7 @@ const Admin = () => {
           </motion.div>
         );
       case 'projects':
+        
         return (
           <motion.div
             key="projects"
@@ -304,6 +307,7 @@ const Admin = () => {
           </motion.div>
         );
       case 'blog':
+        
         return (
           <motion.div
             key="blog"
@@ -315,6 +319,7 @@ const Admin = () => {
           </motion.div>
         );
       case 'slider':
+        
         return (
           <motion.div
             key="slider"
@@ -326,6 +331,7 @@ const Admin = () => {
           </motion.div>
         );
       case 'media':
+        
         return (
           <motion.div
             key="media"
@@ -337,6 +343,7 @@ const Admin = () => {
           </motion.div>
         );
       case 'team':
+        
         return (
           <motion.div
             key="team"
@@ -348,6 +355,7 @@ const Admin = () => {
           </motion.div>
         );
       case 'analytics':
+        
         return (
           <motion.div
             key="analytics"
@@ -359,6 +367,7 @@ const Admin = () => {
           </motion.div>
         );
       case 'seo':
+        
         return (
           <motion.div
             key="seo"
@@ -370,6 +379,7 @@ const Admin = () => {
           </motion.div>
         );
       case 'pages':
+        
         return (
           <motion.div
             key="pages"
@@ -386,6 +396,7 @@ const Admin = () => {
           </motion.div>
         );
       case 'settings':
+        
         return (
           <motion.div
             key="settings"
@@ -398,6 +409,7 @@ const Admin = () => {
           </motion.div>
         );
       case 'database':
+        
         return (
           <motion.div
             key="database"
@@ -409,6 +421,7 @@ const Admin = () => {
           </motion.div>
         );
       case 'appearance':
+        
         return (
           <motion.div
             key="appearance"
@@ -428,7 +441,7 @@ const Admin = () => {
                   <p className="text-white/70">Görünüm ayarlarını düzenlemek için Site Ayarları bölümünde "Renkler" sekmesine geçiş yapabilirsiniz.</p>
                   <div className="mt-4">
                     <Button 
-                      className="bg-ignite hover:bg-ignite-700 text-white" 
+                      variant="ignite"
                       onClick={() => handleTabChange('settings')}
                     >
                       Site Ayarlarına Git
@@ -440,6 +453,7 @@ const Admin = () => {
           </motion.div>
         );
       default:
+        
         return (
           <motion.div
             key="default"
@@ -455,7 +469,7 @@ const Admin = () => {
               <CardContent>
                 <p className="text-white/70">İstenen sekme bulunamadı. Lütfen başka bir sekme seçin.</p>
                 <Button 
-                  className="mt-4 bg-ignite hover:bg-ignite-700 text-white" 
+                  variant="ignite"
                   onClick={() => handleTabChange('dashboard')}
                 >
                   Gösterge Paneline Git
@@ -487,10 +501,9 @@ const Admin = () => {
             </div>
             <div className="flex items-center gap-2">
               <Button 
-                variant="outline" 
+                variant="outlineDark" 
                 onClick={handleLogout} 
                 title="Çıkış Yap"
-                className="border-dark-400 hover:bg-dark-500 text-white"
               >
                 <X className="h-4 w-4 mr-2" />
                 Çıkış Yap
