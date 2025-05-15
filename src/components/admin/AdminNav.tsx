@@ -17,6 +17,7 @@ import {
   FileText
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useCallback } from "react";
 
 interface AdminNavProps {
   activeTab: string;
@@ -24,11 +25,25 @@ interface AdminNavProps {
 }
 
 const AdminNav = ({ activeTab, setActiveTab }: AdminNavProps) => {
-  // Handle tab change without causing page reload - updated to be more robust
-  const handleTabChange = (value: string) => {
+  // Handle tab change without causing page reload
+  const handleTabChange = useCallback((value: string) => {
     if (value === activeTab) return; // Prevent unnecessary updates
+    
+    // Update the tab state
     setActiveTab(value);
-  };
+    
+    // Update URL hash without causing page refresh
+    const mainHash = 'admin'; // Always keep the main hash as admin
+    try {
+      window.history.replaceState(
+        {}, 
+        '', 
+        `${window.location.pathname}#${mainHash}#${value}`
+      );
+    } catch (error) {
+      console.error("Error updating URL hash:", error);
+    }
+  }, [activeTab, setActiveTab]);
 
   return (
     <motion.div 

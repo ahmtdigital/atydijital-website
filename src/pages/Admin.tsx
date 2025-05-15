@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -36,11 +35,7 @@ const Admin = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState(() => {
-    // Get tab from URL hash
-    const hash = location.hash.replace('#', '');
-    return hash || 'dashboard';
-  });
+  const [activeTab, setActiveTab] = useState('dashboard');
   
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -52,10 +47,16 @@ const Admin = () => {
 
   // Update URL hash without causing page refresh
   const updateUrlHash = useCallback((tab: string) => {
-    if (tab && location.hash !== `#${tab}`) {
-      window.history.replaceState({}, '', `${window.location.pathname}#${tab}`);
+    try {
+      window.history.replaceState(
+        {}, 
+        '', 
+        `${window.location.pathname}#admin#${tab}`
+      );
+    } catch (error) {
+      console.error("Error updating URL hash:", error);
     }
-  }, [location.hash]);
+  }, []);
 
   // Check login status on mount
   useEffect(() => {
@@ -68,29 +69,37 @@ const Admin = () => {
     document.title = 'Yönetim Paneli | ATY Dijital';
   }, []);
 
-  // Handle URL hash changes
+  // Parse the URL hash on initial load
   useEffect(() => {
-    const handleHashChange = () => {
-      if (location.hash) {
-        const newTab = location.hash.replace('#', '');
-        if (newTab && newTab !== activeTab) {
-          setActiveTab(newTab);
+    const parseInitialHash = () => {
+      const hashParts = window.location.hash.split('#');
+      if (hashParts.length >= 3 && hashParts[1] === 'admin') {
+        const tabFromHash = hashParts[2];
+        if (tabFromHash) {
+          setActiveTab(tabFromHash);
+        } else {
+          // Set default tab if nothing specified after #admin#
+          updateUrlHash('dashboard');
         }
+      } else if (location.hash.startsWith('#')) {
+        // Handle legacy hash format
+        const tab = location.hash.replace('#', '');
+        if (tab) {
+          setActiveTab(tab);
+          updateUrlHash(tab);
+        } else {
+          updateUrlHash('dashboard');
+        }
+      } else {
+        // No hash at all, set default
+        updateUrlHash('dashboard');
       }
     };
 
-    // Add event listener for hash changes
-    window.addEventListener('hashchange', handleHashChange);
-    
-    // Initialize URL hash if needed
-    if (activeTab && !location.hash) {
-      updateUrlHash(activeTab);
+    if (isLoggedIn) {
+      parseInitialHash();
     }
-    
-    return () => {
-      window.removeEventListener('hashchange', handleHashChange);
-    };
-  }, [location.hash, activeTab, updateUrlHash]);
+  }, [location.hash, isLoggedIn, updateUrlHash]);
 
   const handleTabChange = (value: string) => {
     if (value === activeTab) return; // Prevent unnecessary state updates
@@ -118,9 +127,7 @@ const Admin = () => {
         setLoginError('');
         
         // Set the default hash if none exists
-        if (!location.hash) {
-          updateUrlHash('dashboard');
-        }
+        updateUrlHash('dashboard');
       } else {
         setLoginError('Kullanıcı adı veya şifre hatalı');
         toast({

@@ -1,6 +1,6 @@
 
 # ATY Dijital Website Robots.txt
-# Updated: 2024-05-15
+# Updated: 2025-05-15
 
 User-agent: *
 Allow: /
